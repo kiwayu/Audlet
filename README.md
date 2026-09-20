@@ -22,7 +22,7 @@ Requires the .NET 9 SDK.
 2. `dotnet build`
 3. `dotnet run --project WindowsAudiobookPlayer`
 
-Tests: `dotnet test`
+Tests: `dotnet test` runs the unit tests and the end-to-end suite. The end-to-end project launches the real executable against a throwaway data folder and a generated library of tone files, then drives it through Windows UI Automation. It needs an audio device and takes about fifteen seconds. Run the unit tests alone with `dotnet test WindowsAudiobookPlayer.Tests`.
 
 Release build: `tools\publish.ps1` produces a self-contained folder in `dist\WindowsAudiobookPlayer` that runs on any 64-bit Windows 11 machine without installing .NET.
 

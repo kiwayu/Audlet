@@ -57,6 +57,14 @@ public sealed class PlayGlyph : IValueConverter
     public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
 }
 
+// Sleep glyph for the player bar: crescent alone, or crescent plus the remaining time while a timer runs.
+public sealed class SleepGlyph : IValueConverter
+{
+    public object Convert(object v, Type t, object p, CultureInfo c) =>
+        v is TimeSpan ts && ts > TimeSpan.Zero ? "☾ " + ts.ToString(@"mm\:ss") : "☾";
+    public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
+}
+
 public sealed class LockGlyph : IValueConverter
 {
     public object Convert(object v, Type t, object p, CultureInfo c) => v is true ? "Unlock" : "Lock";

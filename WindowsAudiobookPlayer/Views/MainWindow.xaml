@@ -16,6 +16,7 @@
         <c:PlayGlyph x:Key="PlayGlyph" />
         <c:CoverImage x:Key="Cover" />
         <c:CoverImage x:Key="CoverFull" Full="True" />
+        <c:SleepGlyph x:Key="SleepGlyph" />
     </Window.Resources>
     <Grid>
         <!-- Blurred cover backdrop -->
@@ -76,11 +77,11 @@
                     <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="16,0" VerticalAlignment="Center">
                         <Button Style="{StaticResource TransportButton}" Content="&#x00AB;" Click="BigBack_Click" />
                         <Button Style="{StaticResource TransportButton}" Content="&#x2039;" Click="SmallBack_Click" Margin="8,0" />
-                        <Button Style="{StaticResource PlayButton}" Width="44" Height="44" FontSize="16" Content="{Binding Controller.IsPlaying, Converter={StaticResource PlayGlyph}}" Click="Play_Click" />
+                        <Button AutomationProperties.AutomationId="BarPlay" Style="{StaticResource PlayButton}" Width="44" Height="44" FontSize="16" Content="{Binding Controller.IsPlaying, Converter={StaticResource PlayGlyph}}" Click="Play_Click" />
                         <Button Style="{StaticResource TransportButton}" Content="&#x203A;" Click="SmallFwd_Click" Margin="8,0" />
                         <Button Style="{StaticResource TransportButton}" Content="&#x00BB;" Click="BigFwd_Click" />
                     </StackPanel>
-                    <Button Grid.Column="3" Style="{StaticResource GlassButton}" Content="&#x263E;" Click="Sleep_Click" ToolTip="Sleep timer" />
+                    <Button Grid.Column="3" AutomationProperties.AutomationId="BarSleep" Style="{StaticResource GlassButton}" Content="{Binding Controller.SleepRemaining, Converter={StaticResource SleepGlyph}}" Click="Sleep_Click" ToolTip="Sleep timer" />
                 </Grid>
             </Border>
         </Grid>
@@ -88,7 +89,7 @@
         <TextBlock Text="Audiobook Player" Margin="16,12,0,0" VerticalAlignment="Top" Foreground="{DynamicResource GlassMutedBrush}" FontSize="12" IsHitTestVisible="False" />
         <Border Style="{StaticResource GlassPanel}" Padding="16,8" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,56,0,0"
                 Visibility="{Binding Toast, Converter={StaticResource NotNull}}">
-            <TextBlock Text="{Binding Toast}" />
+            <TextBlock AutomationProperties.AutomationId="Toast" Text="{Binding Toast}" />
         </Border>
         <Border Style="{StaticResource GlassPanel}" Padding="16,8" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,56,24,0"
                 Visibility="{Binding IsScanning, Converter={StaticResource Vis}}">

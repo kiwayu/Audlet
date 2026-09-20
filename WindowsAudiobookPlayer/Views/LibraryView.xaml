@@ -15,7 +15,7 @@
     <DockPanel>
         <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding Heading}" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" VerticalAlignment="Center" />
+            <TextBlock AutomationProperties.AutomationId="Heading" Text="{Binding Heading}" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" VerticalAlignment="Center" />
             <TextBox Grid.Column="1" Width="220" Margin="0,0,12,0" Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
             <ComboBox Grid.Column="2" Width="150" Margin="0,0,12,0" ItemsSource="{Binding SortModes}" SelectedItem="{Binding Sort}" VerticalAlignment="Center" />
             <Button Grid.Column="3" Style="{StaticResource GlassButton}" Content="Rescan" Command="{Binding RescanCommand}" />
@@ -50,7 +50,7 @@
                                         <TextBlock Text="{Binding State}" FontSize="10" />
                                     </Border>
                                 </Grid>
-                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Margin="0,8,0,0" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
+                                <TextBlock AutomationProperties.AutomationId="CardTitle" Text="{Binding Title}" FontWeight="SemiBold" Margin="0,8,0,0" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
                                 <TextBlock Text="{Binding Author}" FontSize="12" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" />
                                 <TextBlock Text="{Binding Breadcrumb}" FontSize="11" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" />
                                 <ProgressBar Height="3" Margin="0,8,0,4" Maximum="100" BorderThickness="0" Background="{DynamicResource GlassBorderBrush}" Foreground="{DynamicResource GlassTextBrush}">

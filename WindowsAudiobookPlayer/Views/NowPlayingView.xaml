@@ -115,7 +115,7 @@
                 <Border.Effect><DropShadowEffect BlurRadius="40" ShadowDepth="12" Opacity="0.5" /></Border.Effect>
                 <Border.Background><ImageBrush ImageSource="{Binding Controller.CurrentBook.CoverPath, Converter={StaticResource Cover}}" Stretch="UniformToFill" /></Border.Background>
             </Border>
-            <TextBlock Text="{Binding Controller.CurrentBook.Title}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" Margin="0,20,0,4" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="520" />
+            <TextBlock AutomationProperties.AutomationId="BookTitle" Text="{Binding Controller.CurrentBook.Title}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" Margin="0,20,0,4" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="520" />
             <TextBlock Text="{Binding Controller.CurrentBook.Author}" Foreground="{DynamicResource GlassMutedBrush}" HorizontalAlignment="Center" />
         </StackPanel>
 
@@ -125,9 +125,9 @@
                 <Slider x:Name="Seek" Style="{StaticResource GlassSlider}" Maximum="{Binding ShownTotal, Mode=OneWay}" Value="{Binding ShownPosition, Mode=OneWay}"
                         Thumb.DragCompleted="Seek_DragCompleted" PreviewMouseLeftButtonUp="Seek_Click" IsEnabled="{Binding Controller.Locked, Converter={StaticResource InverseBool}}" />
                 <Grid Margin="0,4,0,12">
-                    <TextBlock Text="{Binding ShownPosition, Converter={StaticResource Time}}" HorizontalAlignment="Left" />
+                    <TextBlock AutomationProperties.AutomationId="Position" Text="{Binding ShownPosition, Converter={StaticResource Time}}" HorizontalAlignment="Left" />
                     <Button Style="{StaticResource GlassButton}" Padding="8,2" Background="Transparent" HorizontalAlignment="Center" Command="{Binding TogglePositionModeCommand}" ToolTip="Switch between file and book position">
-                        <TextBlock Text="{Binding ChapterLabel}" Foreground="{DynamicResource GlassMutedBrush}" />
+                        <TextBlock AutomationProperties.AutomationId="ChapterLabel" Text="{Binding ChapterLabel}" Foreground="{DynamicResource GlassMutedBrush}" />
                     </Button>
                     <TextBlock HorizontalAlignment="Right" Foreground="{DynamicResource GlassMutedBrush}">
                         <TextBlock.Text><MultiBinding Converter="{StaticResource Remaining}" Mode="OneWay"><Binding Path="ShownPosition" /><Binding Path="ShownTotal" /></MultiBinding></TextBlock.Text>
@@ -137,19 +137,19 @@
                     <StackPanel Orientation="Horizontal" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}">
                         <Button Style="{StaticResource TransportButton}" Content="&#x23EE;" Click="PrevFile_Click" Margin="0,0,10,0" Visibility="{Binding Settings.ShowPrevNextFile, Converter={StaticResource Vis}}" />
                         <Button Style="{StaticResource TransportButton}" Content="{Binding Settings.BigRewindSec}" ContentStringFormat="-{0}" Click="BigBack_Click" Margin="0,0,10,0" />
-                        <Button Style="{StaticResource TransportButton}" Content="{Binding Settings.SmallRewindSec}" ContentStringFormat="-{0}" Click="SmallBack_Click" Margin="0,0,10,0" />
+                        <Button AutomationProperties.AutomationId="SmallBack" Style="{StaticResource TransportButton}" Content="{Binding Settings.SmallRewindSec}" ContentStringFormat="-{0}" Click="SmallBack_Click" Margin="0,0,10,0" />
                     </StackPanel>
-                    <Button Style="{StaticResource PlayButton}" Content="{Binding Controller.IsPlaying, Converter={StaticResource PlayGlyph}}" Click="Play_Click" />
+                    <Button AutomationProperties.AutomationId="Play" Style="{StaticResource PlayButton}" Content="{Binding Controller.IsPlaying, Converter={StaticResource PlayGlyph}}" Click="Play_Click" />
                     <StackPanel Orientation="Horizontal" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}">
-                        <Button Style="{StaticResource TransportButton}" Content="{Binding Settings.SmallRewindSec}" ContentStringFormat="+{0}" Click="SmallFwd_Click" Margin="10,0,0,0" />
+                        <Button AutomationProperties.AutomationId="SmallForward" Style="{StaticResource TransportButton}" Content="{Binding Settings.SmallRewindSec}" ContentStringFormat="+{0}" Click="SmallFwd_Click" Margin="10,0,0,0" />
                         <Button Style="{StaticResource TransportButton}" Content="{Binding Settings.BigRewindSec}" ContentStringFormat="+{0}" Click="BigFwd_Click" Margin="10,0,0,0" />
                         <Button Style="{StaticResource TransportButton}" Content="&#x23ED;" Click="NextFile_Click" Margin="10,0,0,0" Visibility="{Binding Settings.ShowPrevNextFile, Converter={StaticResource Vis}}" />
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,16,0,0" HorizontalAlignment="Center">
                     <Button Style="{StaticResource PillButton}" Margin="4,0" Content="{Binding Controller.Speed}" ContentStringFormat="{}{0:0.00}x" Click="Speed_Click" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}" />
-                    <Button Style="{StaticResource PillButton}" Margin="4,0" Content="{Binding SleepLabel}" Click="Sleep_Click" />
-                    <Button Style="{StaticResource PillButton}" Margin="4,0" Content="Bookmark" Click="QuickBookmark_Click" />
+                    <Button AutomationProperties.AutomationId="Sleep" Style="{StaticResource PillButton}" Margin="4,0" Content="{Binding SleepLabel}" Click="Sleep_Click" />
+                    <Button AutomationProperties.AutomationId="QuickBookmark" Style="{StaticResource PillButton}" Margin="4,0" Content="Bookmark" Click="QuickBookmark_Click" />
                     <Button Style="{StaticResource PillButton}" Margin="4,0" Content="EQ" Click="Eq_Click" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}" />
                     <Button Style="{StaticResource PillButton}" Margin="4,0" Content="Boost" Click="Boost_Click" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}" />
                     <Button Style="{StaticResource PillButton}" Margin="4,0" Content="Characters" Click="Characters_Click" />
