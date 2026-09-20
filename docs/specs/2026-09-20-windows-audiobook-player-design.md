@@ -55,7 +55,8 @@ Dependency direction: Views bind to ViewModels; ViewModels call `PlaybackControl
 
 Under each root folder the scanner walks depth-first and applies these rules:
 
-- A folder that directly contains audio files is a **folder book**. It includes audio files in its sub-folders too (CD1, CD2), sorted by natural path order.
+- A folder that directly contains audio files is a **folder book**. It includes audio files in its sub-folders too, sorted by natural path order.
+- A folder with no audio of its own whose audio-bearing sub-folders are all named like a disc or part (CD1, Disc 2, Part 3) is also a **folder book** spanning those sub-folders.
 - A folder that contains no audio files directly, only sub-folders, is a **grouping folder** (author, series). It is not a book. Its name appears as breadcrumb text on the books under it.
 - Exception to the first rule: if a folder directly contains audio files **and** sub-folders that contain audio, the directly contained files are each a **standalone book** (a lone M4B sitting next to book folders), and the sub-folders are scanned normally.
 
