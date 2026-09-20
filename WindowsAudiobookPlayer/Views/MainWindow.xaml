@@ -1,0 +1,8 @@
+<Window x:Class="WindowsAudiobookPlayer.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Audiobook Player" Width="1200" Height="760" MinWidth="900" MinHeight="600">
+    <Grid>
+        <TextBlock Text="Audiobook Player" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
+    </Grid>
+</Window>
