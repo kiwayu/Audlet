@@ -170,4 +170,4 @@ The BASS wrapper is verified with a manual checklist against sample files, since
 
 ## Repository
 
-Public GitHub repository `kiwayu/WindowsAudiobookPlayer`. Small, frequent commits, one per task. README covers what the app does, how to build, and where to place the native BASS libraries. `.gitignore` excludes `bin/`, `obj/`, `.vs/`, `*.user`, `*.apk`, and `.superpowers/`.
+Public GitHub repository `kiwayu/WindowsAudiobookPlayer`. Small, frequent commits, one per task. README covers what the app does, how to build, and where to place the native BASS libraries. `.gitignore` excludes `bin/`, `obj/`, `.vs/`, `*.user`, `*.apk`, and local plan notes.
