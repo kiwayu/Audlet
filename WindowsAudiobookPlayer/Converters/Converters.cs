@@ -63,6 +63,20 @@ public sealed class LockGlyph : IValueConverter
     public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
 }
 
+public sealed class LocalTime : IValueConverter
+{
+    public object Convert(object v, Type t, object p, CultureInfo c) => v is DateTime d ? d.ToLocalTime().ToString("HH:mm") : "";
+    public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
+}
+
+// Fraction (0..1) of a measured width, for bars that fill their container.
+public sealed class FractionOfWidth : IMultiValueConverter
+{
+    public object Convert(object[] v, Type t, object p, CultureInfo c) =>
+        v.Length == 2 && v[0] is double f && v[1] is double w ? Math.Max(0, f * w) : 0.0;
+    public object[] ConvertBack(object v, Type[] t, object p, CultureInfo c) => throw new NotSupportedException();
+}
+
 public sealed class FractionWidth : IValueConverter
 {
     public object Convert(object v, Type t, object p, CultureInfo c) => (v is double f ? f : 0) * double.Parse((string)p, CultureInfo.InvariantCulture);

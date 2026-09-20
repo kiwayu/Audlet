@@ -14,12 +14,18 @@
         <c:PlayGlyph x:Key="PlayGlyph" />
         <c:LockGlyph x:Key="LockGlyph" />
         <c:InverseBool x:Key="InverseBool" />
+        <c:LocalTime x:Key="LocalTime" />
         <Style x:Key="Row" TargetType="Border">
             <Setter Property="Padding" Value="10,7" /><Setter Property="CornerRadius" Value="6" /><Setter Property="Cursor" Value="Hand" /><Setter Property="Margin" Value="0,1" />
             <Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource GlassHoverBrush}" /></Trigger></Style.Triggers>
         </Style>
         <Style x:Key="Tab" TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
             <Setter Property="Margin" Value="2,0" />
+            <Setter Property="Padding" Value="4,5" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -89,7 +95,7 @@
                                 <DataTemplate DataType="{x:Type m:HistoryEntry}">
                                     <Border Style="{StaticResource Row}" MouseLeftButtonUp="History_Click">
                                         <DockPanel>
-                                            <TextBlock DockPanel.Dock="Right" Text="{Binding AtUtc, Mode=OneWay, StringFormat={}{0:HH:mm}}" Foreground="{DynamicResource GlassMutedBrush}" />
+                                            <TextBlock DockPanel.Dock="Right" Text="{Binding AtUtc, Mode=OneWay, Converter={StaticResource LocalTime}}" Foreground="{DynamicResource GlassMutedBrush}" />
                                             <TextBlock><Run Text="{Binding Kind, Mode=OneWay}" /><Run Text=" - " /><Run Text="{Binding PositionSec, Mode=OneWay, Converter={StaticResource Time}}" /></TextBlock>
                                         </DockPanel>
                                     </Border>

@@ -24,6 +24,8 @@ Requires the .NET 9 SDK.
 
 Tests: `dotnet test`
 
+Release build: `tools\publish.ps1` produces a self-contained folder in `dist\WindowsAudiobookPlayer` that runs on any 64-bit Windows 11 machine without installing .NET.
+
 ## Supported files
 
 mp3, m4a, m4b, aac, ogg, opus, flac, wav, wv, wma. Chapters are read from M4B files and ID3 chapter frames. Covers come from embedded art or a jpg, png, or webp file in the book folder.

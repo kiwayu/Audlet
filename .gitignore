@@ -5,3 +5,4 @@ obj/
 *.apk
 docs/plans/
 lib/bass/
+dist/

@@ -18,7 +18,7 @@ public sealed partial class PlaybackController : ObservableObject
     private DateTime? _pausedAtUtc;
     private DateTime _lastStatUtc;
     private DateTime _lastSaveUtc;
-    private bool _userSpeedApplied = true;
+    private const double SilenceHopSec = 0.2;
 
     [ObservableProperty] private Book? _currentBook;
     [ObservableProperty] private bool _isPlaying;
@@ -80,7 +80,7 @@ public sealed partial class PlaybackController : ObservableObject
             ShowToast("Cannot open " + Path.GetFileName(book.Files[fileIndex].Path));
             return false;
         }
-        _player.Speed = Speed; _userSpeedApplied = true;
+        _player.Speed = Speed;
         var start = Math.Max(posSec, book.SkipStartSec);
         _player.PositionSec = start;
         FileIndex = fileIndex;
@@ -120,7 +120,6 @@ public sealed partial class PlaybackController : ObservableObject
         AccumulateStats();
         _player.Pause();
         _level.Stop();
-        RestoreUserSpeed();
         IsPlaying = false;
         _pausedAtUtc = DateTime.UtcNow;
         SavePosition();
@@ -175,7 +174,7 @@ public sealed partial class PlaybackController : ObservableObject
     {
         Speed = Math.Round(Math.Clamp(speed, 0.5, 3.0), 2);
         if (CurrentBook is { } b) b.Speed = Speed;
-        _player.Speed = Speed; _userSpeedApplied = true;
+        _player.Speed = Speed;
         _store.SaveSoon();
     }
     public void AdjustSpeed(double delta) => SetSpeed(Speed + delta);
@@ -186,7 +185,7 @@ public sealed partial class PlaybackController : ObservableObject
     public void ApplySoundSettings()
     {
         _player.Balance = _store.Settings.Balance; _player.BoostDb = _store.Settings.BoostDb;
-        if (_store.Settings.SkipSilence && IsPlaying) _level.Start(); else { _level.Stop(); RestoreUserSpeed(); }
+        if (_store.Settings.SkipSilence && IsPlaying) _level.Start(); else { _level.Stop(); }
         if (_player.Mono != _store.Settings.Mono && CurrentBook is not null && _player.IsOpen)
         {
             _player.Mono = _store.Settings.Mono;
@@ -243,12 +242,10 @@ public sealed partial class PlaybackController : ObservableObject
     private void LevelTick()
     {
         if (!IsPlaying) return;
-        var fast = _silence.Sample(_player.Level());
-        if (fast && _userSpeedApplied) { _player.Speed = _silence.FastSpeed; _userSpeedApplied = false; }
-        else if (!fast && !_userSpeedApplied) RestoreUserSpeed();
+        // Once a pause has lasted long enough, hop forward in small steps until sound returns.
+        if (_silence.Sample(_player.Level()) && _player.PositionSec + SilenceHopSec < FileDurationSec)
+            _player.PositionSec += SilenceHopSec;
     }
-
-    private void RestoreUserSpeed() { if (!_userSpeedApplied) { _player.Speed = Speed; _userSpeedApplied = true; } }
 
     private void Refresh()
     {
@@ -302,7 +299,7 @@ public sealed partial class PlaybackController : ObservableObject
         if (CurrentBook is null) return;
         var finished = CurrentBook;
         AccumulateStats();
-        _player.Pause(); IsPlaying = false; _level.Stop(); RestoreUserSpeed();
+        _player.Pause(); IsPlaying = false; _level.Stop();
         finished.State = BookState.Finished;
         finished.FileIndex = 0; finished.PositionSec = 0;
         _store.Settings.Queue.RemoveAll(id => id.Equals(finished.Id, StringComparison.OrdinalIgnoreCase));
