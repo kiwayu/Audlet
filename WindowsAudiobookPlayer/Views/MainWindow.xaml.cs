@@ -27,6 +27,7 @@ public partial class MainWindow : Window
         if (s.WindowMaximized) WindowState = WindowState.Maximized;
         SidebarCol.Width = new GridLength(s.SidebarWidth);
         Vm.PropertyChanged += (o, a) => { if (a.PropertyName is nameof(MainViewModel.Section) or nameof(MainViewModel.FirstRun)) ShowSection(); };
+        Vm.Controller.PropertyChanged += (o, a) => { if (a.PropertyName == nameof(Player.PlaybackController.CurrentBook)) UpdatePlayerBar(); };
         ShowSection();
     }
 
@@ -51,7 +52,11 @@ public partial class MainWindow : Window
         };
         var tag = Vm.Section == Section.NowPlaying ? null : Vm.Section.ToString();
         foreach (ListBoxItem item in Nav.Items) item.IsSelected = (string)item.Tag == tag;
+        UpdatePlayerBar();
     }
+
+    private void UpdatePlayerBar() =>
+        PlayerBar.Visibility = Vm.Controller.CurrentBook is not null && Vm.Section != Section.NowPlaying ? Visibility.Visible : Visibility.Collapsed;
 
     private void Nav_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {

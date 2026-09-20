@@ -36,7 +36,10 @@ public partial class App : Application
         MainWindow = window;
         window.Show();
         if (store.Settings.LastBookId is { } id && store.Library.Books.FirstOrDefault(b => b.Id.Equals(id, StringComparison.OrdinalIgnoreCase)) is { } last)
+        {
             _controller.LoadBook(last, play: false);
+            _vm.Section = Section.NowPlaying;
+        }
         if (!_vm.FirstRun) _ = _vm.RescanAsync();
     }
 
