@@ -24,7 +24,7 @@ Requires the .NET 9 SDK.
 
 Tests: `dotnet test` runs the unit tests and the end-to-end suite. The end-to-end project launches the real executable against a throwaway data folder and a generated library of tone files, then drives it through Windows UI Automation. It needs an audio device and takes about fifteen seconds. Run the unit tests alone with `dotnet test WindowsAudiobookPlayer.Tests`.
 
-Release build: `tools\publish.ps1` produces a self-contained folder in `dist\WindowsAudiobookPlayer` that runs on any 64-bit Windows 11 machine without installing .NET.
+Release build: `tools\publish.ps1` produces a self-contained folder in `dist\WindowsAudiobookPlayer` that runs on any 64-bit Windows 11 machine without installing .NET. If [Inno Setup](https://jrsoftware.org/isinfo.php) is installed (`winget install JRSoftware.InnoSetup`), the same script also builds `dist\AudiobookPlayer-Setup-<version>.exe`, a per-user installer with Start Menu and optional desktop shortcuts and an uninstaller.
 
 ## Supported files
 
