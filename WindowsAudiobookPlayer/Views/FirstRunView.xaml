@@ -1,0 +1,12 @@
+<UserControl x:Class="WindowsAudiobookPlayer.Views.FirstRunView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Style="{StaticResource GlassPanel}" Padding="32" MaxWidth="520" VerticalAlignment="Center">
+        <StackPanel>
+            <TextBlock Text="Where are your audiobooks?" FontSize="22" FontWeight="SemiBold" />
+            <TextBlock Margin="0,8,0,20" TextWrapping="Wrap" Foreground="{DynamicResource GlassMutedBrush}"
+                       Text="Pick the folder that holds your books. Each book should be its own folder, or a single M4B file. You can add more folders later in Settings." />
+            <Button Style="{StaticResource PillButton}" Content="Choose folder" HorizontalAlignment="Left" Click="Choose_Click" />
+        </StackPanel>
+    </Border>
+</UserControl>

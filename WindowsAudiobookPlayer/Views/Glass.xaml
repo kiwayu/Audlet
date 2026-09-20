@@ -2,4 +2,109 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <CornerRadius x:Key="GlassRadius">12</CornerRadius>
     <Thickness x:Key="Gutter">24</Thickness>
+
+    <!-- Dark defaults. ThemeService swaps these for light mode. -->
+    <SolidColorBrush x:Key="GlassBrush" Color="#66000000" />
+    <SolidColorBrush x:Key="GlassBorderBrush" Color="#33FFFFFF" />
+    <SolidColorBrush x:Key="GlassHoverBrush" Color="#40FFFFFF" />
+    <SolidColorBrush x:Key="GlassTextBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="GlassMutedBrush" Color="#99FFFFFF" />
+    <SolidColorBrush x:Key="AccentFillBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="AccentTextBrush" Color="#FF202020" />
+    <SolidColorBrush x:Key="ScrimBrush" Color="#88000000" />
+
+    <Style x:Key="GlassPanel" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource GlassBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource GlassBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlassRadius}" />
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource GlassTextBrush}" />
+    </Style>
+
+    <Style x:Key="GlassButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource GlassTextBrush}" />
+        <Setter Property="Background" Value="{DynamicResource GlassBorderBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="{DynamicResource GlassHoverBrush}" /></Trigger>
+                        <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.4" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PillButton" TargetType="Button" BasedOn="{StaticResource GlassButton}">
+        <Setter Property="MinWidth" Value="72" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <Style x:Key="TransportButton" TargetType="Button" BasedOn="{StaticResource GlassButton}">
+        <Setter Property="Width" Value="44" />
+        <Setter Property="Height" Value="44" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="22">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="{DynamicResource GlassHoverBrush}" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PlayButton" TargetType="Button" BasedOn="{StaticResource TransportButton}">
+        <Setter Property="Width" Value="60" />
+        <Setter Property="Height" Value="60" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Background" Value="{DynamicResource AccentFillBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="30">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GlassSlider" TargetType="Slider">
+        <Setter Property="Foreground" Value="{DynamicResource GlassTextBrush}" />
+        <Setter Property="IsMoveToPointEnabled" Value="True" />
+    </Style>
+
+    <Style x:Key="NavItem" TargetType="ListBoxItem">
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Margin" Value="0,2" />
+        <Setter Property="Foreground" Value="{DynamicResource GlassTextBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="Bd" CornerRadius="8" Padding="{TemplateBinding Padding}" Background="Transparent">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="{DynamicResource GlassHoverBrush}" /></Trigger>
+                        <Trigger Property="IsSelected" Value="True"><Setter TargetName="Bd" Property="Background" Value="{DynamicResource GlassBorderBrush}" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
