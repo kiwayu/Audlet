@@ -27,3 +27,17 @@ Tests: `dotnet test`
 ## Supported files
 
 mp3, m4a, m4b, aac, ogg, opus, flac, wav, wv, wma. Chapters are read from M4B files and ID3 chapter frames. Covers come from embedded art or a jpg, png, or webp file in the book folder.
+
+## Keyboard
+
+| Key | Action |
+|---|---|
+| Space | Play / pause |
+| Left / Right | Small rewind / forward |
+| Shift + Left / Right | Big rewind / forward |
+| Up / Down | Speed up / down by 0.05 |
+| B | Add a bookmark |
+| Ctrl + L | Lock / unlock the buttons |
+| Esc | Back to the library |
+
+The Windows media keys and the media overlay also control playback.

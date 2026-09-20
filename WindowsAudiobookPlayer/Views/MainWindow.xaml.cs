@@ -15,7 +15,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         Loaded += OnLoaded;
         Closing += OnClosing;
-        PreviewKeyDown += (o, a) => Vm.Controller.ResetSleep();
+        PreviewKeyDown += OnKeyDown;
         PreviewMouseDown += (o, a) => Vm.Controller.ResetSleep();
     }
 
@@ -37,6 +37,30 @@ public partial class MainWindow : Window
         s.WindowMaximized = WindowState == WindowState.Maximized;
         if (WindowState == WindowState.Normal) { s.WindowLeft = Left; s.WindowTop = Top; s.WindowWidth = Width; s.WindowHeight = Height; }
         s.SidebarWidth = SidebarCol.ActualWidth;
+    }
+
+    private void OnKeyDown(object sender, KeyEventArgs e)
+    {
+        Vm.Controller.ResetSleep();
+        if (Keyboard.FocusedElement is TextBox) return;
+        var c = Vm.Controller; var s = Vm.Store.Settings;
+        var shift = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift); var ctrl = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+        switch (e.Key)
+        {
+            case Key.Space: c.TogglePlay(); break;
+            case Key.Left: c.Jump(shift ? -s.BigRewindSec : -s.SmallRewindSec); break;
+            case Key.Right: c.Jump(shift ? s.BigRewindSec : s.SmallRewindSec); break;
+            case Key.Up: c.AdjustSpeed(0.05); break;
+            case Key.Down: c.AdjustSpeed(-0.05); break;
+            case Key.B: c.AddBookmark(""); break;
+            case Key.L when ctrl: c.Locked = !c.Locked; break;
+            case Key.Escape when Vm.Section == Section.NowPlaying: Vm.Section = Section.Library; break;
+            case Key.MediaPlayPause: c.TogglePlay(); break;
+            case Key.MediaNextTrack: c.NextFile(); break;
+            case Key.MediaPreviousTrack: c.PrevFile(); break;
+            default: return;
+        }
+        e.Handled = true;
     }
 
     private void ShowSection()
