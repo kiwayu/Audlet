@@ -128,17 +128,18 @@
                 <Grid x:Name="SeekArea" MouseMove="Seek_MouseMove" MouseLeave="Seek_MouseLeave" Background="Transparent">
                     <TextBlock x:Name="HoverLabel" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-22,0,0" FontSize="11"
                                Foreground="{DynamicResource GlassTextBrush}" Background="{DynamicResource GlassBrush}" Padding="6,2" IsHitTestVisible="False" />
-                    <ItemsControl x:Name="TickHost" ItemsSource="{Binding Ticks}" Height="8" VerticalAlignment="Top" Margin="6,-2,6,0" IsHitTestVisible="False">
+                    <Slider x:Name="Seek" Style="{StaticResource SeekSlider}" Maximum="{Binding ShownTotal, Mode=OneWay}" Value="{Binding ShownPosition, Mode=OneWay}"
+                            Thumb.DragCompleted="Seek_DragCompleted" PreviewMouseLeftButtonUp="Seek_Click" IsEnabled="{Binding Controller.Locked, Converter={StaticResource InverseBool}}" />
+                    <!-- Chapter marks sit on the track itself, in the text colour so they show over the accent fill. The 8px margin matches the thumb radius. -->
+                    <ItemsControl x:Name="TickHost" ItemsSource="{Binding Ticks}" Height="6" VerticalAlignment="Center" Margin="8,0" IsHitTestVisible="False">
                         <ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                         <ItemsControl.ItemContainerStyle>
                             <Style TargetType="ContentPresenter">
                                 <Setter Property="Canvas.Left"><Setter.Value><MultiBinding Converter="{StaticResource FractionOfWidth}"><Binding Path="Fraction" /><Binding ElementName="TickHost" Path="ActualWidth" /></MultiBinding></Setter.Value></Setter>
                             </Style>
                         </ItemsControl.ItemContainerStyle>
-                        <ItemsControl.ItemTemplate><DataTemplate><Rectangle Width="2" Height="8" Fill="{DynamicResource GlassMutedBrush}" /></DataTemplate></ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemTemplate><DataTemplate><Rectangle Width="2" Height="6" Fill="{DynamicResource GlassTextBrush}" Opacity="0.85" /></DataTemplate></ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <Slider x:Name="Seek" Style="{StaticResource GlassSlider}" Margin="0,6,0,0" Maximum="{Binding ShownTotal, Mode=OneWay}" Value="{Binding ShownPosition, Mode=OneWay}"
-                            Thumb.DragCompleted="Seek_DragCompleted" PreviewMouseLeftButtonUp="Seek_Click" IsEnabled="{Binding Controller.Locked, Converter={StaticResource InverseBool}}" />
                 </Grid>
                 <Grid Margin="0,4,0,12">
                     <TextBlock AutomationProperties.AutomationId="Position" Text="{Binding ShownPosition, Converter={StaticResource Time}}" HorizontalAlignment="Left" />
