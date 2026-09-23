@@ -59,7 +59,7 @@
                                 <TextBlock AutomationProperties.AutomationId="CardTitle" Text="{Binding Title}" FontWeight="SemiBold" Margin="0,8,0,0" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
                                 <TextBlock Text="{Binding Author}" FontSize="12" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" />
                                 <TextBlock Text="{Binding Breadcrumb}" FontSize="11" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" />
-                                <ProgressBar Height="4" Margin="0,8,0,4" Maximum="100" BorderThickness="0" Background="{DynamicResource GlassBorderBrush}" Foreground="{DynamicResource GlassTextBrush}"
+                                <ProgressBar Height="4" Margin="0,8,0,4" Maximum="100" BorderThickness="0" Background="{DynamicResource GlassBorderBrush}" Foreground="{DynamicResource AccentFillBrush}"
                                              Visibility="{Binding BookPositionSec, Converter={StaticResource Started}}">
                                     <ProgressBar.Value><MultiBinding Converter="{StaticResource Percent}" Mode="OneWay"><Binding Path="BookPositionSec" /><Binding Path="TotalDurationSec" /></MultiBinding></ProgressBar.Value>
                                 </ProgressBar>

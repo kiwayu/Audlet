@@ -49,7 +49,8 @@
                         <ItemsControl ItemsSource="{Binding Chapters}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="{x:Type vm:ChapterRow}">
-                                    <Border Style="{StaticResource Row}" MouseLeftButtonUp="Chapter_Click">
+                                    <Border MouseLeftButtonUp="Chapter_Click">
+                                        <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Row}"><Style.Triggers><DataTrigger Binding="{Binding IsCurrent}" Value="True"><Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" /></DataTrigger></Style.Triggers></Style></Border.Style>
                                         <Border.Resources>
                                             <Style TargetType="TextBlock"><Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsPast}" Value="True"><Setter Property="Opacity" Value="0.5" /></DataTrigger>

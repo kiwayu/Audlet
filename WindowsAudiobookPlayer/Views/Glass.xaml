@@ -12,6 +12,10 @@
     <SolidColorBrush x:Key="AccentFillBrush" Color="#FFFFFFFF" />
     <SolidColorBrush x:Key="AccentTextBrush" Color="#FF202020" />
     <SolidColorBrush x:Key="ScrimBrush" Color="#88000000" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#40FFFFFF" />
+    <LinearGradientBrush x:Key="BackgroundBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF141826" Offset="0" /><GradientStop Color="#FF1C2333" Offset="0.55" /><GradientStop Color="#FF23203A" Offset="1" />
+    </LinearGradientBrush>
 
     <Style x:Key="GlassPanel" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource GlassBrush}" />
@@ -85,7 +89,7 @@
     </Style>
 
     <Style x:Key="GlassSlider" TargetType="Slider">
-        <Setter Property="Foreground" Value="{DynamicResource GlassTextBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentFillBrush}" />
         <Setter Property="IsMoveToPointEnabled" Value="True" />
     </Style>
 
@@ -101,7 +105,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="{DynamicResource GlassHoverBrush}" /></Trigger>
-                        <Trigger Property="IsSelected" Value="True"><Setter TargetName="Bd" Property="Background" Value="{DynamicResource GlassBorderBrush}" /></Trigger>
+                        <Trigger Property="IsSelected" Value="True"><Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentSoftBrush}" /></Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

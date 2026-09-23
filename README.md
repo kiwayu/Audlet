@@ -14,7 +14,7 @@ A desktop audiobook player for Windows 11 with a frosted-glass interface. Point 
 - Sleep timer with fadeout and a daily schedule
 - Bookmarks with notes, playback history to undo an accidental jump, listening statistics, a character list per book
 - Windows media overlay and media keys
-- Follows the Windows light or dark theme
+- Themes: dark and light glass that follow Windows, plus Catppuccin Mocha and Latte, Nord, Dracula, Tokyo Night, Rose Pine, Gruvbox Dark, and Solarized Dark
 
 ## Building
 

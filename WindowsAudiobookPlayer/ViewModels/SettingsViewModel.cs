@@ -14,7 +14,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     public int[] RewindChoices => Settings.RewindChoices;
     public int[] SleepChoices => Settings.SleepChoices;
     public EndOfBookAction[] EndOfBookActions { get; } = Enum.GetValues<EndOfBookAction>();
-    public ThemeOverride[] Themes { get; } = Enum.GetValues<ThemeOverride>();
+    public IReadOnlyList<string> Themes => ThemeCatalog.Names;
     public ObservableCollection<string> RootFolders { get; }
     public ObservableCollection<string> LooseFiles { get; }
 
@@ -33,7 +33,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     public bool ScheduleEnabled { get => S.SleepSchedule.Enabled; set { S.SleepSchedule.Enabled = value; Apply(); } }
     public string ScheduleFrom { get => S.SleepSchedule.FromTime.ToString("HH:mm"); set { if (TimeOnly.TryParse(value, out var t)) { S.SleepSchedule.FromTime = t; Apply(); } } }
     public string ScheduleTo { get => S.SleepSchedule.ToTime.ToString("HH:mm"); set { if (TimeOnly.TryParse(value, out var t)) { S.SleepSchedule.ToTime = t; Apply(); } } }
-    public ThemeOverride Theme { get => S.Theme; set { S.Theme = value; ThemeService.Apply(value); Apply(); } }
+    public string Theme { get => S.Theme; set { S.Theme = value; ThemeService.Apply(value); Apply(); } }
 
     private void Apply() { _main.Store.SaveSoon(); _main.Controller.ApplySoundSettings(); }
 

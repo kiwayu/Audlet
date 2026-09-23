@@ -3,7 +3,6 @@ namespace WindowsAudiobookPlayer.Models;
 public enum EndOfBookAction { Stop, NextBook, NextBookPlay }
 public enum PositionMode { File, Book }
 public enum SortMode { Title, Author, RecentlyPlayed, Length, DateAdded }
-public enum ThemeOverride { System, Light, Dark }
 
 public sealed class SleepSchedule
 {
@@ -35,7 +34,7 @@ public sealed class Settings
     public EndOfBookAction EndOfBookAction { get; set; } = EndOfBookAction.Stop;
     public PositionMode PositionMode { get; set; } = PositionMode.File;
     public SortMode SortMode { get; set; } = SortMode.RecentlyPlayed;
-    public ThemeOverride Theme { get; set; } = ThemeOverride.System;
+    public string Theme { get; set; } = "System";   // a ThemeCatalog name, or System to follow Windows
     public List<string> Queue { get; set; } = [];
     public string? LastBookId { get; set; }
     public double SidebarWidth { get; set; } = 220;
