@@ -2,7 +2,7 @@ namespace Audlet.Models;
 
 public enum EndOfBookAction { Stop, NextBook, NextBookPlay }
 public enum PositionMode { File, Book }
-public enum SortMode { Title, Author, RecentlyPlayed, Length, DateAdded }
+public enum SortMode { Title, Author, Series, RecentlyPlayed, Length, DateAdded }
 
 public sealed class SleepSchedule
 {
@@ -29,6 +29,7 @@ public sealed class Settings
     public bool Mono { get; set; }
     public double Balance { get; set; }
     public bool CloseToTray { get; set; } = true;
+    public bool CheckForUpdates { get; set; } = true;
     public bool GlobalHotkeys { get; set; } = true;
     public bool PauseOnDeviceLoss { get; set; } = true;
     public static readonly double[] SpeedPresets = [1.0, 1.25, 1.5, 1.75, 2.0];

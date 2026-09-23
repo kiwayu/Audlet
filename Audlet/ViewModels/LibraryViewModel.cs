@@ -52,6 +52,7 @@ public sealed partial class LibraryViewModel : ObservableObject
             {
                 SortMode.Title => q.OrderBy(b => b.Title, StringComparer.CurrentCultureIgnoreCase),
                 SortMode.Author => q.OrderBy(b => b.Author, StringComparer.CurrentCultureIgnoreCase).ThenBy(b => b.Title),
+                SortMode.Series => q.OrderBy(b => b.Series ?? b.Title, StringComparer.CurrentCultureIgnoreCase).ThenBy(b => b.SeriesIndex ?? 0).ThenBy(b => b.Title),
                 SortMode.Length => q.OrderByDescending(b => b.TotalDurationSec),
                 SortMode.DateAdded => q.OrderByDescending(b => b.AddedUtc),
                 _ => q.OrderByDescending(b => b.LastPlayedUtc ?? DateTime.MinValue).ThenBy(b => b.Title),

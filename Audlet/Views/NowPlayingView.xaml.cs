@@ -42,6 +42,19 @@ public partial class NowPlayingView : UserControl
     private void Bookmark_Click(object s, MouseButtonEventArgs e) { if (e.OriginalSource is not Button && s is Border { DataContext: Bookmark b }) Vm.JumpToBookmarkCommand.Execute(b); }
     private void History_Click(object s, MouseButtonEventArgs e) { if (s is Border { DataContext: HistoryEntry h }) Vm.UndoToCommand.Execute(h); }
 
+    private void Seek_MouseMove(object s, MouseEventArgs e)
+    {
+        var x = e.GetPosition(SeekArea).X;
+        var width = SeekArea.ActualWidth;
+        if (width <= 0) return;
+        var fraction = Math.Clamp(x / width, 0, 1);
+        HoverLabel.Text = Vm.ChapterAtFraction(fraction);
+        HoverLabel.Margin = new Thickness(Math.Clamp(x - 40, 0, Math.Max(0, width - 160)), -22, 0, 0);
+        HoverLabel.Visibility = Visibility.Visible;
+    }
+
+    private void Seek_MouseLeave(object s, MouseEventArgs e) => HoverLabel.Visibility = Visibility.Collapsed;
+
     private void Seek_DragCompleted(object s, DragCompletedEventArgs e) => Vm.SeekToCommand.Execute(Seek.Value);
     private void Seek_Click(object s, MouseButtonEventArgs e) => Dispatcher.BeginInvoke(() => Vm.SeekToCommand.Execute(Seek.Value));
 

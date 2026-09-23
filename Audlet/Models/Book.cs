@@ -18,6 +18,9 @@ public sealed class Book
     public string Author { get; set; } = "";
     public string Breadcrumb { get; set; } = "";
     public string? Description { get; set; }
+    public string? Series { get; set; }
+    public double? SeriesIndex { get; set; }
+    public string? SeriesLabel { get; set; }     // "Dune 3 of 6", filled in after each scan
     public List<AudioFile> Files { get; set; } = [];
     public List<Chapter> Chapters { get; set; } = [];
     public string? CoverPath { get; set; }
@@ -39,6 +42,7 @@ public sealed class Book
     public int? DozeFileIndex { get; set; }        // where the sleep fade began, offered as a rewind target on the next play
     public double? DozePositionSec { get; set; }
 
+    public string CardSubline => SeriesLabel ?? Breadcrumb;
     public double TotalDurationSec => Files.Sum(f => f.DurationSec);
     public double BookPositionSec => Files.Take(FileIndex).Sum(f => f.DurationSec) + PositionSec;
 }

@@ -16,6 +16,8 @@ public static class LibraryMerger
                 old.Files = fresh.Files;
                 old.Chapters = fresh.Chapters;
                 old.Breadcrumb = fresh.Breadcrumb;
+                old.Series = fresh.Series;
+                old.SeriesIndex = fresh.SeriesIndex;
                 if (string.IsNullOrWhiteSpace(old.Title)) old.Title = fresh.Title;
                 if (string.IsNullOrWhiteSpace(old.Author)) old.Author = fresh.Author;
                 old.Missing = false;

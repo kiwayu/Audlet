@@ -44,6 +44,7 @@ public partial class App : Application
             _vm.Section = Section.NowPlaying;
         }
         if (!_vm.FirstRun) _ = _vm.RescanAsync();
+        _ = _vm.CheckForUpdatesAsync();
     }
 
     protected override void OnExit(ExitEventArgs e)

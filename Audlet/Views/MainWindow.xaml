@@ -86,6 +86,15 @@
             </Border>
         </Grid>
 
+        <!-- Update banner -->
+        <Border Style="{StaticResource GlassPanel}" Padding="16,8" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,56,0,0"
+                Visibility="{Binding Update, Converter={StaticResource NotNull}}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Margin="0,0,12,0"><Run Text="Audlet " /><Run Text="{Binding Update.Version, Mode=OneWay}" /><Run Text=" is available." /></TextBlock>
+                <Button Style="{StaticResource PillButton}" Content="Download" Command="{Binding OpenUpdateCommand}" Margin="0,0,6,0" />
+                <Button Style="{StaticResource GlassButton}" Content="Later" Command="{Binding DismissUpdateCommand}" />
+            </StackPanel>
+        </Border>
         <!-- Wake prompt after the sleep timer faded the book out -->
         <Grid Visibility="{Binding Controller.DozePromptVisible, Converter={StaticResource Vis}}">
             <Rectangle Fill="{DynamicResource ScrimBrush}" />

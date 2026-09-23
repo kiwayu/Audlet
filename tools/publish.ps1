@@ -8,7 +8,8 @@ Copy-Item (Join-Path $root 'lib\bass\*.dll') $out -Force
 Write-Host "Published to $out"
 $iscc = @("${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe", "$env:ProgramFiles\Inno Setup 6\ISCC.exe", "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
 if ($iscc) {
-  & $iscc (Join-Path $PSScriptRoot 'installer.iss') | Select-Object -Last 1
+  $version = ([xml](Get-Content (Join-Path $root 'Audlet\Audlet.csproj'))).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
+  & $iscc "/DAppVersion=$version" (Join-Path $PSScriptRoot 'installer.iss') | Select-Object -Last 1
   Write-Host "Installer written to $(Join-Path $root 'dist')"
 } else {
   Write-Host 'Inno Setup not found; skipped the installer. Install it with: winget install JRSoftware.InnoSetup'

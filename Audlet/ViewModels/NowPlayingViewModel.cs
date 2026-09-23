@@ -8,6 +8,7 @@ using Audlet.Player;
 namespace Audlet.ViewModels;
 
 public sealed record ChapterRow(Chapter Chapter, int Index, string Length, bool IsCurrent, bool IsPast);
+public sealed record TickMark(double Fraction, string Title, double StartSec);
 
 public sealed partial class NowPlayingViewModel : ObservableObject
 {
@@ -15,6 +16,7 @@ public sealed partial class NowPlayingViewModel : ObservableObject
     public PlaybackController Controller => Main.Controller;
     public Settings Settings => Main.Store.Settings;
     public ObservableCollection<ChapterRow> Chapters { get; } = [];
+    public ObservableCollection<TickMark> Ticks { get; } = [];
     public ObservableCollection<Bookmark> Bookmarks { get; } = [];
     public ObservableCollection<HistoryEntry> History { get; } = [];
     public int[] SleepChoices => Models.Settings.SleepChoices;
@@ -52,11 +54,11 @@ public sealed partial class NowPlayingViewModel : ObservableObject
             if (e.PropertyName is nameof(PlaybackController.PositionSec) or nameof(PlaybackController.BookPositionSec))
             { OnPropertyChanged(nameof(ShownPosition)); OnPropertyChanged(nameof(ShownTotal)); }
             if (e.PropertyName is nameof(PlaybackController.CurrentChapter) or nameof(PlaybackController.CurrentBook))
-            { RebuildChapters(); RebuildLists(); OnPropertyChanged(nameof(ChapterLabel)); }
+            { RebuildChapters(); RebuildLists(); RebuildTicks(); OnPropertyChanged(nameof(ChapterLabel)); }
             if (e.PropertyName is nameof(PlaybackController.SleepRemaining) or nameof(PlaybackController.SleepActive))
                 OnPropertyChanged(nameof(SleepLabel));
         };
-        RebuildChapters(); RebuildLists();
+        RebuildChapters(); RebuildLists(); RebuildTicks();
     }
 
     private void RebuildChapters()
@@ -66,6 +68,42 @@ public sealed partial class NowPlayingViewModel : ObservableObject
         var cur = Controller.CurrentChapter is { } c ? b.Chapters.IndexOf(c) : -1;
         for (var i = 0; i < b.Chapters.Count; i++)
             Chapters.Add(new ChapterRow(b.Chapters[i], i, TimeConverter.Format(b.Chapters[i].EndSec - b.Chapters[i].StartSec), i == cur, i < cur));
+    }
+
+    // Chapter starts as fractions of the seek bar: the current file in file mode, the whole book in book mode.
+    public void RebuildTicks()
+    {
+        Ticks.Clear();
+        if (Controller.CurrentBook is not { } b) return;
+        if (IsBookMode)
+        {
+            var total = b.TotalDurationSec;
+            if (total <= 0) return;
+            var offsets = new double[b.Files.Count]; double acc = 0;
+            for (var i = 0; i < b.Files.Count; i++) { offsets[i] = acc; acc += b.Files[i].DurationSec; }
+            foreach (var c in b.Chapters)
+            {
+                var start = (c.FileIndex < offsets.Length ? offsets[c.FileIndex] : 0) + c.StartSec;
+                if (start > 0) Ticks.Add(new TickMark(start / total, c.Title, start));
+            }
+        }
+        else
+        {
+            var total = Controller.FileDurationSec;
+            if (total <= 0) return;
+            foreach (var c in b.Chapters.Where(c => c.FileIndex == Controller.FileIndex && c.StartSec > 0))
+                Ticks.Add(new TickMark(c.StartSec / total, c.Title, c.StartSec));
+        }
+    }
+
+    public string ChapterAtFraction(double fraction)
+    {
+        if (Controller.CurrentBook is not { } b) return "";
+        var total = IsBookMode ? b.TotalDurationSec : Controller.FileDurationSec;
+        var sec = fraction * total;
+        var tick = Ticks.LastOrDefault(t => t.StartSec <= sec);
+        var name = tick?.Title ?? (IsBookMode ? b.Chapters.FirstOrDefault()?.Title : b.Chapters.FirstOrDefault(c => c.FileIndex == Controller.FileIndex)?.Title) ?? "";
+        return name + "  " + TimeConverter.Format(sec);
     }
 
     private void RebuildLists()
@@ -85,6 +123,7 @@ public sealed partial class NowPlayingViewModel : ObservableObject
     {
         Settings.PositionMode = IsBookMode ? PositionMode.File : PositionMode.Book; Main.Store.SaveSoon();
         OnPropertyChanged(nameof(IsBookMode)); OnPropertyChanged(nameof(ShownPosition)); OnPropertyChanged(nameof(ShownTotal));
+        RebuildTicks();
     }
     [RelayCommand] private void ToggleLock() => Controller.Locked = !Controller.Locked;
     [RelayCommand] private void SpeedPreset(double s) => Controller.SetSpeed(s);

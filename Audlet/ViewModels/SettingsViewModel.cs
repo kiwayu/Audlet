@@ -25,6 +25,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     public bool ShowPrevNext { get => S.ShowPrevNextFile; set { S.ShowPrevNextFile = value; Apply(); } }
     public bool AutoRewind { get => S.AutoRewind; set { S.AutoRewind = value; Apply(); } }
     public bool CloseToTray { get => S.CloseToTray; set { S.CloseToTray = value; Apply(); } }
+    public bool CheckForUpdates { get => S.CheckForUpdates; set { S.CheckForUpdates = value; Apply(); } }
     public bool GlobalHotkeys { get => S.GlobalHotkeys; set { _main.SetHotkeys(value); Apply(); } }
     public bool PauseOnDeviceLoss { get => S.PauseOnDeviceLoss; set { S.PauseOnDeviceLoss = value; Apply(); } }
     public bool SkipSilence { get => S.SkipSilence; set { S.SkipSilence = value; Apply(); } }

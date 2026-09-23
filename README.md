@@ -19,6 +19,9 @@ A desktop audiobook player for Windows 11 with a frosted-glass interface. Point 
 - Sleep timer fades out, and the next play asks whether to rewind to where you dozed off
 - Pauses by itself when the audio device disappears, such as headphones being unplugged
 - One-click speed presets on the player bar
+- Chapter ticks on the seek bar with the chapter name on hover
+- Series detection from tags or folder names, "Dune 3 of 6" on the card, and the next book offered when one finishes
+- Checks GitHub for a newer version on startup and offers the download
 - Themes: dark and light glass that follow Windows, plus Catppuccin Mocha and Latte, Nord, Dracula, Tokyo Night, Rose Pine, Gruvbox Dark, and Solarized Dark
 
 ## Building

@@ -2,6 +2,7 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Audlet.Audio;
 using Audlet.Data;
+using Audlet.Library;
 using Audlet.Models;
 
 namespace Audlet.Player;
@@ -334,12 +335,15 @@ public sealed partial class PlaybackController : ObservableObject
         var action = _store.Settings.EndOfBookAction;
         var nextId = _store.Settings.Queue.FirstOrDefault();
         var next = nextId is null ? null : Books.FirstOrDefault(b => b.Id.Equals(nextId, StringComparison.OrdinalIgnoreCase));
+        var fromQueue = next is not null;
+        next ??= SeriesInfo.Next(Books, finished);   // nothing queued: fall through to the next book in the series
         if (action != EndOfBookAction.Stop && next is not null)
         {
-            _store.Settings.Queue.RemoveAt(0);
+            if (fromQueue) _store.Settings.Queue.RemoveAt(0);
             LoadBook(next, play: action == EndOfBookAction.NextBookPlay);
+            ShowToast("Finished. Next: " + next.Title);
         }
-        else ShowToast("The book is finished.");
+        else ShowToast(next is null ? "The book is finished." : "Finished. Next in the series: " + next.Title);
         _store.SaveNow();
     }
 

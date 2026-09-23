@@ -19,6 +19,7 @@ public sealed partial class MainViewModel : ObservableObject
     [ObservableProperty] private string _scanStatus = "";
     [ObservableProperty] private string? _toast;
     [ObservableProperty] private bool _firstRun;
+    [ObservableProperty] private UpdateInfo? _update;
 
     public event Action? LibraryChanged;
     public event Action<bool>? HotkeysToggled;
@@ -32,6 +33,20 @@ public sealed partial class MainViewModel : ObservableObject
         controller.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(PlaybackController.Toast) && controller.Toast is { } t) ShowToast(t); };
     }
 
+    public async Task CheckForUpdatesAsync()
+    {
+        if (!Store.Settings.CheckForUpdates) return;
+        await Task.Delay(3000);   // let the window settle first
+        Update = await UpdateChecker.CheckAsync();
+    }
+
+    [RelayCommand] private void OpenUpdate()
+    {
+        if (Update is null) return;
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(Update.InstallerUrl ?? Update.PageUrl) { UseShellExecute = true });
+    }
+    [RelayCommand] private void DismissUpdate() => Update = null;
+
     [RelayCommand] public void ToggleNowPlaying() => Section = Section == Section.NowPlaying ? Section.Library : Section.NowPlaying;
 
     [RelayCommand]
@@ -44,6 +59,7 @@ public sealed partial class MainViewModel : ObservableObject
         var loose = Store.Settings.LooseFiles.ToList();
         var scanned = await Task.Run(() => new LibraryScanner(MetadataReader.Read).Scan(roots, progress, loose));
         LibraryMerger.Merge(Store.Library.Books, scanned);
+        SeriesInfo.Label(Store.Library.Books);
         await Task.Run(() =>
         {
             foreach (var b in Store.Library.Books.Where(b => !b.Missing))

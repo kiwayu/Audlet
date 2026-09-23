@@ -2,7 +2,7 @@ using Audlet.Models;
 
 namespace Audlet.Library;
 
-public sealed record FileMeta(double DurationSec, string? Title, string? Album, string? Artist, IReadOnlyList<Chapter> Chapters);
+public sealed record FileMeta(double DurationSec, string? Title, string? Album, string? Artist, IReadOnlyList<Chapter> Chapters, string? Series = null, double? SeriesIndex = null);
 
 public sealed class LibraryScanner
 {
@@ -70,6 +70,9 @@ public sealed class LibraryScanner
         var parent = Path.GetDirectoryName(id)!;
         var breadcrumb = Path.GetRelativePath(root, parent);
         var fallbackTitle = Path.GetFileNameWithoutExtension(id);
+        // Series from tags first, then from names like "Dune 03" or "03 - Dune Messiah" inside a series folder.
+        var (series, seriesIndex) = first?.Series is { Length: > 0 } ? (first.Series, first.SeriesIndex)
+            : SeriesInfo.Parse(fallbackTitle, breadcrumb == "." ? null : Path.GetFileName(parent));
         return new Book
         {
             Id = id,
@@ -77,6 +80,8 @@ public sealed class LibraryScanner
                              : (first?.Title is { Length: > 0 } t ? t : fallbackTitle),
             Author = first?.Artist ?? "",
             Breadcrumb = breadcrumb == "." ? "" : breadcrumb,
+            Series = series,
+            SeriesIndex = seriesIndex,
             Files = files,
             Chapters = chapters,
             AddedUtc = DateTime.UtcNow,

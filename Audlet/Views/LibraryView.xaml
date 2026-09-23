@@ -60,7 +60,7 @@
                                 </Grid>
                                 <TextBlock AutomationProperties.AutomationId="CardTitle" Text="{Binding Title}" FontWeight="SemiBold" Margin="0,8,0,0" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
                                 <TextBlock Text="{Binding Author}" FontSize="12" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" Height="17" />
-                                <TextBlock Text="{Binding Breadcrumb}" FontSize="11" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" Height="15" />
+                                <TextBlock Text="{Binding CardSubline}" FontSize="11" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" Height="15" />
                                 <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{DynamicResource GlassMutedBrush}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Height="30" Margin="0,4,0,0" ToolTip="{Binding Description}" />
                                 <ProgressBar Height="4" Margin="0,8,0,4" Maximum="100" BorderThickness="0" Background="{DynamicResource GlassBorderBrush}" Foreground="{DynamicResource AccentFillBrush}"
                                              Visibility="{Binding BookPositionSec, Converter={StaticResource Started}}">

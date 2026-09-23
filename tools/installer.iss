@@ -1,6 +1,8 @@
 ; Inno Setup script. tools\publish.ps1 runs this after publishing.
 #define AppName "Audlet"
+#ifndef AppVersion
 #define AppVersion "1.0.0"
+#endif
 #define AppExe "Audlet.exe"
 #define SourceDir "..\dist\Audlet"
 

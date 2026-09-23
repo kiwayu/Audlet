@@ -16,7 +16,8 @@ public static class MetadataReader
                 .Select(c => new Chapter(c.Title ?? "", 0, c.StartTime / 1000.0, c.EndTime / 1000.0))
                 .ToList() ?? [];
             if (chapters.Count == 1) chapters = [];
-            return new FileMeta(duration, Nul(track.Title), Nul(track.Album), Nul(track.Artist) ?? Nul(track.AlbumArtist), chapters);
+            double? part = double.TryParse(track.SeriesPart, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var sp) ? sp : null;
+            return new FileMeta(duration, Nul(track.Title), Nul(track.Album), Nul(track.Artist) ?? Nul(track.AlbumArtist), chapters, Nul(track.SeriesTitle), part);
         }
         catch (Exception)
         {
