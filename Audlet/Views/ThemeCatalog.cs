@@ -1,14 +1,14 @@
 namespace Audlet.Views;
 
-// A theme is a background gradient plus the tints the glass panels sit on. Colours are ARGB hex.
-public sealed record Theme(string Name, bool IsDark, string Bg1, string Bg2, string Bg3, string Text, string Muted, string Accent, string AccentText);
+// A theme is a background gradient plus the tints the glass panels sit on. Colours are ARGB hex. Orb tints the colour blobs behind the glass; it defaults to the accent.
+public sealed record Theme(string Name, bool IsDark, string Bg1, string Bg2, string Bg3, string Text, string Muted, string Accent, string AccentText, string? Orb = null);
 
 public static class ThemeCatalog
 {
     public const string System = "System";
 
-    public static readonly Theme DarkGlass = new("Dark glass", true, "#FF141826", "#FF1C2333", "#FF23203A", "#FFFFFFFF", "#99FFFFFF", "#FFFFFFFF", "#FF202020");
-    public static readonly Theme LightGlass = new("Light glass", false, "#FFE9EDF5", "#FFDCE3F0", "#FFE6DDF2", "#FF1A1A1A", "#991A1A1A", "#FF1A1A1A", "#FFFFFFFF");
+    public static readonly Theme DarkGlass = new("Dark glass", true, "#FF141826", "#FF1C2333", "#FF23203A", "#FFFFFFFF", "#99FFFFFF", "#FFFFFFFF", "#FF202020", "#FF6E7CF5");
+    public static readonly Theme LightGlass = new("Light glass", false, "#FFE9EDF5", "#FFDCE3F0", "#FFE6DDF2", "#FF1A1A1A", "#991A1A1A", "#FF1A1A1A", "#FFFFFFFF", "#FF7C8CFF");
 
     public static readonly IReadOnlyList<Theme> All =
     [

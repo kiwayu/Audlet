@@ -19,8 +19,13 @@
         <c:SleepGlyph x:Key="SleepGlyph" />
     </Window.Resources>
     <Grid>
-        <!-- Themed backdrop the glass panels sit on -->
+        <!-- Themed backdrop the glass panels sit on: a gradient with soft colour orbs, so the frosted panels have something to sit over -->
         <Rectangle Fill="{DynamicResource BackgroundBrush}" />
+        <Canvas ClipToBounds="True" IsHitTestVisible="False">
+            <Ellipse Width="900" Height="900" Canvas.Left="-120" Canvas.Top="-380" Fill="{DynamicResource Orb1Brush}" />
+            <Ellipse Width="820" Height="820" Canvas.Right="-260" Canvas.Top="-40" Fill="{DynamicResource Orb2Brush}" />
+            <Ellipse Width="760" Height="760" Canvas.Left="300" Canvas.Bottom="-420" Fill="{DynamicResource Orb3Brush}" />
+        </Canvas>
 
         <Grid Margin="0,40,0,0">
             <Grid.ColumnDefinitions>
