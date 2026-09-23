@@ -7,6 +7,8 @@
         <c:TimeConverter x:Key="Time" />
         <c:PercentConverter x:Key="Percent" />
         <c:CoverImage x:Key="Cover" />
+        <c:PositiveToVisibility x:Key="Started" />
+        <c:PercentText x:Key="PercentText" />
         <Style x:Key="Card" TargetType="Border" BasedOn="{StaticResource GlassPanel}">
             <Setter Property="Width" Value="180" /><Setter Property="Margin" Value="0,0,16,16" /><Setter Property="Padding" Value="10" /><Setter Property="Cursor" Value="Hand" />
             <Style.Triggers><DataTrigger Binding="{Binding Missing}" Value="True"><Setter Property="Opacity" Value="0.45" /></DataTrigger></Style.Triggers>
@@ -14,11 +16,12 @@
     </UserControl.Resources>
     <DockPanel>
         <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
             <TextBlock AutomationProperties.AutomationId="Heading" Text="{Binding Heading}" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" VerticalAlignment="Center" />
             <TextBox Grid.Column="1" Width="220" Margin="0,0,12,0" Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
             <ComboBox Grid.Column="2" Width="150" Margin="0,0,12,0" ItemsSource="{Binding SortModes}" SelectedItem="{Binding Sort}" VerticalAlignment="Center" />
-            <Button Grid.Column="3" Style="{StaticResource GlassButton}" Content="Rescan" Command="{Binding RescanCommand}" />
+            <Button Grid.Column="3" Style="{StaticResource GlassButton}" Content="New folder..." Command="{Binding NewFolderCommand}" Margin="0,0,8,0" />
+            <Button Grid.Column="4" Style="{StaticResource GlassButton}" Content="Rescan" Command="{Binding RescanCommand}" />
         </Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Books}">
@@ -35,6 +38,9 @@
                                     <Separator />
                                     <MenuItem Header="Add to queue" Command="{Binding PlacementTarget.Tag.AddToQueueCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
                                     <MenuItem Header="Remove from queue" Command="{Binding PlacementTarget.Tag.RemoveFromQueueCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
+                                    <Separator />
+                                    <MenuItem Header="Rename..." Command="{Binding PlacementTarget.Tag.RenameCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
+                                    <MenuItem Header="Move to folder..." Command="{Binding PlacementTarget.Tag.MoveToFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
                                     <Separator />
                                     <MenuItem Header="Set cover from file" Command="{Binding PlacementTarget.Tag.SetCoverCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
                                     <MenuItem Header="Open folder" Command="{Binding PlacementTarget.Tag.OpenFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
@@ -53,10 +59,16 @@
                                 <TextBlock AutomationProperties.AutomationId="CardTitle" Text="{Binding Title}" FontWeight="SemiBold" Margin="0,8,0,0" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
                                 <TextBlock Text="{Binding Author}" FontSize="12" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" />
                                 <TextBlock Text="{Binding Breadcrumb}" FontSize="11" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" />
-                                <ProgressBar Height="3" Margin="0,8,0,4" Maximum="100" BorderThickness="0" Background="{DynamicResource GlassBorderBrush}" Foreground="{DynamicResource GlassTextBrush}">
+                                <ProgressBar Height="4" Margin="0,8,0,4" Maximum="100" BorderThickness="0" Background="{DynamicResource GlassBorderBrush}" Foreground="{DynamicResource GlassTextBrush}"
+                                             Visibility="{Binding BookPositionSec, Converter={StaticResource Started}}">
                                     <ProgressBar.Value><MultiBinding Converter="{StaticResource Percent}" Mode="OneWay"><Binding Path="BookPositionSec" /><Binding Path="TotalDurationSec" /></MultiBinding></ProgressBar.Value>
                                 </ProgressBar>
-                                <TextBlock FontSize="11" Foreground="{DynamicResource GlassMutedBrush}" Text="{Binding TotalDurationSec, Converter={StaticResource Time}}" />
+                                <DockPanel Margin="0,2,0,0">
+                                    <TextBlock DockPanel.Dock="Right" FontSize="11" Foreground="{DynamicResource GlassMutedBrush}" Text="{Binding TotalDurationSec, Converter={StaticResource Time}}" />
+                                    <TextBlock FontSize="11" Foreground="{DynamicResource GlassMutedBrush}" Visibility="{Binding BookPositionSec, Converter={StaticResource Started}}">
+                                        <TextBlock.Text><MultiBinding Converter="{StaticResource PercentText}" Mode="OneWay"><Binding Path="BookPositionSec" /><Binding Path="TotalDurationSec" /></MultiBinding></TextBlock.Text>
+                                    </TextBlock>
+                                </DockPanel>
                             </StackPanel>
                         </Border>
                     </DataTemplate>

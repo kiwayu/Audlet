@@ -31,6 +31,19 @@ public sealed class PercentConverter : IMultiValueConverter
     public object[] ConvertBack(object v, Type[] t, object p, CultureInfo c) => throw new NotSupportedException();
 }
 
+public sealed class PositiveToVisibility : IValueConverter
+{
+    public object Convert(object v, Type t, object p, CultureInfo c) => v is double d && d > 0 ? Visibility.Visible : Visibility.Collapsed;
+    public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
+}
+
+public sealed class PercentText : IMultiValueConverter
+{
+    public object Convert(object[] v, Type t, object p, CultureInfo c) =>
+        v.Length == 2 && v[0] is double pos && v[1] is double total && total > 0 ? Math.Clamp(Math.Round(pos / total * 100), 0, 100) + "%" : "";
+    public object[] ConvertBack(object v, Type[] t, object p, CultureInfo c) => throw new NotSupportedException();
+}
+
 public sealed class BoolToVisibility : IValueConverter
 {
     public bool Invert { get; set; }

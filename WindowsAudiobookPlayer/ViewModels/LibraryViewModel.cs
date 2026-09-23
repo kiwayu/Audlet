@@ -3,7 +3,9 @@ using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
+using WindowsAudiobookPlayer.Library;
 using WindowsAudiobookPlayer.Models;
+using WindowsAudiobookPlayer.Views;
 
 namespace WindowsAudiobookPlayer.ViewModels;
 
@@ -66,6 +68,59 @@ public sealed partial class LibraryViewModel : ObservableObject
     [RelayCommand] private void RemoveFromQueue(Book b) { _main.Store.Settings.Queue.Remove(b.Id); _main.Store.SaveSoon(); Refresh(); }
     [RelayCommand] private void OpenFolder(Book b) => Process.Start("explorer.exe", Directory.Exists(b.Id) ? b.Id : Path.GetDirectoryName(b.Id)!);
     [RelayCommand] private async Task Rescan() => await _main.RescanAsync();
+
+    private string? RootOf(string id) =>
+        _main.Store.Settings.RootFolders.FirstOrDefault(r => id.StartsWith(r.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase));
+
+    private static bool ValidName(string name) => name.IndexOfAny(Path.GetInvalidFileNameChars()) < 0;
+
+    private async Task RelocateAsync(Book b, Func<Book, string> move)
+    {
+        var wasLoose = _main.Store.Settings.LooseFiles.Contains(b.Id, StringComparer.OrdinalIgnoreCase);
+        var oldId = b.Id;
+        try { move(b); }
+        catch (Exception ex) { _main.ShowToast(ex.Message); return; }
+        if (wasLoose) { _main.Store.Settings.LooseFiles.Remove(oldId); _main.Store.Settings.LooseFiles.Add(b.Id); }
+        if (_main.Store.Settings.LastBookId == oldId) _main.Store.Settings.LastBookId = b.Id;
+        _main.Store.SaveSoon();
+        await _main.RescanAsync();
+    }
+
+    [RelayCommand]
+    private async Task Rename(Book b)
+    {
+        var name = InputDialog.Ask("Rename", "New name for this book", b.Title);
+        if (name is null || name == b.Title) return;
+        if (!ValidName(name)) { _main.ShowToast("That name contains characters Windows does not allow"); return; }
+        await RelocateAsync(b, x => BookMover.Rename(x, name));
+    }
+
+    [RelayCommand]
+    private async Task MoveToFolder(Book b)
+    {
+        var root = RootOf(b.Id) ?? Path.GetDirectoryName(b.Id)!;
+        var dlg = new OpenFolderDialog { Title = "Move into which folder? You can create one here.", InitialDirectory = root };
+        if (dlg.ShowDialog() != true) return;
+        var folder = dlg.FolderName;
+        if (RootOf(folder + Path.DirectorySeparatorChar) is null && !_main.Store.Settings.RootFolders.Contains(folder, StringComparer.OrdinalIgnoreCase))
+        { _main.ShowToast("Choose a folder inside one of your library folders"); return; }
+        if (folder.StartsWith(b.Id + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) { _main.ShowToast("Cannot move a book into itself"); return; }
+        await RelocateAsync(b, x => BookMover.MoveInto(x, folder));
+    }
+
+    [RelayCommand]
+    private void NewFolder()
+    {
+        var root = _main.Store.Settings.RootFolders.FirstOrDefault();
+        if (root is null) { _main.ShowToast("Add a library folder first"); return; }
+        var name = InputDialog.Ask("New folder", "Folder name, for example a genre or an author");
+        if (name is null) return;
+        if (!ValidName(name)) { _main.ShowToast("That name contains characters Windows does not allow"); return; }
+        var path = Path.Combine(root, name);
+        if (Directory.Exists(path)) { _main.ShowToast("That folder already exists"); return; }
+        Directory.CreateDirectory(path);
+        _main.ShowToast("Created " + name + ". Right-click a book and choose Move to folder to fill it.");
+    }
 
     [RelayCommand]
     private void SetCover(Book b)
