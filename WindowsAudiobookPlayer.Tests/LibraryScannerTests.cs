@@ -74,6 +74,19 @@ public class LibraryScannerTests : IDisposable
     }
 
     [Fact]
+    public void LooseFileBecomesItsOwnBook()
+    {
+        Touch("Elsewhere", "Piranesi.m4b"); Touch("Elsewhere", "Other.m4b"); Touch("Lib", "Dune", "01.mp3");
+        var loose = Path.Combine(_root, "Elsewhere", "Piranesi.m4b");
+        var books = new LibraryScanner(Meta).Scan([Path.Combine(_root, "Lib")], looseFiles: [loose, Path.Combine(_root, "missing.mp3")]);
+        Assert.Equal(2, books.Count);
+        var piranesi = books.Single(b => b.Id == loose);
+        Assert.Equal("Piranesi", piranesi.Title);
+        Assert.Equal("", piranesi.Breadcrumb);
+        Assert.Single(piranesi.Files);
+    }
+
+    [Fact]
     public void CoverFilePreference()
     {
         Touch("D", "zzz.png"); Touch("D", "Folder.JPG"); Touch("D", "01.mp3");

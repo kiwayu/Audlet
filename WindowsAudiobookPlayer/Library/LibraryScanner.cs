@@ -11,11 +11,13 @@ public sealed class LibraryScanner
 
     public LibraryScanner(Func<string, FileMeta> readMeta) => _readMeta = readMeta;
 
-    public IReadOnlyList<Book> Scan(IEnumerable<string> roots, IProgress<string>? progress = null)
+    public IReadOnlyList<Book> Scan(IEnumerable<string> roots, IProgress<string>? progress = null, IEnumerable<string>? looseFiles = null)
     {
         var books = new List<Book>();
         foreach (var root in roots.Where(Directory.Exists))
             Walk(root, root, books, progress);
+        foreach (var file in (looseFiles ?? []).Where(f => File.Exists(f) && AudioExtensions.IsAudio(f)))
+            books.Add(Build(Path.GetDirectoryName(file)!, file, [file], progress));
         return books;
     }
 

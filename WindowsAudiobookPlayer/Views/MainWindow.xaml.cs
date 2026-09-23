@@ -87,6 +87,17 @@ public partial class MainWindow : Window
         if (Nav.SelectedItem is ListBoxItem { Tag: string tag } && Enum.TryParse<Section>(tag, out var s) && s != Vm.Section) Vm.Section = s;
     }
 
+    private void Window_DragOver(object sender, DragEventArgs e)
+    {
+        e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    private async void Window_Drop(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetData(DataFormats.FileDrop) is string[] paths) await Vm.AddDroppedAsync(paths);
+    }
+
     private void Sidebar_DragCompleted(object sender, DragCompletedEventArgs e) => Vm.Store.Settings.SidebarWidth = SidebarCol.ActualWidth;
     private void PlayerBar_Click(object sender, MouseButtonEventArgs e) { if (e.OriginalSource is not Button) Vm.ToggleNowPlaying(); }
     private void Play_Click(object s, RoutedEventArgs e) { Vm.Controller.TogglePlay(); e.Handled = true; }

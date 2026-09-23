@@ -12,6 +12,8 @@
             <Border Style="{StaticResource GlassPanel}" Margin="0,0,0,16">
                 <StackPanel>
                     <TextBlock Style="{StaticResource Head}" Text="Library" />
+                    <TextBlock Style="{StaticResource Label}" Foreground="{DynamicResource GlassMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,8"
+                               Text="Browse for the folder that holds your audiobooks. Each book is a folder of audio files or a single M4B. You can also drop folders or audio files onto the window at any time." />
                     <ItemsControl ItemsSource="{Binding RootFolders}">
                         <ItemsControl.ItemTemplate><DataTemplate>
                             <DockPanel Margin="0,2">
@@ -21,8 +23,17 @@
                             </DockPanel>
                         </DataTemplate></ItemsControl.ItemTemplate>
                     </ItemsControl>
+                    <ItemsControl ItemsSource="{Binding LooseFiles}">
+                        <ItemsControl.ItemTemplate><DataTemplate>
+                            <DockPanel Margin="0,2">
+                                <Button DockPanel.Dock="Right" Style="{StaticResource GlassButton}" Padding="6,2" Content="Remove"
+                                        Command="{Binding DataContext.RemoveLooseCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                <TextBlock Style="{StaticResource Label}" Text="{Binding}" TextTrimming="CharacterEllipsis" />
+                            </DockPanel>
+                        </DataTemplate></ItemsControl.ItemTemplate>
+                    </ItemsControl>
                     <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                        <Button Style="{StaticResource GlassButton}" Content="Add folder" Command="{Binding AddRootCommand}" Margin="0,0,8,0" />
+                        <Button AutomationProperties.AutomationId="Browse" Style="{StaticResource PillButton}" Content="Browse..." Command="{Binding AddRootCommand}" Margin="0,0,8,0" />
                         <Button Style="{StaticResource GlassButton}" Content="Rescan" Command="{Binding RescanCommand}" />
                     </StackPanel>
                 </StackPanel>

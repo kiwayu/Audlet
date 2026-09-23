@@ -5,6 +5,7 @@ A desktop audiobook player for Windows 11 with a frosted-glass interface. Point 
 ## Features
 
 - Library from any number of root folders; a folder of audio files is a book, a lone M4B is a book
+- Drop folders or audio files onto the window to add them, or pick the folder with Browse in Settings
 - New / Started / Finished states, sort, search, and a queue for what to play next
 - Big and small rewind and forward, chapters, position in file or in book
 - Speed with pitch preserved, pitch shift, five-band equalizer, volume boost, skip silence

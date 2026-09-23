@@ -7,7 +7,7 @@ public class LibraryTests
     {
         using var app = new AppSession();
         app.Launch();
-        Assert.NotNull(app.WaitForName("Choose folder"));
+        Assert.NotNull(app.WaitForName("Browse..."));
     }
 
     [Fact]

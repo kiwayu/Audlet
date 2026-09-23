@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:c="clr-namespace:WindowsAudiobookPlayer.Converters"
         Title="Audiobook Player" Width="1200" Height="760" MinWidth="900" MinHeight="600"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" AllowDrop="True" DragOver="Window_DragOver" Drop="Window_Drop">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="40" GlassFrameThickness="-1" ResizeBorderThickness="6" UseAeroCaptionButtons="True" />
     </WindowChrome.WindowChrome>

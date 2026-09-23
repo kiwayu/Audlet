@@ -16,8 +16,9 @@ public sealed partial class SettingsViewModel : ObservableObject
     public EndOfBookAction[] EndOfBookActions { get; } = Enum.GetValues<EndOfBookAction>();
     public ThemeOverride[] Themes { get; } = Enum.GetValues<ThemeOverride>();
     public ObservableCollection<string> RootFolders { get; }
+    public ObservableCollection<string> LooseFiles { get; }
 
-    public SettingsViewModel(MainViewModel main) { _main = main; RootFolders = new(S.RootFolders); }
+    public SettingsViewModel(MainViewModel main) { _main = main; RootFolders = new(S.RootFolders); LooseFiles = new(S.LooseFiles); }
 
     public int SmallRewind { get => S.SmallRewindSec; set { S.SmallRewindSec = value; Apply(); } }
     public int BigRewind { get => S.BigRewindSec; set { S.BigRewindSec = value; Apply(); } }
@@ -39,7 +40,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private async Task AddRoot()
     {
-        var dlg = new OpenFolderDialog { Title = "Add a root folder" };
+        var dlg = new OpenFolderDialog { Title = "Choose your audiobooks folder" };
         if (dlg.ShowDialog() != true || S.RootFolders.Contains(dlg.FolderName, StringComparer.OrdinalIgnoreCase)) return;
         S.RootFolders.Add(dlg.FolderName); RootFolders.Add(dlg.FolderName);
         _main.FirstRun = false;
@@ -47,5 +48,6 @@ public sealed partial class SettingsViewModel : ObservableObject
     }
 
     [RelayCommand] private async Task RemoveRoot(string folder) { S.RootFolders.Remove(folder); RootFolders.Remove(folder); await _main.RescanAsync(); }
+    [RelayCommand] private async Task RemoveLoose(string file) { S.LooseFiles.Remove(file); LooseFiles.Remove(file); await _main.RescanAsync(); }
     [RelayCommand] private async Task Rescan() => await _main.RescanAsync();
 }

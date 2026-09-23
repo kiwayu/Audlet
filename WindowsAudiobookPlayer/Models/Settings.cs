@@ -18,6 +18,7 @@ public sealed class Settings
     public static readonly int[] SleepChoices = [5, 10, 15, 20, 30, 45, 60, 75, 90];
 
     public List<string> RootFolders { get; set; } = [];
+    public List<string> LooseFiles { get; set; } = [];   // audio files dropped onto the window, each its own book
     public int SmallRewindSec { get; set; } = 10;
     public int BigRewindSec { get; set; } = 60;
     public bool ShowPrevNextFile { get; set; } = true;
