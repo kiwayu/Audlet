@@ -31,6 +31,8 @@ public sealed partial class PlaybackController : ObservableObject
     [ObservableProperty] private bool _sleepActive;
     [ObservableProperty] private bool _locked;
     [ObservableProperty] private string? _toast;
+    [ObservableProperty] private bool _dozePromptVisible;
+    private bool _dozeMarked;
 
     public Settings Settings => _store.Settings;
     public double BookTotalSec => _timeline?.Total ?? 0;
@@ -102,6 +104,7 @@ public sealed partial class PlaybackController : ObservableObject
             if (back > 0) MoveBy(-back, record: false);
         }
         _pausedAtUtc = null;
+        if (CurrentBook.DozePositionSec is not null) DozePromptVisible = true;
         if (_store.Settings.SleepSchedule.Enabled && !_sleep.IsRunning &&
             _store.Settings.SleepSchedule.Contains(TimeOnly.FromDateTime(DateTime.Now)))
             StartSleep(_store.Settings.SleepDefaultMin);
@@ -194,10 +197,33 @@ public sealed partial class PlaybackController : ObservableObject
         }
     }
 
-    public void StartSleep(int minutes) { _sleep.Fadeout = _store.Settings.SleepFadeout; _sleep.Start(TimeSpan.FromMinutes(minutes), DateTime.UtcNow); SleepActive = true; }
+    public void StartSleep(int minutes) { _sleep.Fadeout = _store.Settings.SleepFadeout; _sleep.Start(TimeSpan.FromMinutes(minutes), DateTime.UtcNow); SleepActive = true; _dozeMarked = false; }
     public void StartSleepUntilChapterEnd() { _sleep.StartUntilChapterEnd(); SleepActive = true; }
     public void StopSleep() { _sleep.Stop(); SleepActive = false; _player.Volume = 1.0; SleepRemaining = TimeSpan.Zero; }
-    public void ResetSleep() { _sleep.Reset(DateTime.UtcNow); _player.Volume = 1.0; }
+    public void ResetSleep() { _sleep.Reset(DateTime.UtcNow); _player.Volume = 1.0; _dozeMarked = false; }
+
+    // Answer to the wake prompt: go back to where the fade began, or keep going.
+    public void RewindToDoze()
+    {
+        if (CurrentBook is { DozeFileIndex: { } f, DozePositionSec: { } p }) SeekFile(f, p, HistoryKind.Jump);
+        ClearDoze();
+    }
+    public void ClearDoze() { if (CurrentBook is { } b) { b.DozeFileIndex = null; b.DozePositionSec = null; } DozePromptVisible = false; _store.SaveSoon(); }
+
+    // Speed presets cycle from the player bar: 1x, 1.25x, 1.5x, 1.75x, 2x, then round again.
+    public void CycleSpeed()
+    {
+        var presets = Settings.SpeedPresets;
+        var next = presets.FirstOrDefault(s => s > Speed + 0.001);
+        SetSpeed(next > 0 ? next : presets[0]);
+    }
+
+    public void PauseForDeviceLoss()
+    {
+        if (!IsPlaying) return;
+        Pause();
+        ShowToast("Paused: the audio device went away");
+    }
 
     public void AddBookmark(string note)
     {
@@ -232,7 +258,9 @@ public sealed partial class PlaybackController : ObservableObject
             {
                 var now = DateTime.UtcNow;
                 SleepRemaining = _sleep.Remaining(now);
-                _player.Volume = _sleep.VolumeFor(now);
+                var volume = _sleep.VolumeFor(now);
+                if (volume < 1.0 && !_dozeMarked) { CurrentBook.DozeFileIndex = FileIndex; CurrentBook.DozePositionSec = pos; _dozeMarked = true; }
+                _player.Volume = volume;
                 if (_sleep.Expired(now)) { StopSleep(); Pause(); }
             }
         }

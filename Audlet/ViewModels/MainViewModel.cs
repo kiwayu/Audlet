@@ -21,6 +21,9 @@ public sealed partial class MainViewModel : ObservableObject
     [ObservableProperty] private bool _firstRun;
 
     public event Action? LibraryChanged;
+    public event Action<bool>? HotkeysToggled;
+
+    public void SetHotkeys(bool on) { Store.Settings.GlobalHotkeys = on; HotkeysToggled?.Invoke(on); }
 
     public MainViewModel(AppStore store, PlaybackController controller, CoverCache covers)
     {

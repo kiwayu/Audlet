@@ -24,9 +24,12 @@ public sealed class BassPlayer : IDisposable
     public bool IsOpen => _handle != 0;
     public bool IsPlaying => _handle != 0 && Bass.ChannelIsActive(_handle) == PlaybackState.Playing;
 
+    private static int _users;   // BASS is initialised once per process and freed when the last player goes
+
     public BassPlayer()
     {
-        if (!Bass.Init()) throw new InvalidOperationException("Audio device init failed: " + Bass.LastError);
+        if (_users++ == 0 && !Bass.Init() && Bass.LastError != Errors.Already)
+            throw new InvalidOperationException("Audio device init failed: " + Bass.LastError);
         foreach (var plugin in new[] { "bassflac.dll", "bassopus.dll", "basswv.dll" })
             Bass.PluginLoad(Path.Combine(AppContext.BaseDirectory, plugin));
         Bass.Configure(Configuration.UpdatePeriod, 50);
@@ -114,5 +117,5 @@ public sealed class BassPlayer : IDisposable
         Array.Clear(_eq);
     }
 
-    public void Dispose() { Close(); Bass.Free(); }
+    public void Dispose() { Close(); if (--_users <= 0) { _users = 0; Bass.Free(); } }
 }

@@ -35,6 +35,8 @@ public sealed class Book
     public DateTime AddedUtc { get; set; }
     public DateTime? LastPlayedUtc { get; set; }
     public bool Missing { get; set; }
+    public int? DozeFileIndex { get; set; }        // where the sleep fade began, offered as a rewind target on the next play
+    public double? DozePositionSec { get; set; }
 
     public double TotalDurationSec => Files.Sum(f => f.DurationSec);
     public double BookPositionSec => Files.Take(FileIndex).Sum(f => f.DurationSec) + PositionSec;

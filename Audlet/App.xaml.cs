@@ -32,6 +32,8 @@ public partial class App : Application
         var player = new BassPlayer();
         _controller = new PlaybackController(player, store);
         _ = new MediaControls(_controller);
+        var devices = new DeviceWatcher();
+        devices.DeviceLost += () => { if (store.Settings.PauseOnDeviceLoss) _controller!.PauseForDeviceLoss(); };
         _vm = new MainViewModel(store, _controller, new CoverCache(AppPaths.Covers));
         var window = new MainWindow { DataContext = _vm };
         MainWindow = window;

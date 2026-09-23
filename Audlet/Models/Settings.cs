@@ -28,6 +28,10 @@ public sealed class Settings
     public double BoostDb { get; set; }
     public bool Mono { get; set; }
     public double Balance { get; set; }
+    public bool CloseToTray { get; set; } = true;
+    public bool GlobalHotkeys { get; set; } = true;
+    public bool PauseOnDeviceLoss { get; set; } = true;
+    public static readonly double[] SpeedPresets = [1.0, 1.25, 1.5, 1.75, 2.0];
     public int SleepDefaultMin { get; set; } = 30;
     public bool SleepFadeout { get; set; } = true;
     public SleepSchedule SleepSchedule { get; set; } = new();

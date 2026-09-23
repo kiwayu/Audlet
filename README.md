@@ -13,7 +13,11 @@ A desktop audiobook player for Windows 11 with a frosted-glass interface. Point 
 - Auto-rewind after a pause, skip the start and end of every file, lock buttons
 - Sleep timer with fadeout and a daily schedule
 - Bookmarks with notes, playback history to undo an accidental jump, listening statistics, a character list per book
-- Windows media overlay and media keys
+- Windows media overlay and media keys, plus global hotkeys that work while another app has focus
+- Closing the window keeps playing from the tray, with play, rewind, and forward in the tray menu
+- Sleep timer fades out, and the next play asks whether to rewind to where you dozed off
+- Pauses by itself when the audio device disappears, such as headphones being unplugged
+- One-click speed presets on the player bar
 - Themes: dark and light glass that follow Windows, plus Catppuccin Mocha and Latte, Nord, Dracula, Tokyo Night, Rose Pine, Gruvbox Dark, and Solarized Dark
 
 ## Building
@@ -43,5 +47,8 @@ mp3, m4a, m4b, aac, ogg, opus, flac, wav, wv, wma. Chapters are read from M4B fi
 | B | Add a bookmark |
 | Ctrl + L | Lock / unlock the buttons |
 | Esc | Back to the library |
+| Ctrl + Alt + Space | Play / pause from anywhere |
+| Ctrl + Alt + Left / Right | Small rewind / forward from anywhere |
+| Ctrl + Alt + Shift + Left / Right | Big rewind / forward from anywhere |
 
 The Windows media keys and the media overlay also control playback.

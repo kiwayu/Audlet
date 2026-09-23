@@ -56,7 +56,7 @@
                     Visibility="Collapsed" MouseLeftButtonUp="PlayerBar_Click">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Border Width="48" Height="48" CornerRadius="6" Margin="0,0,16,0">
                         <Border.Background><ImageBrush ImageSource="{Binding Controller.CurrentBook.CoverPath, Converter={StaticResource Cover}}" Stretch="UniformToFill" /></Border.Background>
@@ -78,13 +78,30 @@
                         <Button Style="{StaticResource TransportButton}" Content="{Binding Store.Settings.SmallRewindSec}" ContentStringFormat="+{0}" Click="SmallFwd_Click" Margin="8,0" ToolTip="Forward" />
                         <Button Style="{StaticResource TransportButton}" Content="{Binding Store.Settings.BigRewindSec}" ContentStringFormat="+{0}" Click="BigFwd_Click" ToolTip="Big forward" />
                     </StackPanel>
-                    <Button Grid.Column="3" AutomationProperties.AutomationId="BarSleep" Style="{StaticResource GlassButton}" Click="Sleep_Click" ToolTip="Sleep timer" Padding="10,6">
+                    <Button Grid.Column="3" AutomationProperties.AutomationId="BarSpeed" Style="{StaticResource GlassButton}" Content="{Binding Controller.Speed}" ContentStringFormat="{}{0:0.00}x" Click="Speed_Click" ToolTip="Speed: click to cycle 1x, 1.25x, 1.5x, 1.75x, 2x" Margin="0,0,8,0" MinWidth="64" />
+                    <Button Grid.Column="4" AutomationProperties.AutomationId="BarSleep" Style="{StaticResource GlassButton}" Click="Sleep_Click" ToolTip="Sleep timer" Padding="10,6">
                         <TextBlock><Run FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE708;" /><Run Text="{Binding Controller.SleepRemaining, Mode=OneWay, Converter={StaticResource SleepGlyph}}" /></TextBlock>
                     </Button>
                 </Grid>
             </Border>
         </Grid>
 
+        <!-- Wake prompt after the sleep timer faded the book out -->
+        <Grid Visibility="{Binding Controller.DozePromptVisible, Converter={StaticResource Vis}}">
+            <Rectangle Fill="{DynamicResource ScrimBrush}" />
+            <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{StaticResource GlassRadius}" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="440">
+            <Border Style="{StaticResource GlassPanel}" Padding="20,16">
+            <StackPanel>
+                <TextBlock Text="Rewind to where you dozed off?" FontSize="16" FontWeight="SemiBold" />
+                <TextBlock Margin="0,6,0,14" Foreground="{DynamicResource GlassMutedBrush}" TextWrapping="Wrap" Text="The sleep timer faded the book out. You can jump back to where the fade began, or keep going from here." />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource GlassButton}" Content="Keep going" Click="DozeKeep_Click" Margin="0,0,8,0" />
+                    <Button AutomationProperties.AutomationId="DozeRewind" Style="{StaticResource PillButton}" Content="Rewind" Click="DozeRewind_Click" />
+                </StackPanel>
+            </StackPanel>
+            </Border>
+            </Border>
+        </Grid>
         <TextBlock Text="Audlet" Margin="16,12,0,0" VerticalAlignment="Top" Foreground="{DynamicResource GlassMutedBrush}" FontSize="12" IsHitTestVisible="False" />
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
             <Button Style="{StaticResource CaptionButton}" Content="&#xE921;" Click="Minimize_Click" ToolTip="Minimize" />

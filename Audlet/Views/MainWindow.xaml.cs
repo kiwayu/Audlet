@@ -9,6 +9,9 @@ namespace Audlet.Views;
 public partial class MainWindow : Window
 {
     private MainViewModel Vm => (MainViewModel)DataContext;
+    private TrayIcon? _tray;
+    private GlobalHotkeys? _hotkeys;
+    private bool _exiting;
 
     public MainWindow()
     {
@@ -26,6 +29,12 @@ public partial class MainWindow : Window
         Width = s.WindowWidth; Height = s.WindowHeight;
         if (s.WindowMaximized) WindowState = WindowState.Maximized;
         SidebarCol.Width = new GridLength(s.SidebarWidth);
+        _hotkeys = new GlobalHotkeys(this, Vm.Controller);
+        _hotkeys.Enable(s.GlobalHotkeys);
+        Vm.HotkeysToggled += on => _hotkeys.Enable(on);
+        _tray = new TrayIcon(Vm.Controller);
+        _tray.ShowRequested += Restore;
+        _tray.ExitRequested += ForceClose;
         Vm.PropertyChanged += (o, a) => { if (a.PropertyName is nameof(MainViewModel.Section) or nameof(MainViewModel.FirstRun)) ShowSection(); };
         Vm.Controller.PropertyChanged += (o, a) => { if (a.PropertyName == nameof(Player.PlaybackController.CurrentBook)) UpdatePlayerBar(); };
         ShowSection();
@@ -34,6 +43,15 @@ public partial class MainWindow : Window
     private void OnClosing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
         var s = Vm.Store.Settings;
+        if (s.CloseToTray && !_exiting)
+        {
+            // Keep playing from the tray; Exit in the tray menu quits for real.
+            e.Cancel = true;
+            Hide();
+            return;
+        }
+        _tray?.Dispose();
+        _hotkeys?.Dispose();
         s.WindowMaximized = WindowState == WindowState.Maximized;
         if (WindowState == WindowState.Normal) { s.WindowLeft = Left; s.WindowTop = Top; s.WindowWidth = Width; s.WindowHeight = Height; }
         s.SidebarWidth = SidebarCol.ActualWidth;
@@ -97,6 +115,19 @@ public partial class MainWindow : Window
     {
         if (e.Data.GetData(DataFormats.FileDrop) is string[] paths) await Vm.AddDroppedAsync(paths);
     }
+
+    public void Restore()
+    {
+        Show();
+        if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
+        Activate();
+    }
+
+    public void ForceClose() { _exiting = true; Close(); }
+
+    private void Speed_Click(object s, RoutedEventArgs e) { Vm.Controller.CycleSpeed(); e.Handled = true; }
+    private void DozeKeep_Click(object s, RoutedEventArgs e) => Vm.Controller.ClearDoze();
+    private void DozeRewind_Click(object s, RoutedEventArgs e) => Vm.Controller.RewindToDoze();
 
     private void Minimize_Click(object s, RoutedEventArgs e) => WindowState = WindowState.Minimized;
     private void Maximize_Click(object s, RoutedEventArgs e) => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
