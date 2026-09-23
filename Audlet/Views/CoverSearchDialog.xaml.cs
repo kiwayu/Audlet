@@ -28,7 +28,7 @@ public partial class CoverSearchDialog : Window
         var cts = _cts = new CancellationTokenSource();
         Results.ItemsSource = null;
         UseButton.IsEnabled = false;
-        Status.Text = "Searching Open Library and Google Books...";
+        Status.Text = "Searching Audible, Apple Books, Open Library and Google Books...";
         try
         {
             var result = await CoverSearch.SearchAsync(TitleBox.Text.Trim(), AuthorBox.Text.Trim(), cts.Token);

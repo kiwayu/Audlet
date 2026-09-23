@@ -1,5 +1,6 @@
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Audlet.Library;
 
@@ -17,8 +18,11 @@ public static class CoverSearch
     {
         var results = new List<CoverCandidate>();
         var warnings = new List<string>();
+        // Audiobook stores first: their art is the square cover a listener expects, and their blurbs are written for the audio edition.
         var tasks = new (string Name, Task<IReadOnlyList<CoverCandidate>> Task)[]
         {
+            ("Audible", SearchAudibleAsync(title, author, ct)),
+            ("Apple Books", SearchAppleAsync(title, author, ct)),
             ("Open Library", SearchOpenLibraryAsync(title, author, ct)),
             ("Google Books", SearchGoogleAsync(title, author, ct)),
         };
@@ -32,6 +36,59 @@ public static class CoverSearch
     }
 
     public static async Task<byte[]> DownloadAsync(string url, CancellationToken ct = default) => await Http.GetByteArrayAsync(url, ct);
+
+    private static async Task<IReadOnlyList<CoverCandidate>> SearchAudibleAsync(string title, string author, CancellationToken ct)
+    {
+        var url = "https://api.audible.com/1.0/catalog/products?num_results=8&response_groups=media,contributors,product_desc&image_sizes=500&title=" + Uri.EscapeDataString(title)
+                  + (string.IsNullOrWhiteSpace(author) ? "" : "&author=" + Uri.EscapeDataString(author));
+        return ParseAudible(await Http.GetStringAsync(url, ct));
+    }
+
+    private static async Task<IReadOnlyList<CoverCandidate>> SearchAppleAsync(string title, string author, CancellationToken ct)
+    {
+        var url = "https://itunes.apple.com/search?media=audiobook&entity=audiobook&limit=8&term=" + Uri.EscapeDataString((title + " " + author).Trim());
+        return ParseApple(await Http.GetStringAsync(url, ct));
+    }
+
+    public static IReadOnlyList<CoverCandidate> ParseAudible(string json)
+    {
+        var list = new List<CoverCandidate>();
+        using var doc = JsonDocument.Parse(json);
+        if (!doc.RootElement.TryGetProperty("products", out var products)) return list;
+        foreach (var p in products.EnumerateArray())
+        {
+            if (!p.TryGetProperty("product_images", out var images) || images.ValueKind != JsonValueKind.Object) continue;
+            string? img = null;
+            foreach (var prop in images.EnumerateObject()) img = prop.Value.GetString();   // the largest requested size
+            if (string.IsNullOrEmpty(img)) continue;
+            var title = p.TryGetProperty("title", out var t) ? t.GetString() ?? "" : "";
+            var author = p.TryGetProperty("authors", out var a) && a.ValueKind == JsonValueKind.Array
+                ? string.Join(", ", a.EnumerateArray().Select(x => x.TryGetProperty("name", out var n) ? n.GetString() : null).Where(n => n is not null)) : "";
+            var desc = p.TryGetProperty("publisher_summary", out var ps) ? ps.GetString() : p.TryGetProperty("merchandising_summary", out var ms) ? ms.GetString() : null;
+            list.Add(new CoverCandidate("Audible", title, author, StripHtml(desc), img, null));
+        }
+        return list;
+    }
+
+    public static IReadOnlyList<CoverCandidate> ParseApple(string json)
+    {
+        var list = new List<CoverCandidate>();
+        using var doc = JsonDocument.Parse(json);
+        if (!doc.RootElement.TryGetProperty("results", out var results)) return list;
+        foreach (var r in results.EnumerateArray())
+        {
+            if (!r.TryGetProperty("artworkUrl100", out var art) || art.GetString() is not { Length: > 0 } small) continue;
+            var title = r.TryGetProperty("collectionName", out var t) ? t.GetString() ?? "" : "";
+            var author = r.TryGetProperty("artistName", out var a) ? a.GetString() ?? "" : "";
+            var desc = r.TryGetProperty("description", out var d) ? d.GetString() : null;
+            list.Add(new CoverCandidate("Apple Books", title, author, StripHtml(desc), small.Replace("100x100bb", "600x600bb"), null));
+        }
+        return list;
+    }
+
+    private static readonly Regex Tags = new("<[^>]+>");
+    public static string? StripHtml(string? html) =>
+        html is null ? null : System.Net.WebUtility.HtmlDecode(Tags.Replace(html, " ")).Replace("  ", " ").Trim();
 
     private static async Task<IReadOnlyList<CoverCandidate>> SearchOpenLibraryAsync(string title, string author, CancellationToken ct)
     {

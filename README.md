@@ -8,7 +8,7 @@ A desktop audiobook player for Windows 11 with a frosted-glass interface. Point 
 - Drop folders or audio files onto the window to add them, or pick the folder with Browse in Settings
 - New / Started / Finished states, sort, search, and a queue for what to play next
 - Rename books, create folders for genres or authors, and move books between them from the library
-- Find a cover and blurb online from Open Library or Google Books and pick the one you want
+- Find a cover and blurb online from Audible, Apple Books, Open Library, or Google Books and pick the one you want
 - Big and small rewind and forward, chapters, position in file or in book
 - Speed with pitch preserved, pitch shift, five-band equalizer, volume boost, skip silence
 - Auto-rewind after a pause, skip the start and end of every file, lock buttons

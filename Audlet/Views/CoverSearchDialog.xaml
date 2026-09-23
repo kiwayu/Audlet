@@ -18,7 +18,7 @@
                     <Button DockPanel.Dock="Right" Style="{StaticResource GlassButton}" Content="Cancel" IsCancel="True" Margin="0,0,8,0" />
                     <CheckBox x:Name="UseDescription" Content="Also use the description as the book blurb" IsChecked="True" VerticalAlignment="Center" Foreground="{DynamicResource GlassTextBrush}" />
                 </DockPanel>
-                <TextBlock DockPanel.Dock="Top" x:Name="Status" Foreground="{DynamicResource GlassMutedBrush}" Margin="0,0,0,8" Text="Searching Open Library and Google Books..." />
+                <TextBlock DockPanel.Dock="Top" x:Name="Status" Foreground="{DynamicResource GlassMutedBrush}" Margin="0,0,0,8" Text="Searching Audible, Apple Books, Open Library and Google Books..." />
                 <ListBox x:Name="Results" Background="Transparent" BorderThickness="0" SelectionChanged="Results_SelectionChanged"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ListBox.ItemsPanel>
