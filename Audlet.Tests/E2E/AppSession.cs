@@ -4,7 +4,7 @@ using System.Windows.Automation;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
-namespace Audlet.E2E;
+namespace Audlet.Tests.E2E;
 
 // Launches the real executable against a throwaway data folder and a generated library of tone files.
 public sealed class AppSession : IDisposable
@@ -54,6 +54,7 @@ public sealed class AppSession : IDisposable
     }
 
     public AutomationElement Root => _root ?? throw new InvalidOperationException("Launch first.");
+    public Process Process => _process ?? throw new InvalidOperationException("Launch first.");
 
     public AutomationElement WaitFor(string automationId, int timeoutMs = 15000)
     {
@@ -151,6 +152,8 @@ public sealed class AppSession : IDisposable
         try { if (_process is { HasExited: false }) _process.Kill(); } catch (Exception) { }
         try { Directory.Delete(Path.GetDirectoryName(DataDir)!, true); } catch (Exception) { }
     }
+
+    public static void WriteTone(string path, int seconds, double hz) => Tone(path, seconds, hz);
 
     private static void Tone(string path, int seconds, double hz)
     {

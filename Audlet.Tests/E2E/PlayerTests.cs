@@ -1,13 +1,14 @@
 using System.Text.Json;
 
-namespace Audlet.E2E;
+namespace Audlet.Tests.E2E;
 
+[Trait("Category", "E2E")]
 public class PlayerTests
 {
     private static AppSession OpenDune()
     {
         var app = new AppSession();
-        app.WriteSettings(new { rootFolders = new[] { app.LibraryDir }, lastBookId = app.DuneId });
+        app.WriteSettings(new { rootFolders = new[] { app.LibraryDir }, lastBookId = app.DuneId, closeToTray = false });
         // A pre-scanned library lets the app restore the book at startup.
         var files = new[] { Path.Combine(app.DuneId, "CD1", "01.wav"), Path.Combine(app.DuneId, "CD2", "01.wav") };
         var book = new
@@ -49,7 +50,7 @@ public class PlayerTests
     {
         using var app = OpenDune();
         app.WaitFor("Play");
-        app.SelectNav("Library");
+        app.SelectNav("All books");
         app.WaitFor("BarSleep");
         app.Invoke("BarSleep");
         app.Invoke("BarPlay");

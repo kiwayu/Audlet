@@ -1,5 +1,6 @@
-namespace Audlet.E2E;
+namespace Audlet.Tests.E2E;
 
+[Trait("Category", "E2E")]
 public class LibraryTests
 {
     [Fact]
