@@ -17,6 +17,7 @@ public sealed class Book
     public string Title { get; set; } = "";
     public string Author { get; set; } = "";
     public string Breadcrumb { get; set; } = "";
+    public string? Description { get; set; }
     public List<AudioFile> Files { get; set; } = [];
     public List<Chapter> Chapters { get; set; } = [];
     public string? CoverPath { get; set; }

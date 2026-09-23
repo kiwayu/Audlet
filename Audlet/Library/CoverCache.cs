@@ -45,6 +45,12 @@ public sealed class CoverCache
         Save(decoder.Frames[0], PathFor(book));
     }
 
+    public void Replace(Book book, byte[] imageBytes)
+    {
+        var decoder = BitmapDecoder.Create(new MemoryStream(imageBytes), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+        Save(decoder.Frames[0], PathFor(book));
+    }
+
     private void Save(BitmapFrame frame, string target)
     {
         Directory.CreateDirectory(_folder);

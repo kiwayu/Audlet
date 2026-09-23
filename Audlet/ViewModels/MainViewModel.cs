@@ -44,7 +44,15 @@ public sealed partial class MainViewModel : ObservableObject
         var loose = Store.Settings.LooseFiles.ToList();
         var scanned = await Task.Run(() => new LibraryScanner(MetadataReader.Read).Scan(roots, progress, loose));
         LibraryMerger.Merge(Store.Library.Books, scanned);
-        await Task.Run(() => { foreach (var b in Store.Library.Books.Where(b => !b.Missing && b.CoverPath is null)) b.CoverPath = Covers.Ensure(b); });
+        await Task.Run(() =>
+        {
+            foreach (var b in Store.Library.Books.Where(b => !b.Missing))
+            {
+                // A cover path that no longer exists (the cache folder moved, or the file was cleaned up) is rebuilt.
+                if (b.CoverPath is not null && !File.Exists(b.CoverPath)) b.CoverPath = null;
+                b.CoverPath ??= Covers.Ensure(b);
+            }
+        });
         Store.SaveNow();
         IsScanning = false; ScanStatus = "";
         FirstRun = Store.Settings.RootFolders.Count == 0 && Store.Settings.LooseFiles.Count == 0;

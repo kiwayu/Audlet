@@ -123,6 +123,24 @@ public sealed partial class LibraryViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task FindCover(Book b)
+    {
+        var dlg = new CoverSearchDialog(b.Title, b.Author);
+        if (dlg.ShowDialog() != true || dlg.Chosen is not { } pick) return;
+        try
+        {
+            var bytes = await CoverSearch.DownloadAsync(pick.ImageUrl);
+            _main.Covers.Replace(b, bytes);
+            b.CoverPath = _main.Covers.PathFor(b);
+            if (dlg.ApplyDescription && !string.IsNullOrWhiteSpace(pick.Description)) b.Description = pick.Description.Trim();
+            _main.Store.SaveSoon();
+            _main.ShowToast("Cover updated from " + pick.Source);
+            Refresh();
+        }
+        catch (Exception ex) { _main.ShowToast("Could not fetch that cover: " + ex.Message); }
+    }
+
+    [RelayCommand]
     private void SetCover(Book b)
     {
         var dlg = new OpenFileDialog { Filter = "Images|*.jpg;*.jpeg;*.png;*.webp" };
