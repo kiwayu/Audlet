@@ -1,4 +1,4 @@
-# Windows Audiobook Player: Design
+# Audlet: Design
 
 Date: 2026-09-20
 
@@ -37,7 +37,7 @@ Supported cover files in a book folder: jpg, jpeg, png, webp. A file named cover
 
 ## Architecture
 
-One WPF project, `WindowsAudiobookPlayer`, plus one test project, `WindowsAudiobookPlayer.Tests`.
+One WPF project, `Audlet`, plus one test project, `Audlet.Tests`.
 
 | Folder | Contents |
 |---|---|
@@ -97,7 +97,7 @@ Settings    rootFolders, smallRewindSec, bigRewindSec, showPrevNextFile, autoRew
             sortMode, queue (book ids), sidebarWidth, chaptersPanelWidth, window bounds
 ```
 
-Storage: `%LocalAppData%\WindowsAudiobookPlayer\` with `library.json` (all books), `settings.json`, `stats.json` (months), `covers\` (one JPEG per book, named by a hash of the book id). Saves are debounced two seconds and forced on pause, book switch, and exit. Position is written to the in-memory book every five seconds while playing.
+Storage: `%LocalAppData%\Audlet\` with `library.json` (all books), `settings.json`, `stats.json` (months), `covers\` (one JPEG per book, named by a hash of the book id). Saves are debounced two seconds and forced on pause, book switch, and exit. Position is written to the in-memory book every five seconds while playing.
 
 Rescan merges by book id: existing books keep their state, position, bookmarks, characters, and history; files are refreshed; books whose path no longer exists are marked missing but kept.
 
@@ -170,4 +170,4 @@ The BASS wrapper is verified with a manual checklist against sample files, since
 
 ## Repository
 
-Public GitHub repository `kiwayu/WindowsAudiobookPlayer`. Small, frequent commits, one per task. README covers what the app does, how to build, and where to place the native BASS libraries. `.gitignore` excludes `bin/`, `obj/`, `.vs/`, `*.user`, `*.apk`, and local plan notes.
+Public GitHub repository `kiwayu/Audlet`. Small, frequent commits, one per task. README covers what the app does, how to build, and where to place the native BASS libraries. `.gitignore` excludes `bin/`, `obj/`, `.vs/`, `*.user`, `*.apk`, and local plan notes.

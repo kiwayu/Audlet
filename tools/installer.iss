@@ -1,8 +1,8 @@
 ; Inno Setup script. tools\publish.ps1 runs this after publishing.
-#define AppName "Audiobook Player"
+#define AppName "Audlet"
 #define AppVersion "1.0.0"
-#define AppExe "WindowsAudiobookPlayer.exe"
-#define SourceDir "..\dist\WindowsAudiobookPlayer"
+#define AppExe "Audlet.exe"
+#define SourceDir "..\dist\Audlet"
 
 [Setup]
 AppId={{7C1B4C6E-3B0A-4F0B-9B7B-3F2A6E8D1A11}
@@ -12,14 +12,14 @@ DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 UninstallDisplayIcon={app}\{#AppExe}
 OutputDir=..\dist
-OutputBaseFilename=AudiobookPlayer-Setup-{#AppVersion}
+OutputBaseFilename=Audlet-Setup-{#AppVersion}
 Compression=lzma2/max
 SolidCompression=yes
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 PrivilegesRequired=lowest
 WizardStyle=modern
-SetupIconFile=..\WindowsAudiobookPlayer\app.ico
+SetupIconFile=..\Audlet\app.ico
 
 [Files]
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs

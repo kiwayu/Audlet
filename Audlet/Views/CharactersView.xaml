@@ -1,0 +1,28 @@
+<UserControl x:Class="Audlet.Views.CharactersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:m="clr-namespace:Audlet.Models">
+    <StackPanel Width="360">
+        <TextBlock Text="Characters" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,8" />
+        <ScrollViewer MaxHeight="260" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Characters}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type m:Character}">
+                        <DockPanel Margin="0,3">
+                            <Button DockPanel.Dock="Right" Style="{StaticResource GlassButton}" Padding="6,2" Content="&#x2715;"
+                                    Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                            <StackPanel><TextBlock Text="{Binding Name}" FontWeight="SemiBold" /><TextBlock Text="{Binding Description}" Foreground="{DynamicResource GlassMutedBrush}" TextWrapping="Wrap" /></StackPanel>
+                        </DockPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        <TextBox Margin="0,8,0,4" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" ToolTip="Name" />
+        <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" ToolTip="Description" />
+        <Button Style="{StaticResource GlassButton}" Margin="0,6,0,0" Content="Add" Command="{Binding AddCommand}" />
+        <DockPanel Margin="0,12,0,0">
+            <Button DockPanel.Dock="Right" Style="{StaticResource GlassButton}" Content="Import" Command="{Binding ImportCommand}" Margin="6,0,0,0" />
+            <ComboBox ItemsSource="{Binding FinishedBooks}" DisplayMemberPath="Title" SelectedItem="{Binding ImportSource}" />
+        </DockPanel>
+    </StackPanel>
+</UserControl>
