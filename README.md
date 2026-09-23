@@ -16,6 +16,7 @@ A desktop audiobook player for Windows 11 with a frosted-glass interface. Point 
 - Bookmarks with notes, playback history to undo an accidental jump, listening statistics, a character list per book
 - Windows media overlay and media keys, plus global hotkeys that work while another app has focus
 - Closing the window keeps playing from the tray, with play, rewind, and forward in the tray menu
+- Hover the taskbar button for rewind, play or pause, and forward, with book progress shown on the button
 - Sleep timer fades out, and the next play asks whether to rewind to where you dozed off
 - Pauses by itself when the audio device disappears, such as headphones being unplugged
 - One-click speed presets on the player bar
