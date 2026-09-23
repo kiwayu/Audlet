@@ -34,7 +34,7 @@ public class LibraryTests
         app.SelectNav("Finished");
         Assert.Equal("Finished", app.WaitForText("Heading", t => t == "Finished"));
         Assert.Equal(0, app.CountByAutomationId("CardTitle"));
-        app.SelectNav("Library");
+        app.SelectNav("All books");
         Assert.Equal("Library", app.WaitForText("Heading", t => t == "Library"));
     }
 }

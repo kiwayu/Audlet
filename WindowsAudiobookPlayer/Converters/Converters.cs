@@ -66,7 +66,8 @@ public sealed class InverseBool : IValueConverter
 
 public sealed class PlayGlyph : IValueConverter
 {
-    public object Convert(object v, Type t, object p, CultureInfo c) => v is true ? "⏸" : "▶";
+    // Segoe MDL2 Assets glyphs: pause and play. The button sets that font family.
+    public object Convert(object v, Type t, object p, CultureInfo c) => v is true ? "\uE769" : "\uE768";
     public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
 }
 
@@ -74,7 +75,7 @@ public sealed class PlayGlyph : IValueConverter
 public sealed class SleepGlyph : IValueConverter
 {
     public object Convert(object v, Type t, object p, CultureInfo c) =>
-        v is TimeSpan ts && ts > TimeSpan.Zero ? "☾ " + ts.ToString(@"mm\:ss") : "☾";
+        v is TimeSpan ts && ts > TimeSpan.Zero ? " " + ts.ToString(@"mm\:ss") : "";
     public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
 }
 

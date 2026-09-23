@@ -98,6 +98,16 @@ public partial class MainWindow : Window
         if (e.Data.GetData(DataFormats.FileDrop) is string[] paths) await Vm.AddDroppedAsync(paths);
     }
 
+    private void Minimize_Click(object s, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+    private void Maximize_Click(object s, RoutedEventArgs e) => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+    private void Close_Click(object s, RoutedEventArgs e) => Close();
+
+    protected override void OnStateChanged(EventArgs e)
+    {
+        base.OnStateChanged(e);
+        MaximizeButton.Content = WindowState == WindowState.Maximized ? "\uE923" : "\uE922";
+    }
+
     private void Sidebar_DragCompleted(object sender, DragCompletedEventArgs e) => Vm.Store.Settings.SidebarWidth = SidebarCol.ActualWidth;
     private void PlayerBar_Click(object sender, MouseButtonEventArgs e) { if (e.OriginalSource is not Button) Vm.ToggleNowPlaying(); }
     private void Play_Click(object s, RoutedEventArgs e) { Vm.Controller.TogglePlay(); e.Handled = true; }

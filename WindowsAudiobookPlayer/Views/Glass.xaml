@@ -56,7 +56,8 @@
         <Setter Property="Width" Value="44" />
         <Setter Property="Height" Value="44" />
         <Setter Property="Padding" Value="0" />
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -75,6 +76,7 @@
         <Setter Property="Width" Value="60" />
         <Setter Property="Height" Value="60" />
         <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
         <Setter Property="Background" Value="{DynamicResource AccentFillBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
         <Setter Property="Template">
@@ -91,6 +93,55 @@
     <Style x:Key="GlassSlider" TargetType="Slider">
         <Setter Property="Foreground" Value="{DynamicResource AccentFillBrush}" />
         <Setter Property="IsMoveToPointEnabled" Value="True" />
+    </Style>
+
+    <Style x:Key="NavCaption" TargetType="ListBoxItem">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <TextBlock Text="{TemplateBinding Content}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource GlassMutedBrush}" Margin="12,14,0,4" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="CaptionButton" TargetType="Button">
+        <Setter Property="Width" Value="46" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="Foreground" Value="{DynamicResource GlassTextBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="{DynamicResource GlassHoverBrush}" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource CaptionButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Bd" Property="Background" Value="#E81123" /><Setter Property="Foreground" Value="White" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="NavItem" TargetType="ListBoxItem">

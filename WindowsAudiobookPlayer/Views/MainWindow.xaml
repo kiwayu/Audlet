@@ -5,7 +5,7 @@
         Title="Audiobook Player" Width="1200" Height="760" MinWidth="900" MinHeight="600"
         WindowStartupLocation="CenterScreen" AllowDrop="True" DragOver="Window_DragOver" Drop="Window_Drop">
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="40" GlassFrameThickness="-1" ResizeBorderThickness="6" UseAeroCaptionButtons="True" />
+        <WindowChrome CaptionHeight="40" GlassFrameThickness="-1" ResizeBorderThickness="6" UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
     <Window.Resources>
         <c:BoolToVisibility x:Key="Vis" />
@@ -35,12 +35,14 @@
 
             <Border Style="{StaticResource GlassPanel}" CornerRadius="0" BorderThickness="0,0,1,0" Grid.RowSpan="2">
                 <ListBox x:Name="Nav" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource NavItem}" SelectionChanged="Nav_SelectionChanged">
-                    <ListBoxItem Tag="Library" Content="Library" />
+                    <ListBoxItem Style="{StaticResource NavCaption}" Content="LIBRARY" />
+                    <ListBoxItem Tag="Library" Content="All books" />
                     <ListBoxItem Tag="Started" Content="Started" />
                     <ListBoxItem Tag="New" Content="New" />
                     <ListBoxItem Tag="Finished" Content="Finished" />
                     <ListBoxItem Tag="Queue" Content="Queue" />
-                    <ListBoxItem Tag="Bookmarks" Content="Bookmarks" Margin="0,16,0,2" />
+                    <ListBoxItem Style="{StaticResource NavCaption}" Content="MORE" />
+                    <ListBoxItem Tag="Bookmarks" Content="Bookmarks" />
                     <ListBoxItem Tag="Statistics" Content="Statistics" />
                     <ListBoxItem Tag="Settings" Content="Settings" />
                 </ListBox>
@@ -70,18 +72,25 @@
                         </ProgressBar>
                     </StackPanel>
                     <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="16,0" VerticalAlignment="Center">
-                        <Button Style="{StaticResource TransportButton}" Content="&#x00AB;" Click="BigBack_Click" />
-                        <Button Style="{StaticResource TransportButton}" Content="&#x2039;" Click="SmallBack_Click" Margin="8,0" />
-                        <Button AutomationProperties.AutomationId="BarPlay" Style="{StaticResource PlayButton}" Width="44" Height="44" FontSize="16" Content="{Binding Controller.IsPlaying, Converter={StaticResource PlayGlyph}}" Click="Play_Click" />
-                        <Button Style="{StaticResource TransportButton}" Content="&#x203A;" Click="SmallFwd_Click" Margin="8,0" />
-                        <Button Style="{StaticResource TransportButton}" Content="&#x00BB;" Click="BigFwd_Click" />
+                        <Button Style="{StaticResource TransportButton}" Content="{Binding Store.Settings.BigRewindSec}" ContentStringFormat="-{0}" Click="BigBack_Click" ToolTip="Big rewind" />
+                        <Button Style="{StaticResource TransportButton}" Content="{Binding Store.Settings.SmallRewindSec}" ContentStringFormat="-{0}" Click="SmallBack_Click" Margin="8,0" ToolTip="Rewind" />
+                        <Button AutomationProperties.AutomationId="BarPlay" Style="{StaticResource PlayButton}" Width="48" Height="48" FontSize="18" Content="{Binding Controller.IsPlaying, Converter={StaticResource PlayGlyph}}" Click="Play_Click" />
+                        <Button Style="{StaticResource TransportButton}" Content="{Binding Store.Settings.SmallRewindSec}" ContentStringFormat="+{0}" Click="SmallFwd_Click" Margin="8,0" ToolTip="Forward" />
+                        <Button Style="{StaticResource TransportButton}" Content="{Binding Store.Settings.BigRewindSec}" ContentStringFormat="+{0}" Click="BigFwd_Click" ToolTip="Big forward" />
                     </StackPanel>
-                    <Button Grid.Column="3" AutomationProperties.AutomationId="BarSleep" Style="{StaticResource GlassButton}" Content="{Binding Controller.SleepRemaining, Converter={StaticResource SleepGlyph}}" Click="Sleep_Click" ToolTip="Sleep timer" />
+                    <Button Grid.Column="3" AutomationProperties.AutomationId="BarSleep" Style="{StaticResource GlassButton}" Click="Sleep_Click" ToolTip="Sleep timer" Padding="10,6">
+                        <TextBlock><Run FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE708;" /><Run Text="{Binding Controller.SleepRemaining, Mode=OneWay, Converter={StaticResource SleepGlyph}}" /></TextBlock>
+                    </Button>
                 </Grid>
             </Border>
         </Grid>
 
         <TextBlock Text="Audiobook Player" Margin="16,12,0,0" VerticalAlignment="Top" Foreground="{DynamicResource GlassMutedBrush}" FontSize="12" IsHitTestVisible="False" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <Button Style="{StaticResource CaptionButton}" Content="&#xE921;" Click="Minimize_Click" ToolTip="Minimize" />
+            <Button x:Name="MaximizeButton" Style="{StaticResource CaptionButton}" Content="&#xE922;" Click="Maximize_Click" ToolTip="Maximize" />
+            <Button Style="{StaticResource CloseButton}" Content="&#xE8BB;" Click="Close_Click" ToolTip="Close" />
+        </StackPanel>
         <Border Style="{StaticResource GlassPanel}" Padding="16,8" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,56,0,0"
                 Visibility="{Binding Toast, Converter={StaticResource NotNull}}">
             <TextBlock AutomationProperties.AutomationId="Toast" Text="{Binding Toast}" />
