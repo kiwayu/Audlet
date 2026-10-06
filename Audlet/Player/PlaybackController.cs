@@ -160,18 +160,20 @@ public sealed partial class PlaybackController : ObservableObject
         Refresh();
     }
 
-    public void PrevFile()
+    // Back goes to the start of the current chapter, or the previous one when already at its start. Forward goes to the next chapter.
+    public void PrevChapter()
     {
-        if (CurrentBook is null) return;
-        var target = _player.PositionSec > 3 ? FileIndex : Math.Max(0, FileIndex - 1);
-        SeekFile(target, 0, HistoryKind.Jump);
+        if (CurrentBook is null || _timeline is null) return;
+        var t = _timeline.PrevChapterStart(FileIndex, _player.PositionSec) ?? (_player.PositionSec > 3 ? FileIndex : Math.Max(0, FileIndex - 1), 0);
+        SeekFile(t.FileIndex, t.PosSec, HistoryKind.Jump);
     }
 
-    public void NextFile()
+    public void NextChapter()
     {
-        if (CurrentBook is null) return;
-        if (FileIndex + 1 >= CurrentBook.Files.Count) { OnBookEnded(); return; }
-        SeekFile(FileIndex + 1, 0, HistoryKind.Jump);
+        if (CurrentBook is null || _timeline is null) return;
+        var t = _timeline.NextChapterStart(FileIndex, _player.PositionSec) ?? (FileIndex + 1 < CurrentBook.Files.Count ? (FileIndex + 1, 0) : null);
+        if (t is null) { OnBookEnded(); return; }
+        SeekFile(t.Value.FileIndex, t.Value.PosSec, HistoryKind.Jump);
     }
 
     public void SetSpeed(double speed)

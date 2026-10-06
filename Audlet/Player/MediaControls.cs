@@ -40,8 +40,8 @@ public sealed class MediaControls
             {
                 case SystemMediaTransportControlsButton.Play: _controller.Play(); break;
                 case SystemMediaTransportControlsButton.Pause: _controller.Pause(); break;
-                case SystemMediaTransportControlsButton.Next: _controller.NextFile(); break;
-                case SystemMediaTransportControlsButton.Previous: _controller.PrevFile(); break;
+                case SystemMediaTransportControlsButton.Next: _controller.NextChapter(); break;
+                case SystemMediaTransportControlsButton.Previous: _controller.PrevChapter(); break;
                 case SystemMediaTransportControlsButton.FastForward: _controller.Jump(_controller.Settings.SmallRewindSec); break;
                 case SystemMediaTransportControlsButton.Rewind: _controller.Jump(-_controller.Settings.SmallRewindSec); break;
             }

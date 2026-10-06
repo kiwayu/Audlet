@@ -17,8 +17,25 @@ public sealed partial class SettingsViewModel : ObservableObject
     public IReadOnlyList<string> Themes => ThemeCatalog.Names;
     public ObservableCollection<string> RootFolders { get; }
     public ObservableCollection<string> LooseFiles { get; }
+    public ObservableCollection<KeyRow> KeyRows { get; } = [];
 
-    public SettingsViewModel(MainViewModel main) { _main = main; RootFolders = new(S.RootFolders); LooseFiles = new(S.LooseFiles); }
+    public SettingsViewModel(MainViewModel main) { _main = main; RootFolders = new(S.RootFolders); LooseFiles = new(S.LooseFiles); LoadKeys(); }
+
+    private void LoadKeys()
+    {
+        KeyRows.Clear();
+        foreach (var (action, label) in Keybindings.Actions) KeyRows.Add(new KeyRow(action, label) { Gesture = Keybindings.Gesture(S, action) });
+    }
+
+    // Binding a gesture already used elsewhere takes it away from the other action, so a key never does two things.
+    public void SetKey(KeyRow row, string gesture)
+    {
+        foreach (var other in KeyRows.Where(r => r != row && r.Gesture == gesture)) { other.Gesture = ""; S.Keys[other.Action] = ""; }
+        row.Gesture = gesture; S.Keys[row.Action] = gesture;
+        Apply();
+    }
+
+    [RelayCommand] private void ResetKeys() { S.Keys = Keybindings.Defaults(); LoadKeys(); Apply(); }
 
     public int SmallRewind { get => S.SmallRewindSec; set { S.SmallRewindSec = value; Apply(); } }
     public int BigRewind { get => S.BigRewindSec; set { S.BigRewindSec = value; Apply(); } }
@@ -54,4 +71,13 @@ public sealed partial class SettingsViewModel : ObservableObject
     [RelayCommand] private async Task RemoveRoot(string folder) { S.RootFolders.Remove(folder); RootFolders.Remove(folder); await _main.RescanAsync(); }
     [RelayCommand] private async Task RemoveLoose(string file) { S.LooseFiles.Remove(file); LooseFiles.Remove(file); await _main.RescanAsync(); }
     [RelayCommand] private async Task Rescan() => await _main.RescanAsync();
+}
+
+public sealed partial class KeyRow(string action, string label) : ObservableObject
+{
+    public string Action { get; } = action;
+    public string Label { get; } = label;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Display))] private string _gesture = "";
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Display))] private bool _capturing;
+    public string Display => Capturing ? "Press a key..." : Gesture == "" ? "Not set" : Gesture;
 }

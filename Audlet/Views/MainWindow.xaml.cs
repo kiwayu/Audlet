@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using Audlet.Models;
 using Audlet.ViewModels;
 
 namespace Audlet.Views;
@@ -61,22 +62,31 @@ public partial class MainWindow : Window
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
         Vm.Controller.ResetSleep();
-        if (Keyboard.FocusedElement is TextBox) return;
+        // Text boxes keep their keys, and so does a shortcut button in Settings while it waits for a key press.
+        if (Keyboard.FocusedElement is TextBox or Button { Tag: "key" }) return;
         var c = Vm.Controller; var s = Vm.Store.Settings;
-        var shift = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift); var ctrl = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
-        switch (e.Key)
+        var key = e.Key == Key.System ? e.SystemKey : e.Key;
+        switch (key)
         {
-            case Key.Space: c.TogglePlay(); break;
-            case Key.Left: c.Jump(shift ? -s.BigRewindSec : -s.SmallRewindSec); break;
-            case Key.Right: c.Jump(shift ? s.BigRewindSec : s.SmallRewindSec); break;
-            case Key.Up: c.AdjustSpeed(0.05); break;
-            case Key.Down: c.AdjustSpeed(-0.05); break;
-            case Key.B: c.AddBookmark(""); break;
-            case Key.L when ctrl: c.Locked = !c.Locked; break;
-            case Key.Escape when Vm.Section == Section.NowPlaying: Vm.Section = Section.Library; break;
-            case Key.MediaPlayPause: c.TogglePlay(); break;
-            case Key.MediaNextTrack: c.NextFile(); break;
-            case Key.MediaPreviousTrack: c.PrevFile(); break;
+            case Key.Escape when Vm.Section == Section.NowPlaying: Vm.Section = Section.Library; e.Handled = true; return;
+            case Key.MediaPlayPause: c.TogglePlay(); e.Handled = true; return;
+            case Key.MediaNextTrack: c.NextChapter(); e.Handled = true; return;
+            case Key.MediaPreviousTrack: c.PrevChapter(); e.Handled = true; return;
+        }
+        if (Keybindings.IsModifier(key)) return;
+        switch (Keybindings.ActionFor(s, Keybindings.Format(key, Keyboard.Modifiers)))
+        {
+            case "PlayPause": c.TogglePlay(); break;
+            case "Rewind": c.Jump(-s.SmallRewindSec); break;
+            case "Forward": c.Jump(s.SmallRewindSec); break;
+            case "BigRewind": c.Jump(-s.BigRewindSec); break;
+            case "BigForward": c.Jump(s.BigRewindSec); break;
+            case "PrevChapter": c.PrevChapter(); break;
+            case "NextChapter": c.NextChapter(); break;
+            case "SpeedUp": c.AdjustSpeed(0.05); break;
+            case "SpeedDown": c.AdjustSpeed(-0.05); break;
+            case "Bookmark": c.AddBookmark(""); break;
+            case "Lock": c.Locked = !c.Locked; break;
             default: return;
         }
         e.Handled = true;

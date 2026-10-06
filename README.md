@@ -43,11 +43,15 @@ mp3, m4a, m4b, aac, ogg, opus, flac, wav, wv, wma. Chapters are read from M4B fi
 
 ## Keyboard
 
+Every in-app shortcut can be changed under Settings > Keyboard. The defaults:
+
 | Key | Action |
 |---|---|
 | Space | Play / pause |
 | Left / Right | Small rewind / forward |
 | Shift + Left / Right | Big rewind / forward |
+| Ctrl + Left | Start of the chapter, or the previous chapter when already at the start |
+| Ctrl + Right | Next chapter |
 | Up / Down | Speed up / down by 0.05 |
 | B | Add a bookmark |
 | Ctrl + L | Lock / unlock the buttons |

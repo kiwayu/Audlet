@@ -63,8 +63,8 @@ public partial class NowPlayingView : UserControl
     private void SmallFwd_Click(object s, RoutedEventArgs e) => Vm.Controller.Jump(Vm.Settings.SmallRewindSec);
     private void BigBack_Click(object s, RoutedEventArgs e) => Vm.Controller.Jump(-Vm.Settings.BigRewindSec);
     private void BigFwd_Click(object s, RoutedEventArgs e) => Vm.Controller.Jump(Vm.Settings.BigRewindSec);
-    private void PrevFile_Click(object s, RoutedEventArgs e) => Vm.Controller.PrevFile();
-    private void NextFile_Click(object s, RoutedEventArgs e) => Vm.Controller.NextFile();
+    private void PrevChapter_Click(object s, RoutedEventArgs e) => Vm.Controller.PrevChapter();
+    private void NextChapter_Click(object s, RoutedEventArgs e) => Vm.Controller.NextChapter();
     private void QuickBookmark_Click(object s, RoutedEventArgs e) => Vm.AddBookmarkCommand.Execute(null);
 
     private void Speed_Click(object s, RoutedEventArgs e) => SpeedPopup.IsOpen = true;

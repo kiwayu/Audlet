@@ -49,6 +49,24 @@ public sealed class BookTimeline
         return i < 0 ? null : _book.Chapters[i];
     }
 
+    // Start of the chapter before the current one, or of the current one when more than graceSec into it. Null with no chapters.
+    public (int FileIndex, double PosSec)? PrevChapterStart(int fileIndex, double posSec, double graceSec = 3)
+    {
+        var i = ChapterIndexAt(fileIndex, posSec);
+        if (i < 0) return null;
+        var c = _book.Chapters[i];
+        if (i > 0 && ToBookSec(fileIndex, posSec) - ToBookSec(c.FileIndex, c.StartSec) <= graceSec) c = _book.Chapters[i - 1];
+        return (c.FileIndex, c.StartSec);
+    }
+
+    // Start of the next chapter, or null when the current one is the last.
+    public (int FileIndex, double PosSec)? NextChapterStart(int fileIndex, double posSec)
+    {
+        var i = ChapterIndexAt(fileIndex, posSec) + 1;
+        if (i >= _book.Chapters.Count) return null;
+        return (_book.Chapters[i].FileIndex, _book.Chapters[i].StartSec);
+    }
+
     public (int FileIndex, double PosSec) Offset(int fileIndex, double posSec, double deltaSec) =>
         FromBookSec(ToBookSec(fileIndex, posSec) + deltaSec);
 }

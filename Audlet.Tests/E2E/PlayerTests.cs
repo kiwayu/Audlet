@@ -46,6 +46,17 @@ public class PlayerTests
     }
 
     [Fact]
+    public void ChapterButtonsSkipBetweenChapters()
+    {
+        using var app = OpenDune();
+        app.WaitFor("Play");
+        app.Invoke("NextChapter");
+        Assert.Equal("Chapter 2 of 2", app.WaitForText("ChapterLabel", t => t.StartsWith("Chapter 2"), 8000));
+        app.Invoke("PrevChapter");
+        Assert.Equal("Chapter 1 of 2", app.WaitForText("ChapterLabel", t => t.StartsWith("Chapter 1"), 8000));
+    }
+
+    [Fact]
     public void SleepButtonStartsCountdown()
     {
         using var app = OpenDune();

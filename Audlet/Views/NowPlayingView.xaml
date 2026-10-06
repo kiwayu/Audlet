@@ -152,7 +152,7 @@
                 </Grid>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <StackPanel Orientation="Horizontal" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}">
-                        <Button Style="{StaticResource TransportButton}" FontFamily="Segoe MDL2 Assets" Content="&#xE892;" Click="PrevFile_Click" ToolTip="Previous file" Margin="0,0,10,0" Visibility="{Binding Settings.ShowPrevNextFile, Converter={StaticResource Vis}}" />
+                        <Button Style="{StaticResource TransportButton}" FontFamily="Segoe MDL2 Assets" Content="&#xE892;" AutomationProperties.AutomationId="PrevChapter" Click="PrevChapter_Click" ToolTip="Start of chapter" Margin="0,0,10,0" Visibility="{Binding Settings.ShowPrevNextFile, Converter={StaticResource Vis}}" />
                         <Button Style="{StaticResource TransportButton}" Content="{Binding Settings.BigRewindSec}" ContentStringFormat="-{0}" Click="BigBack_Click" Margin="0,0,10,0" />
                         <Button AutomationProperties.AutomationId="SmallBack" Style="{StaticResource TransportButton}" Content="{Binding Settings.SmallRewindSec}" ContentStringFormat="-{0}" Click="SmallBack_Click" Margin="0,0,10,0" />
                     </StackPanel>
@@ -160,7 +160,7 @@
                     <StackPanel Orientation="Horizontal" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}">
                         <Button AutomationProperties.AutomationId="SmallForward" Style="{StaticResource TransportButton}" Content="{Binding Settings.SmallRewindSec}" ContentStringFormat="+{0}" Click="SmallFwd_Click" Margin="10,0,0,0" />
                         <Button Style="{StaticResource TransportButton}" Content="{Binding Settings.BigRewindSec}" ContentStringFormat="+{0}" Click="BigFwd_Click" Margin="10,0,0,0" />
-                        <Button Style="{StaticResource TransportButton}" FontFamily="Segoe MDL2 Assets" Content="&#xE893;" Click="NextFile_Click" ToolTip="Next file" Margin="10,0,0,0" Visibility="{Binding Settings.ShowPrevNextFile, Converter={StaticResource Vis}}" />
+                        <Button Style="{StaticResource TransportButton}" FontFamily="Segoe MDL2 Assets" Content="&#xE893;" AutomationProperties.AutomationId="NextChapter" Click="NextChapter_Click" ToolTip="Next chapter" Margin="10,0,0,0" Visibility="{Binding Settings.ShowPrevNextFile, Converter={StaticResource Vis}}" />
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,16,0,0" HorizontalAlignment="Center">

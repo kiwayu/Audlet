@@ -46,7 +46,7 @@
                     <TextBlock Style="{StaticResource Head}" Text="Playback" Grid.ColumnSpan="2" />
                     <TextBlock Grid.Row="1" Style="{StaticResource Label}" Text="Small rewind (seconds)" /><ComboBox Grid.Row="1" Grid.Column="1" Width="120" HorizontalAlignment="Left" ItemsSource="{Binding RewindChoices}" SelectedItem="{Binding SmallRewind}" />
                     <TextBlock Grid.Row="2" Style="{StaticResource Label}" Text="Big rewind (seconds)" /><ComboBox Grid.Row="2" Grid.Column="1" Width="120" HorizontalAlignment="Left" ItemsSource="{Binding RewindChoices}" SelectedItem="{Binding BigRewind}" />
-                    <TextBlock Grid.Row="3" Style="{StaticResource Label}" Text="Previous and next file buttons" /><CheckBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding ShowPrevNext}" />
+                    <TextBlock Grid.Row="3" Style="{StaticResource Label}" Text="Previous and next chapter buttons" /><CheckBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding ShowPrevNext}" />
                     <TextBlock Grid.Row="4" Style="{StaticResource Label}" Text="Auto-rewind after a pause" /><CheckBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AutoRewind}" />
                     <TextBlock Grid.Row="5" Style="{StaticResource Label}" Text="Skip silence" /><CheckBox Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding SkipSilence}" />
                     <TextBlock Grid.Row="6" Style="{StaticResource Label}" Text="Mono" /><CheckBox Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding Mono}" />
@@ -78,6 +78,26 @@
                     <TextBlock Grid.Row="2" Style="{StaticResource Label}" Text="Global hotkeys (Ctrl+Alt+Space, Ctrl+Alt+Left/Right, Shift for big jumps)" TextWrapping="Wrap" /><CheckBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding GlobalHotkeys}" />
                     <TextBlock Grid.Row="3" Style="{StaticResource Label}" Text="Pause when the audio device disappears" /><CheckBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding PauseOnDeviceLoss}" />
                 </Grid>
+            </Border>
+
+            <Border Style="{StaticResource GlassPanel}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Head}" Text="Keyboard" />
+                    <TextBlock Style="{StaticResource Label}" Foreground="{DynamicResource GlassMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,8" Text="Click a shortcut, then press the keys you want. Press Esc to keep the current one." />
+                    <ItemsControl ItemsSource="{Binding KeyRows}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,2">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="260" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource Label}" Text="{Binding Label}" />
+                                    <Button Grid.Column="1" Style="{StaticResource GlassButton}" Tag="key" MinWidth="140" HorizontalAlignment="Left" Content="{Binding Display}"
+                                            AutomationProperties.AutomationId="{Binding Action}" Click="KeyButton_Click" PreviewKeyDown="KeyButton_PreviewKeyDown" LostKeyboardFocus="KeyButton_LostFocus" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Button Style="{StaticResource GlassButton}" Content="Reset to defaults" HorizontalAlignment="Left" Margin="0,8,0,0" Command="{Binding ResetKeysCommand}" />
+                </StackPanel>
             </Border>
 
             <Border Style="{StaticResource GlassPanel}">

@@ -20,7 +20,8 @@ public sealed class Settings
     public List<string> LooseFiles { get; set; } = [];   // audio files dropped onto the window, each its own book
     public int SmallRewindSec { get; set; } = 10;
     public int BigRewindSec { get; set; } = 60;
-    public bool ShowPrevNextFile { get; set; } = true;
+    public bool ShowPrevNextFile { get; set; } = true;   // previous and next chapter buttons
+    public Dictionary<string, string> Keys { get; set; } = Keybindings.Defaults();   // action name to gesture, see Keybindings
     public bool AutoRewind { get; set; } = true;
     public bool SkipSilence { get; set; }
     public double DefaultSpeed { get; set; } = 1.0;
