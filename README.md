@@ -41,6 +41,10 @@ Release build: `tools\publish.ps1` produces a self-contained folder in `dist\Aud
 
 mp3, m4a, m4b, aac, ogg, opus, flac, wav, wv, wma. Chapters are read from M4B files and ID3 chapter frames. Covers come from embedded art or a jpg, png, or webp file in the book folder.
 
+## Website
+
+`site/` is the static homepage, served by Cloudflare Pages straight from this repo: production branch `main`, no build command, output directory `site`. The download button reads the latest release from the GitHub API and falls back to the releases page when it cannot.
+
 ## Keyboard
 
 Every in-app shortcut can be changed under Settings > Keyboard. The defaults:

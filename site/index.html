@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Audlet</title>
+  <meta name="description" content="Audlet is a desktop audiobook player for Windows 11. Point it at your folders and it remembers your place in every book.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#F5F5F3">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Audlet">
+  <meta property="og:description" content="A desktop audiobook player for Windows 11. Point it at your folders and it remembers your place in every book.">
+  <meta property="og:image" content="https://audlet.pages.dev/screenshots/now-playing.png">
+  <meta property="og:url" content="https://audlet.pages.dev/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&family=Hanken+Grotesk:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="nav" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="favicon.png" alt="" width="24" height="24">Audlet</a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#themes">Themes</a></li>
+      <li><a href="#download">Download</a></li>
+      <li><a href="#faq">Questions</a></li>
+      <li><a href="https://github.com/kiwayu/Audlet" rel="noopener">GitHub</a></li>
+    </ul>
+    <a class="btn btn-ink btn-sm" id="dl-nav" href="https://github.com/kiwayu/Audlet/releases/latest" rel="noopener">Download</a>
+  </div>
+</nav>
+
+<main class="wrap" id="top">
+  <header class="hero">
+    <h1><span class="mark"><img src="favicon.png" alt=""></span>Audlet</h1>
+    <p class="sub">A Windows player for the audiobooks you already own. It keeps your place in every book, down to the chapter.</p>
+    <div>
+      <div class="cta">
+        <a class="btn btn-ink" id="dl" href="https://github.com/kiwayu/Audlet/releases/latest" rel="noopener"><span id="dl-label">Download for Windows</span><span class="ver" id="dl-ver"></span></a>
+        <ul class="meta"><li>Free</li><li>Windows 11, 64-bit</li><li>Nothing else to install</li></ul>
+      </div>
+      <p class="platform-note" id="platform-note" hidden>Audlet runs on Windows. Save the installer for your PC.</p>
+    </div>
+  </header>
+
+  <div class="shot" id="shot">
+    <img src="screenshots/now-playing.png" width="1200" height="760" alt="Audlet's Now Playing view: the chapter list on the left, the book cover, title and author, and a control panel with the seek bar, rewind, play and forward buttons" fetchpriority="high">
+  </div>
+
+  <div class="statement" id="about">
+    <p data-words="A folder of audio files is a book. A single M4B is a book. There is nothing else to set up. Audlet keeps your position, chapters, bookmarks and listening time for each one. No account, nothing uploaded."></p>
+  </div>
+
+  <div class="caps">
+    <ul>
+      <li>Chapters</li><li>Bookmarks</li><li>Sleep timer</li><li>Speed 0.5x to 3x</li><li>Equalizer</li><li>Skip silence</li><li>Tray playback</li><li>Media keys</li><li>Global hotkeys</li><li>Series</li><li>Covers online</li><li>Statistics</li><li>Queue</li><li>Auto-rewind</li><li>Taskbar controls</li>
+    </ul>
+  </div>
+
+  <section id="features">
+    <div class="head">
+      <h2>Made for long books</h2>
+      <p>A novel takes weeks. The player has to remember where you were, let you jump back a minute, and keep going while you do other things.</p>
+    </div>
+    <div class="list">
+      <div class="row">
+        <h3>Your folders are the library</h3>
+        <p>Drop folders or files onto the window. Rename books, make folders for genres or authors, and move things around inside the app. Covers and blurbs can be fetched from Audible, Apple Books or Open Library in a click.</p>
+      </div>
+      <div class="row">
+        <h3>Chapters, bookmarks, history</h3>
+        <p>Chapter ticks on the seek bar, notes on bookmarks, and a history that undoes an accidental jump.</p>
+      </div>
+      <div class="row">
+        <h3>Speed, equalizer, sleep timer</h3>
+        <p>Speed from 0.5x to 3x with pitch preserved, a five-band equalizer, volume boost, silence skipping, and a sleep timer that fades out and asks where you dozed off.</p>
+      </div>
+      <div class="row">
+        <h3>Part of the desktop</h3>
+        <p>Closing the window keeps the book playing from the tray. Media keys, global hotkeys and taskbar controls all work, and playback pauses when your headphones unplug.</p>
+      </div>
+      <div class="row">
+        <h3>Series kept in order</h3>
+        <p>Series are read from tags or folder names, the card shows "3 of 6", and the next book is offered the moment one ends.</p>
+      </div>
+    </div>
+    <div class="shot library">
+      <img src="screenshots/library.png" width="1200" height="760" alt="Audlet's library: a sidebar, book cards with covers and progress bars, and the player bar along the bottom" loading="lazy">
+    </div>
+  </section>
+
+  <section id="themes">
+    <div class="head">
+      <h2>Ten themes</h2>
+      <p>Dark and light glass follow Windows. The other eight are for people who already have a favourite.</p>
+    </div>
+    <div class="themes">
+      <span class="theme"><span class="swatch t1"></span>Dark glass</span>
+      <span class="theme"><span class="swatch t2"></span>Light glass</span>
+      <span class="theme"><span class="swatch t3"></span>Catppuccin Mocha</span>
+      <span class="theme"><span class="swatch t4"></span>Catppuccin Latte</span>
+      <span class="theme"><span class="swatch t5"></span>Nord</span>
+      <span class="theme"><span class="swatch t6"></span>Dracula</span>
+      <span class="theme"><span class="swatch t7"></span>Tokyo Night</span>
+      <span class="theme"><span class="swatch t8"></span>Rose Pine</span>
+      <span class="theme"><span class="swatch t9"></span>Gruvbox Dark</span>
+      <span class="theme"><span class="swatch t10"></span>Solarized Dark</span>
+    </div>
+  </section>
+
+  <section id="download">
+    <div class="dl">
+      <div>
+        <h2>Get Audlet</h2>
+        <p class="lead">One installer, under a minute, nothing else to install. It goes into your user account only and tells you when a newer version is out.</p>
+        <a class="btn btn-ink" id="dl2" href="https://github.com/kiwayu/Audlet/releases/latest" rel="noopener"><span id="dl2-label">Download for Windows</span><span class="ver" id="dl2-ver"></span></a>
+        <br><a class="all" href="https://github.com/kiwayu/Audlet/releases" rel="noopener">All releases and notes on GitHub</a>
+      </div>
+      <ul class="reqs">
+        <li><b>Windows 11, 64-bit</b><span>Windows 10 is not supported.</span></li>
+        <li><b>MP3, M4A, M4B, FLAC, Opus, OGG, WAV and WavPack</b><span>Chapters and covers are read from the files themselves.</span></li>
+        <li><b>SmartScreen may ask once</b><span>The installer is not code-signed yet. Choose "More info", then "Run anyway".</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="head">
+      <h2>Common questions</h2>
+    </div>
+    <div class="faq">
+      <details><summary>Where does my listening progress live?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></summary><p>In a small folder under your Windows user profile, as plain JSON files. Nothing leaves your PC. Delete the folder and Audlet starts fresh.</p></details>
+      <details><summary>Do I need to install .NET first?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></summary><p>No. The installer carries everything it needs.</p></details>
+      <details><summary>Does it play Audible files?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></summary><p>It plays open formats: MP3, M4A, M4B, FLAC, Opus, OGG, WAV and WavPack. Protected AAX files are not supported.</p></details>
+      <details><summary>Is it free?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></summary><p>Yes. There is no trial, no subscription and no account.</p></details>
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      <div class="big">Audlet</div>
+      <p>Your audiobooks, played properly.</p>
+      <small>© 2026 Audlet</small>
+    </div>
+    <div class="links"><a href="#features">Features</a><a href="#download">Download</a><a href="https://github.com/kiwayu/Audlet" rel="noopener">GitHub</a><a href="https://github.com/kiwayu/Audlet/releases" rel="noopener">Releases</a></div>
+  </footer>
+</main>
+<script src="main.js"></script>
+</body>
+</html>
