@@ -112,15 +112,20 @@ public sealed class CoverImage : IValueConverter
     public object? Convert(object v, Type t, object p, CultureInfo c)
     {
         if (v is not string path || !File.Exists(path)) return null;
-        var img = new BitmapImage();
-        img.BeginInit();
-        img.CacheOption = BitmapCacheOption.OnLoad;
-        img.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-        img.UriSource = new Uri(path);
-        if (!Full) img.DecodePixelWidth = 320;
-        img.EndInit();
-        img.Freeze();
-        return img;
+        // A damaged file must show as "no cover", never take the window down with it.
+        try
+        {
+            var img = new BitmapImage();
+            img.BeginInit();
+            img.CacheOption = BitmapCacheOption.OnLoad;
+            img.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            img.UriSource = new Uri(path);
+            if (!Full) img.DecodePixelWidth = 320;
+            img.EndInit();
+            img.Freeze();
+            return img;
+        }
+        catch (Exception) { return null; }
     }
     public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
 }

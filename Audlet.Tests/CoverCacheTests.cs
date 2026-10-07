@@ -44,6 +44,33 @@ public class CoverCacheTests : IDisposable
     }
 
     [Fact]
+    public void DamagedCoverFileShowsAsNoCover()
+    {
+        // A JPEG header followed by rubbish, like a file cut off mid-write.
+        var path = Path.Combine(_dir, "broken.jpg");
+        File.WriteAllBytes(path, [0xFF, 0xD8, 0xFF, 0xE0, .. new byte[4000]]);
+        var converter = new Audlet.Converters.CoverImage();
+        Assert.Null(converter.Convert(path, typeof(object), null!, System.Globalization.CultureInfo.InvariantCulture));
+    }
+
+    [Fact]
+    public void DamagedFolderCoverFallsBackToEmbedded()
+    {
+        var bookDir = Path.Combine(_dir, "damaged");
+        Directory.CreateDirectory(bookDir);
+        File.WriteAllBytes(Path.Combine(bookDir, "cover.jpg"), [0xFF, 0xD8, 0xFF, 0xE0, .. new byte[4000]]);
+        File.WriteAllText(Path.Combine(bookDir, "01.mp3"), "");
+        var good = File.ReadAllBytes(MakePng(_dir, "embedded.png", 200));
+        var cache = new CoverCache(Path.Combine(_dir, "covers"), embedded: _ => good);
+        var book = new Book { Id = bookDir, Files = [new AudioFile(Path.Combine(bookDir, "01.mp3"), 1, "x")] };
+
+        var path = cache.Ensure(book);
+
+        Assert.NotNull(path);
+        Assert.Empty(Directory.GetFiles(Path.Combine(_dir, "covers"), "*.part"));
+    }
+
+    [Fact]
     public void NoImageGivesNull()
     {
         var bookDir = Path.Combine(_dir, "plain");

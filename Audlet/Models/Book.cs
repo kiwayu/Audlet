@@ -42,7 +42,8 @@ public sealed class Book
     public int? DozeFileIndex { get; set; }        // where the sleep fade began, offered as a rewind target on the next play
     public double? DozePositionSec { get; set; }
 
-    public string CardSubline => SeriesLabel ?? Breadcrumb;
+    // The folder path is only worth showing when it says something the author line does not.
+    public string CardSubline => SeriesLabel ?? (string.Equals(Breadcrumb, Author, StringComparison.OrdinalIgnoreCase) ? "" : Breadcrumb);
     public double TotalDurationSec => Files.Sum(f => f.DurationSec);
     public double BookPositionSec => Files.Take(FileIndex).Sum(f => f.DurationSec) + PositionSec;
 }

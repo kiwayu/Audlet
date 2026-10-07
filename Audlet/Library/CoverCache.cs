@@ -25,18 +25,39 @@ public sealed class CoverCache
     {
         var target = PathFor(book);
         if (File.Exists(target)) return target;
-        byte[]? bytes = null;
-        if (Directory.Exists(book.Id) && AudioExtensions.PickCoverFile(book.Id) is { } file)
-            bytes = File.ReadAllBytes(file);
-        bytes ??= book.Files.Count > 0 ? _embedded(book.Files[0].Path) : null;
-        if (bytes is null) return null;
-        try
+        // A damaged folder image falls through to the embedded one rather than leaving the book without a cover.
+        foreach (var bytes in Candidates(book))
         {
-            var decoder = BitmapDecoder.Create(new MemoryStream(bytes), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-            Save(decoder.Frames[0], target);
-            return target;
+            try
+            {
+                var decoder = BitmapDecoder.Create(new MemoryStream(bytes), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                Save(decoder.Frames[0], target);
+                return target;
+            }
+            catch (Exception) { }
+            // A JPEG with a damaged tail still decodes when scaled during decoding, so try that before giving up on it.
+            try { Save(DecodeScaled(bytes), target); return target; }
+            catch (Exception) { }
         }
-        catch (Exception) { return null; }
+        return null;
+    }
+
+    private static BitmapSource DecodeScaled(byte[] bytes)
+    {
+        var img = new BitmapImage();
+        img.BeginInit();
+        img.CacheOption = BitmapCacheOption.OnLoad;
+        img.StreamSource = new MemoryStream(bytes);
+        img.DecodePixelWidth = MaxSide;
+        img.EndInit();
+        img.Freeze();
+        return img;
+    }
+
+    private IEnumerable<byte[]> Candidates(Book book)
+    {
+        if (Directory.Exists(book.Id) && AudioExtensions.PickCoverFile(book.Id) is { } file) yield return File.ReadAllBytes(file);
+        if (book.Files.Count > 0 && _embedded(book.Files[0].Path) is { } embedded) yield return embedded;
     }
 
     public void Replace(Book book, string imagePath)
@@ -51,14 +72,20 @@ public sealed class CoverCache
         Save(decoder.Frames[0], PathFor(book));
     }
 
-    private void Save(BitmapFrame frame, string target)
+    private void Save(BitmapSource frame, string target)
     {
         Directory.CreateDirectory(_folder);
         var scale = Math.Min(1.0, (double)MaxSide / Math.Max(frame.PixelWidth, frame.PixelHeight));
         BitmapSource src = scale < 1.0 ? new TransformedBitmap(frame, new ScaleTransform(scale, scale)) : frame;
         var enc = new JpegBitmapEncoder { QualityLevel = 85 };
         enc.Frames.Add(BitmapFrame.Create(src));
-        using var fs = File.Create(target);
-        enc.Save(fs);
+        // Write beside the target and move into place, so a crash mid-write never leaves a half file behind.
+        var temp = target + ".part";
+        try
+        {
+            using (var fs = File.Create(temp)) enc.Save(fs);
+            File.Move(temp, target, overwrite: true);
+        }
+        catch (Exception) { File.Delete(temp); throw; }
     }
 }
