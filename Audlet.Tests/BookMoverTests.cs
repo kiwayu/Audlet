@@ -59,6 +59,20 @@ public class BookMoverTests : IDisposable
         Assert.Equal(Path.Combine(_root, "Piranesi (Clarke).m4b"), BookMover.Rename(book, "Piranesi (Clarke)"));
     }
 
+    [Theory]
+    [InlineData(@"..\outside")]
+    [InlineData(@"C:\elsewhere")]
+    [InlineData("sub/dir")]
+    [InlineData("..")]
+    public void RejectsNamesThatAreNotASingleSegment(string name)
+    {
+        var dir = Path.Combine(_root, "Keep Me");
+        Directory.CreateDirectory(dir);
+        var book = new Book { Id = dir, Files = [new AudioFile(Path.Combine(dir, "01.mp3"), 1, "x")] };
+        Assert.Throws<ArgumentException>(() => BookMover.Rename(book, name));
+        Assert.True(Directory.Exists(dir));
+    }
+
     [Fact]
     public void RefusesToOverwrite()
     {

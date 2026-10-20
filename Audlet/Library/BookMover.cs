@@ -20,6 +20,9 @@ public static class BookMover
 
     public static string Rename(Book book, string newName)
     {
+        // The name becomes one path segment, never a path of its own.
+        if (string.IsNullOrWhiteSpace(newName) || newName.Trim() is "." or ".." || newName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            throw new ArgumentException("That name cannot be used for a file or folder.");
         var parent = Path.GetDirectoryName(book.Id)!;
         var target = Directory.Exists(book.Id) ? Path.Combine(parent, newName) : Path.Combine(parent, newName + Path.GetExtension(book.Id));
         Relocate(book, target);

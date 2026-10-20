@@ -32,15 +32,19 @@ public static class UpdateChecker
         using var doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
         if (!root.TryGetProperty("tag_name", out var tag) || !TryParseVersion(tag.GetString(), out var version)) return null;
+        // Both links are opened with the shell, so only release links on GitHub itself are accepted.
         var page = root.TryGetProperty("html_url", out var h) ? h.GetString() ?? "" : "";
+        if (!IsReleaseLink(page)) return null;
         string? installer = null;
         if (root.TryGetProperty("assets", out var assets))
             foreach (var a in assets.EnumerateArray())
                 if (a.TryGetProperty("name", out var n) && (n.GetString() ?? "").EndsWith("Setup" + "-" + version + ".exe", StringComparison.OrdinalIgnoreCase)
                     || a.TryGetProperty("name", out n) && (n.GetString() ?? "").StartsWith("Audlet-Setup", StringComparison.OrdinalIgnoreCase))
-                    installer = a.TryGetProperty("browser_download_url", out var u) ? u.GetString() : null;
+                    installer = a.TryGetProperty("browser_download_url", out var u) && u.GetString() is { } link && IsReleaseLink(link) ? link : null;
         return new UpdateInfo(version, page, installer);
     }
+
+    private static bool IsReleaseLink(string url) => url.StartsWith("https://github.com/kiwayu/Audlet/", StringComparison.OrdinalIgnoreCase);
 
     public static bool TryParseVersion(string? tag, out Version version)
     {

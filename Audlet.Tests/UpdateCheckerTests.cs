@@ -15,16 +15,26 @@ public class UpdateCheckerTests
     }
 
     [Fact]
+    public void OnlyAcceptsReleaseLinksOnGitHub()
+    {
+        var json = """{"tag_name":"v9.0.0","html_url":"https://github.com/kiwayu/Audlet/releases/tag/v9.0.0","assets":[{"name":"Audlet-Setup-9.0.0.exe","browser_download_url":"file:///C:/evil.exe"}]}""";
+        var info = UpdateChecker.Parse(json);
+        Assert.NotNull(info);
+        Assert.Null(info.InstallerUrl);
+        Assert.Null(UpdateChecker.Parse("""{"tag_name":"v9.0.0","html_url":"https://example.com/x","assets":[]}"""));
+    }
+
+    [Fact]
     public void RejectsJunkTags() => Assert.False(UpdateChecker.TryParseVersion("latest", out var v));
 
     [Fact]
     public void ParsesReleaseAndFindsInstaller()
     {
-        var json = """{"tag_name":"v1.1.0","html_url":"https://github.com/kiwayu/Audlet/releases/tag/v1.1.0","assets":[{"name":"Audlet-Setup-1.1.0.exe","browser_download_url":"https://example.test/Audlet-Setup-1.1.0.exe"}]}""";
+        var json = """{"tag_name":"v1.1.0","html_url":"https://github.com/kiwayu/Audlet/releases/tag/v1.1.0","assets":[{"name":"Audlet-Setup-1.1.0.exe","browser_download_url":"https://github.com/kiwayu/Audlet/releases/download/v1.1.0/Audlet-Setup-1.1.0.exe"}]}""";
         var info = UpdateChecker.Parse(json)!;
         Assert.Equal(new Version(1, 1, 0), info.Version);
         Assert.EndsWith("/v1.1.0", info.PageUrl);
-        Assert.Equal("https://example.test/Audlet-Setup-1.1.0.exe", info.InstallerUrl);
+        Assert.Equal("https://github.com/kiwayu/Audlet/releases/download/v1.1.0/Audlet-Setup-1.1.0.exe", info.InstallerUrl);
     }
 
     [Fact]
