@@ -23,6 +23,8 @@ A desktop audiobook player for Windows 11 with a frosted-glass interface. Point 
 - Chapter ticks on the seek bar with the chapter name on hover
 - Series detection from tags or folder names, "Dune 3 of 6" on the card, and the next book offered when one finishes
 - Checks GitHub for a newer version on startup and offers the download
+- Back up the library, settings, statistics and covers to a zip and restore them later; a copy of the data files from each of the last seven days is kept automatically
+- Unhandled errors are written to `errors.log` in the data folder, which Settings can open
 - Themes: dark and light glass that follow Windows, plus Catppuccin Mocha and Latte, Nord, Dracula, Tokyo Night, Rose Pine, Gruvbox Dark, and Solarized Dark
 
 ## Building

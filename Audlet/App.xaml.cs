@@ -16,6 +16,9 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        DispatcherUnhandledException += (_, a) => ErrorLog.Write(AppPaths.Root, "ui", a.Exception);
+        AppDomain.CurrentDomain.UnhandledException += (_, a) => { if (a.ExceptionObject is Exception ex) ErrorLog.Write(AppPaths.Root, "app", ex); };
+        TaskScheduler.UnobservedTaskException += (_, a) => { ErrorLog.Write(AppPaths.Root, "task", a.Exception); a.SetObserved(); };
         var missing = NativeLibraries.Missing();
         if (missing.Count > 0)
         {
@@ -26,6 +29,7 @@ public partial class App : Application
             return;
         }
         AppPaths.MigrateLegacy();
+        try { Backup.Daily(AppPaths.Root, DateTime.Today); } catch (Exception ex) { ErrorLog.Write(AppPaths.Root, "backup", ex); }
         var store = new AppStore(AppPaths.Root);
         store.Load();
         ThemeService.Start(() => store.Settings.Theme);

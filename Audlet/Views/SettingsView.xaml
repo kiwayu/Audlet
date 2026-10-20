@@ -82,6 +82,18 @@
 
             <Border Style="{StaticResource GlassPanel}" Margin="0,0,0,16">
                 <StackPanel>
+                    <TextBlock Style="{StaticResource Head}" Text="Data" />
+                    <TextBlock Style="{StaticResource Label}" Foreground="{DynamicResource GlassMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,8" Text="Your library, settings and statistics live in one folder on this PC. A copy from each of the last seven days is kept there too, and any crash is written to errors.log." />
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource GlassButton}" Content="Back up..." Command="{Binding BackUpCommand}" />
+                        <Button Style="{StaticResource GlassButton}" Content="Restore..." Command="{Binding RestoreCommand}" Margin="8,0,0,0" />
+                        <Button Style="{StaticResource GlassButton}" Content="Open folder" Command="{Binding OpenDataFolderCommand}" Margin="8,0,0,0" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource GlassPanel}" Margin="0,0,0,16">
+                <StackPanel>
                     <TextBlock Style="{StaticResource Head}" Text="Keyboard" />
                     <TextBlock Style="{StaticResource Label}" Foreground="{DynamicResource GlassMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,8" Text="Click a shortcut, then press the keys you want. Press Esc to keep the current one." />
                     <ItemsControl ItemsSource="{Binding KeyRows}">

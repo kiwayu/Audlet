@@ -1,7 +1,10 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Diagnostics;
+using System.Windows;
 using Microsoft.Win32;
+using Audlet.Data;
 using Audlet.Models;
 using Audlet.Views;
 
@@ -71,6 +74,35 @@ public sealed partial class SettingsViewModel : ObservableObject
     [RelayCommand] private async Task RemoveRoot(string folder) { S.RootFolders.Remove(folder); RootFolders.Remove(folder); await _main.RescanAsync(); }
     [RelayCommand] private async Task RemoveLoose(string file) { S.LooseFiles.Remove(file); LooseFiles.Remove(file); await _main.RescanAsync(); }
     [RelayCommand] private async Task Rescan() => await _main.RescanAsync();
+
+    [RelayCommand]
+    private void BackUp()
+    {
+        var dlg = new SaveFileDialog { Title = "Save a backup", Filter = "Zip archive|*.zip", FileName = "Audlet-backup-" + DateTime.Today.ToString("yyyy-MM-dd") + ".zip" };
+        if (dlg.ShowDialog() != true) return;
+        _main.Store.SaveNow();
+        try { Backup.Create(AppPaths.Root, dlg.FileName); _main.ShowToast("Backup saved"); }
+        catch (Exception ex) { ErrorLog.Write(AppPaths.Root, "backup", ex); _main.ShowToast("Could not save the backup: " + ex.Message); }
+    }
+
+    [RelayCommand]
+    private void Restore()
+    {
+        var dlg = new OpenFileDialog { Title = "Restore a backup", Filter = "Zip archive|*.zip" };
+        if (dlg.ShowDialog() != true) return;
+        var answer = MessageBox.Show("Replace your library, settings and statistics with this backup? Audlet will restart.", "Restore", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+        if (answer != MessageBoxResult.OK) return;
+        try
+        {
+            Backup.Restore(AppPaths.Root, dlg.FileName);
+            _main.Store.Load();
+            Process.Start(new ProcessStartInfo(Environment.ProcessPath!) { UseShellExecute = true });
+            Application.Current.Shutdown();
+        }
+        catch (Exception ex) { ErrorLog.Write(AppPaths.Root, "restore", ex); _main.ShowToast("Could not restore: " + ex.Message); }
+    }
+
+    [RelayCommand] private void OpenDataFolder() => Process.Start("explorer.exe", AppPaths.Root);
 }
 
 public sealed partial class KeyRow(string action, string label) : ObservableObject
