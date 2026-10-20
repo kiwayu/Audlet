@@ -78,6 +78,34 @@ public class BackupTests : IDisposable
     }
 
     [Fact]
+    public void DailyAlsoWritesAZipToTheSecondFolder()
+    {
+        var root = Root("twofold");
+        var second = Path.Combine(_dir, "synced");
+        Directory.CreateDirectory(second);
+        for (var i = 0; i < 9; i++) Backup.Daily(root, new DateTime(2026, 11, 1).AddDays(i), second);
+
+        var zips = Directory.GetFiles(second, "Audlet-backup-*.zip").Select(Path.GetFileName).OrderBy(n => n).ToList();
+        Assert.Equal(Backup.KeepDays, zips.Count);
+        Assert.Equal("Audlet-backup-2026-11-03.zip", zips[0]);
+    }
+
+    [Fact]
+    public void RestoreKeepsACopyOfWhatItReplaces()
+    {
+        var root = Root("keep");
+        var zip = Path.Combine(_dir, "incoming.zip");
+        Backup.Create(Root("other"), zip);
+        File.WriteAllText(Path.Combine(root, "settings.json"), "{\"theme\":\"Dracula\"}");
+
+        Backup.Restore(root, zip);
+
+        var snapshot = Directory.GetDirectories(Backup.DailyFolder(root)).Single(d => d.Contains("before-restore"));
+        Assert.Equal("{\"theme\":\"Dracula\"}", File.ReadAllText(Path.Combine(snapshot, "settings.json")));
+        Assert.Equal("{\"theme\":\"Nord\"}", File.ReadAllText(Path.Combine(root, "settings.json")));
+    }
+
+    [Fact]
     public void ErrorLogAppendsAndStaysBounded()
     {
         var root = Path.Combine(_dir, "log");

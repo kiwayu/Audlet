@@ -15,6 +15,16 @@ public class UpdateCheckerTests
     }
 
     [Fact]
+    public void ReadsInstallerSizeAndChecksumAsset()
+    {
+        var json = """{"tag_name":"v2.0.0","html_url":"https://github.com/kiwayu/Audlet/releases/tag/v2.0.0","assets":[{"name":"Audlet-Setup-2.0.0.exe","size":55000000,"browser_download_url":"https://github.com/kiwayu/Audlet/releases/download/v2.0.0/Audlet-Setup-2.0.0.exe"},{"name":"Audlet-Setup-2.0.0.exe.sha256","size":80,"browser_download_url":"https://github.com/kiwayu/Audlet/releases/download/v2.0.0/Audlet-Setup-2.0.0.exe.sha256"}]}""";
+        var info = UpdateChecker.Parse(json);
+        Assert.NotNull(info);
+        Assert.Equal(55000000, info.InstallerSize);
+        Assert.EndsWith(".sha256", info.ShaUrl);
+    }
+
+    [Fact]
     public void OnlyAcceptsReleaseLinksOnGitHub()
     {
         var json = """{"tag_name":"v9.0.0","html_url":"https://github.com/kiwayu/Audlet/releases/tag/v9.0.0","assets":[{"name":"Audlet-Setup-9.0.0.exe","browser_download_url":"file:///C:/evil.exe"}]}""";

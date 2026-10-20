@@ -1,5 +1,6 @@
 using System.Net.Http;
 using System.Text.Json;
+using Audlet.Data;
 using System.Text.RegularExpressions;
 
 namespace Audlet.Library;
@@ -10,9 +11,14 @@ public sealed record CoverSearchResult(IReadOnlyList<CoverCandidate> Hits, IRead
 // Looks up covers and blurbs on Open Library and Google Books. Parsing is separate from fetching so it can be tested offline.
 public static class CoverSearch
 {
-    private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(25) };
+    private static HttpClient Http => Net.Http;
 
-    static CoverSearch() => Http.DefaultRequestHeaders.UserAgent.ParseAdd("Audlet/1.0 (audiobook player)");
+    // Images are only fetched from the hosts the four sources actually use.
+    private static readonly string[] ImageHosts = ["media-amazon.com", "ssl-images-amazon.com", "mzstatic.com", "covers.openlibrary.org", "books.google.com", "googleusercontent.com"];
+
+    public static bool IsAllowedImageUrl(string url) =>
+        Uri.TryCreate(url, UriKind.Absolute, out var u) && u.Scheme == Uri.UriSchemeHttps
+        && ImageHosts.Any(h => u.Host.Equals(h, StringComparison.OrdinalIgnoreCase) || u.Host.EndsWith("." + h, StringComparison.OrdinalIgnoreCase));
 
     public static async Task<CoverSearchResult> SearchAsync(string title, string author, CancellationToken ct = default)
     {
@@ -35,7 +41,11 @@ public static class CoverSearch
         return new CoverSearchResult(results, warnings);
     }
 
-    public static async Task<byte[]> DownloadAsync(string url, CancellationToken ct = default) => await Http.GetByteArrayAsync(url, ct);
+    public static async Task<byte[]> DownloadAsync(string url, CancellationToken ct = default)
+    {
+        if (!IsAllowedImageUrl(url)) throw new InvalidOperationException("That image is not on one of the known cover sources.");
+        return await Http.GetByteArrayAsync(url, ct);
+    }
 
     private static async Task<IReadOnlyList<CoverCandidate>> SearchAudibleAsync(string title, string author, CancellationToken ct)
     {

@@ -11,6 +11,12 @@ if ($iscc) {
   $version = ([xml](Get-Content (Join-Path $root 'Audlet\Audlet.csproj'))).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
   & $iscc "/DAppVersion=$version" (Join-Path $PSScriptRoot 'installer.iss') | Select-Object -Last 1
   Write-Host "Installer written to $(Join-Path $root 'dist')"
+  $setup = Get-ChildItem (Join-Path $root 'dist') -Filter 'Audlet-Setup-*.exe' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+  if ($setup) {
+    $hash = (Get-FileHash $setup.FullName -Algorithm SHA256).Hash.ToLower()
+    "$hash  $($setup.Name)" | Set-Content "$($setup.FullName).sha256" -Encoding ascii
+    Write-Host "Checksum written to $($setup.FullName).sha256"
+  }
 } else {
   Write-Host 'Inno Setup not found; skipped the installer. Install it with: winget install JRSoftware.InnoSetup'
 }

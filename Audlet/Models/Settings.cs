@@ -31,6 +31,8 @@ public sealed class Settings
     public double Balance { get; set; }
     public bool CloseToTray { get; set; } = true;
     public bool CheckForUpdates { get; set; } = true;
+    public bool AllowCoverLookup { get; set; } = true;   // the only other thing that goes online: title and author, on request
+    public string? BackupFolder { get; set; }            // a second place for the daily backup zip, such as a synced folder
     public bool GlobalHotkeys { get; set; } = true;
     public bool PauseOnDeviceLoss { get; set; } = true;
     public static readonly double[] SpeedPresets = [1.0, 1.25, 1.5, 1.75, 2.0];

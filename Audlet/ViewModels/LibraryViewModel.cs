@@ -126,6 +126,7 @@ public sealed partial class LibraryViewModel : ObservableObject
     [RelayCommand]
     private async Task FindCover(Book b)
     {
+        if (!_main.Store.Settings.AllowCoverLookup) { _main.ShowToast("Online cover lookup is switched off in Settings"); return; }
         var dlg = new CoverSearchDialog(b.Title, b.Author);
         if (dlg.ShowDialog() != true || dlg.Chosen is not { } pick) return;
         try

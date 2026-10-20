@@ -20,6 +20,8 @@ public sealed partial class MainViewModel : ObservableObject
     [ObservableProperty] private string? _toast;
     [ObservableProperty] private bool _firstRun;
     [ObservableProperty] private UpdateInfo? _update;
+    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(OpenUpdateCommand))] private bool _updateBusy;
+    [ObservableProperty] private string _updateLabel = "Download";
 
     public event Action? LibraryChanged;
     public event Action<bool>? HotkeysToggled;
@@ -40,11 +42,31 @@ public sealed partial class MainViewModel : ObservableObject
         Update = await UpdateChecker.CheckAsync();
     }
 
-    [RelayCommand] private void OpenUpdate()
+    private bool CanOpenUpdate() => !UpdateBusy;
+
+    // The installer is fetched and checked against the size and checksum GitHub publishes before it is started.
+    [RelayCommand(CanExecute = nameof(CanOpenUpdate))]
+    private async Task OpenUpdate()
     {
         if (Update is null) return;
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(Update.InstallerUrl ?? Update.PageUrl) { UseShellExecute = true });
+        if (Update.InstallerUrl is null) { OpenPage(Update.PageUrl); return; }
+        UpdateBusy = true; UpdateLabel = "Downloading...";
+        try
+        {
+            var path = await UpdateChecker.DownloadInstallerAsync(Update);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(path) { UseShellExecute = true });
+            Update = null;
+        }
+        catch (Exception ex)
+        {
+            ErrorLog.Write(AppPaths.Root, "update", ex);
+            ShowToast("Could not download the update: " + ex.Message);
+            OpenPage(Update.PageUrl);
+        }
+        finally { UpdateBusy = false; UpdateLabel = "Download"; }
     }
+
+    private static void OpenPage(string url) => System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
     [RelayCommand] private void DismissUpdate() => Update = null;
 
     [RelayCommand] public void ToggleNowPlaying() => Section = Section == Section.NowPlaying ? Section.Library : Section.NowPlaying;

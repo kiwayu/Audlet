@@ -31,6 +31,11 @@ public static class Backup
     {
         using var zip = ZipFile.OpenRead(zipPath);
         if (!zip.Entries.Any(e => e.FullName == "library.json")) throw new InvalidDataException("That file is not an Audlet backup.");
+        // Keep what is about to be replaced, so a wrong zip can be undone from the backups folder.
+        var keep = Path.Combine(DailyFolder(root), DateTime.Now.ToString("yyyy-MM-dd") + "-before-restore-" + DateTime.Now.ToString("HHmmss"));
+        Directory.CreateDirectory(keep);
+        foreach (var name in Files)
+            if (File.Exists(Path.Combine(root, name))) File.Copy(Path.Combine(root, name), Path.Combine(keep, name), overwrite: true);
         foreach (var entry in zip.Entries)
         {
             var name = entry.FullName.Replace('\\', '/');
@@ -44,8 +49,15 @@ public static class Backup
     }
 
     // Keeps one copy of the data files per day and prunes the folder to the last KeepDays days.
-    public static void Daily(string root, DateTime today)
+    // With a second folder set, a zip of the whole data set is kept there as well, pruned the same way.
+    public static void Daily(string root, DateTime today, string? secondFolder = null)
     {
+        if (secondFolder is not null && Directory.Exists(secondFolder))
+        {
+            var zip = Path.Combine(secondFolder, "Audlet-backup-" + today.ToString("yyyy-MM-dd") + ".zip");
+            if (!File.Exists(zip)) Create(root, zip);
+            foreach (var old in Directory.GetFiles(secondFolder, "Audlet-backup-*.zip").OrderByDescending(f => f).Skip(KeepDays)) File.Delete(old);
+        }
         var folder = Path.Combine(DailyFolder(root), today.ToString("yyyy-MM-dd"));
         if (!Directory.Exists(folder))
         {

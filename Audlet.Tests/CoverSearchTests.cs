@@ -44,4 +44,14 @@ public class CoverSearchTests
         Assert.Empty(CoverSearch.ParseOpenLibrary("""{"numFound":0}"""));
         Assert.Empty(CoverSearch.ParseGoogle("""{"totalItems":0}"""));
     }
+
+    [Theory]
+    [InlineData("https://m.media-amazon.com/images/I/abc.jpg", true)]
+    [InlineData("https://is1-ssl.mzstatic.com/image/thumb/x/500x500bb.jpg", true)]
+    [InlineData("https://covers.openlibrary.org/b/id/123-L.jpg", true)]
+    [InlineData("https://books.google.com/books/content?id=x", true)]
+    [InlineData("http://m.media-amazon.com/images/I/abc.jpg", false)]
+    [InlineData("https://evil.example/media-amazon.com/x.jpg", false)]
+    [InlineData("https://media-amazon.com.evil.example/x.jpg", false)]
+    public void OnlyKnownImageHostsAreFetched(string url, bool allowed) => Assert.Equal(allowed, CoverSearch.IsAllowedImageUrl(url));
 }

@@ -34,6 +34,15 @@
       var mb = Math.round(asset.size / 1048576);
       ['dl', 'dl2', 'dl-nav'].forEach(function (id) { var a = document.getElementById(id); if (a) a.href = asset.browser_download_url; });
       ['dl-ver', 'dl2-ver'].forEach(function (id) { document.getElementById(id).textContent = rel.tag_name + ' · ' + mb + ' MB'; });
+      var sum = (rel.assets || []).filter(function (a) { return /\.sha256$/i.test(a.name); })[0];
+      if (!sum) return;
+      return fetch(sum.browser_download_url).then(function (r) { return r.ok ? r.text() : ''; }).then(function (text) {
+        var hash = (text.match(/[0-9a-f]{64}/i) || [])[0];
+        if (!hash) return;
+        var el = document.getElementById('sha');
+        el.textContent = 'SHA-256 of the installer: ' + hash.toLowerCase();
+        el.hidden = false;
+      });
     })
     .catch(function () {});
 })();

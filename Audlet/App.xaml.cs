@@ -29,9 +29,9 @@ public partial class App : Application
             return;
         }
         AppPaths.MigrateLegacy();
-        try { Backup.Daily(AppPaths.Root, DateTime.Today); } catch (Exception ex) { ErrorLog.Write(AppPaths.Root, "backup", ex); }
         var store = new AppStore(AppPaths.Root);
         store.Load();
+        try { Backup.Daily(AppPaths.Root, DateTime.Today, store.Settings.BackupFolder); } catch (Exception ex) { ErrorLog.Write(AppPaths.Root, "backup", ex); }
         ThemeService.Start(() => store.Settings.Theme);
         var player = new BassPlayer();
         _controller = new PlaybackController(player, store);

@@ -96,7 +96,7 @@
                 Visibility="{Binding Update, Converter={StaticResource NotNull}}">
             <StackPanel Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center" Margin="0,0,12,0"><Run Text="Audlet " /><Run Text="{Binding Update.Version, Mode=OneWay}" /><Run Text=" is available." /></TextBlock>
-                <Button Style="{StaticResource PillButton}" Content="Download" Command="{Binding OpenUpdateCommand}" Margin="0,0,6,0" />
+                <Button Style="{StaticResource PillButton}" Content="{Binding UpdateLabel}" Command="{Binding OpenUpdateCommand}" Margin="0,0,6,0" />
                 <Button Style="{StaticResource GlassButton}" Content="Later" Command="{Binding DismissUpdateCommand}" />
             </StackPanel>
         </Border>

@@ -46,6 +46,8 @@ public sealed partial class SettingsViewModel : ObservableObject
     public bool AutoRewind { get => S.AutoRewind; set { S.AutoRewind = value; Apply(); } }
     public bool CloseToTray { get => S.CloseToTray; set { S.CloseToTray = value; Apply(); } }
     public bool CheckForUpdates { get => S.CheckForUpdates; set { S.CheckForUpdates = value; Apply(); } }
+    public bool CoverLookup { get => S.AllowCoverLookup; set { S.AllowCoverLookup = value; Apply(); } }
+    public string BackupFolderLabel => S.BackupFolder ?? "no second folder";
     public bool GlobalHotkeys { get => S.GlobalHotkeys; set { _main.SetHotkeys(value); Apply(); } }
     public bool PauseOnDeviceLoss { get => S.PauseOnDeviceLoss; set { S.PauseOnDeviceLoss = value; Apply(); } }
     public bool SkipSilence { get => S.SkipSilence; set { S.SkipSilence = value; Apply(); } }
@@ -103,6 +105,20 @@ public sealed partial class SettingsViewModel : ObservableObject
     }
 
     [RelayCommand] private void OpenDataFolder() => Process.Start("explorer.exe", AppPaths.Root);
+
+    [RelayCommand]
+    private void ChooseBackupFolder()
+    {
+        var dlg = new OpenFolderDialog { Title = "Choose a second folder for daily backups" };
+        if (dlg.ShowDialog() != true) return;
+        S.BackupFolder = dlg.FolderName;
+        OnPropertyChanged(nameof(BackupFolderLabel));
+        _main.Store.SaveNow();
+        try { Backup.Daily(AppPaths.Root, DateTime.Today, S.BackupFolder); _main.ShowToast("Backup written to " + Path.GetFileName(S.BackupFolder)); }
+        catch (Exception ex) { ErrorLog.Write(AppPaths.Root, "backup", ex); _main.ShowToast("Could not write there: " + ex.Message); }
+    }
+
+    [RelayCommand] private void ClearBackupFolder() { S.BackupFolder = null; OnPropertyChanged(nameof(BackupFolderLabel)); Apply(); }
 }
 
 public sealed partial class KeyRow(string action, string label) : ObservableObject

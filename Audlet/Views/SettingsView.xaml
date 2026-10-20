@@ -71,8 +71,9 @@
             <Border Style="{StaticResource GlassPanel}" Margin="0,0,0,16">
                 <Grid>
                     <Grid.ColumnDefinitions><ColumnDefinition Width="260" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /></Grid.RowDefinitions>
+                    <Grid.RowDefinitions><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /></Grid.RowDefinitions>
                     <TextBlock Style="{StaticResource Head}" Text="Desktop" Grid.ColumnSpan="2" />
+                    <TextBlock Grid.Row="5" Style="{StaticResource Label}" Text="Look up covers and blurbs online (sends the title and author)" TextWrapping="Wrap" /><CheckBox Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding CoverLookup}" />
                     <TextBlock Grid.Row="4" Style="{StaticResource Label}" Text="Check for new versions on startup" /><CheckBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding CheckForUpdates}" />
                     <TextBlock Grid.Row="1" Style="{StaticResource Label}" Text="Close button hides to the tray and keeps playing" /><CheckBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding CloseToTray}" />
                     <TextBlock Grid.Row="2" Style="{StaticResource Label}" Text="Global hotkeys (Ctrl+Alt+Space, Ctrl+Alt+Left/Right, Shift for big jumps)" TextWrapping="Wrap" /><CheckBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding GlobalHotkeys}" />
@@ -88,6 +89,12 @@
                         <Button Style="{StaticResource GlassButton}" Content="Back up..." Command="{Binding BackUpCommand}" />
                         <Button Style="{StaticResource GlassButton}" Content="Restore..." Command="{Binding RestoreCommand}" Margin="8,0,0,0" />
                         <Button Style="{StaticResource GlassButton}" Content="Open folder" Command="{Binding OpenDataFolderCommand}" Margin="8,0,0,0" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <TextBlock Style="{StaticResource Label}" Text="Daily zip also kept in:" />
+                        <TextBlock Style="{StaticResource Label}" Text="{Binding BackupFolderLabel}" FontWeight="SemiBold" Margin="6,6" TextTrimming="CharacterEllipsis" MaxWidth="300" />
+                        <Button Style="{StaticResource GlassButton}" Content="Choose..." Command="{Binding ChooseBackupFolderCommand}" Margin="8,0,0,0" />
+                        <Button Style="{StaticResource GlassButton}" Content="Clear" Command="{Binding ClearBackupFolderCommand}" Margin="8,0,0,0" />
                     </StackPanel>
                 </StackPanel>
             </Border>

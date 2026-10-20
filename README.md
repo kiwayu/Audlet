@@ -22,7 +22,7 @@ A desktop audiobook player for Windows 11 with a frosted-glass interface. Point 
 - One-click speed presets on the player bar
 - Chapter ticks on the seek bar with the chapter name on hover
 - Series detection from tags or folder names, "Dune 3 of 6" on the card, and the next book offered when one finishes
-- Checks GitHub for a newer version on startup and offers the download
+- Checks GitHub for a newer version on startup, downloads the installer in the app and verifies its size and checksum before starting it. The check, and the online cover lookup, can each be switched off in Settings
 - Back up the library, settings, statistics and covers to a zip and restore them later; a copy of the data files from each of the last seven days is kept automatically
 - Unhandled errors are written to `errors.log` in the data folder, which Settings can open
 - Themes: dark and light glass that follow Windows, plus Catppuccin Mocha and Latte, Nord, Dracula, Tokyo Night, Rose Pine, Gruvbox Dark, and Solarized Dark
@@ -37,7 +37,7 @@ Requires the .NET 9 SDK.
 
 Tests: `dotnet test` runs everything. The end-to-end tests (`--filter Category=E2E`) launch the real executable against a throwaway data folder and a generated library of tone files, then drive it through Windows UI Automation; they need an audio device and take about half a minute. Skip them with `--filter Category!=E2E`.
 
-Release build: `tools\publish.ps1` produces a self-contained folder in `dist\Audlet` that runs on any 64-bit Windows 11 machine without installing .NET. If [Inno Setup](https://jrsoftware.org/isinfo.php) is installed (`winget install JRSoftware.InnoSetup`), the same script also builds `dist\Audlet-Setup-<version>.exe`, a per-user installer with Start Menu and optional desktop shortcuts and an uninstaller.
+Release build: `tools\publish.ps1` produces a self-contained folder in `dist\Audlet` that runs on any 64-bit Windows 11 machine without installing .NET. If [Inno Setup](https://jrsoftware.org/isinfo.php) is installed (`winget install JRSoftware.InnoSetup`), the same script also builds `dist\Audlet-Setup-<version>.exe`, a per-user installer with Start Menu and optional desktop shortcuts and an uninstaller, plus `Audlet-Setup-<version>.exe.sha256`. Upload both files to the GitHub release: the app checks the installer it downloads against that checksum, and the website shows it next to the download button. Every push to `main` is built and unit-tested by the workflow in `.github/workflows/build.yml`, which also fails on packages with known vulnerabilities.
 
 ## Supported files
 

@@ -71,6 +71,7 @@
   .reqs b { font-weight: 500; display: block; }
   .reqs span { color: var(--text-2); }
   .all { display: inline-block; margin-top: 18px; font-size: 15px; color: var(--text-2); }
+  .sha { margin: 14px 0 0; font-size: 13px; color: var(--text-3); overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
 
   .faq { max-width: 680px; border-top: 1px solid var(--line); }
   details { border-bottom: 1px solid var(--line); }
