@@ -14,6 +14,33 @@ public class LibraryMergerTests
     };
 
     [Fact]
+    public void BookUnderARemovedRootIsDroppedButAnUnpluggedOneIsKept()
+    {
+        var gone = B(@"C:\old\one", "1.mp3");
+        var unplugged = B(@"D:\books\two", "1.mp3");
+        var existing = new List<Book> { gone, unplugged };
+
+        LibraryMerger.Merge(existing, [], roots: [@"D:\books"], looseFiles: []);
+
+        var kept = Assert.Single(existing);
+        Assert.Same(unplugged, kept);
+        Assert.True(kept.Missing);
+    }
+
+    [Fact]
+    public void CompanionsComeFromTheFreshScan()
+    {
+        var old = B(@"C:\b\one", "1.mp3");
+        var fresh = B(@"C:\b\one", "1.mp3");
+        fresh.Companions = [@"C:\b\one\notes.txt"];
+        var existing = new List<Book> { old };
+
+        LibraryMerger.Merge(existing, [fresh]);
+
+        Assert.Equal([@"C:\b\one\notes.txt"], old.Companions);
+    }
+
+    [Fact]
     public void ExistingBookKeepsStateAndGetsFreshFiles()
     {
         var old = B(@"C:\b\one", "1.mp3");

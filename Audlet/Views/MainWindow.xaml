@@ -46,6 +46,10 @@
                     <ListBoxItem Tag="New" Content="New" />
                     <ListBoxItem Tag="Finished" Content="Finished" />
                     <ListBoxItem Tag="Queue" Content="Queue" />
+                    <ListBoxItem Style="{StaticResource NavCaption}" Content="SHELVES" />
+                    <ListBoxItem Tag="RecentlyAdded" Content="Recently added" />
+                    <ListBoxItem Tag="NearlyDone" Content="Nearly done" />
+                    <ListBoxItem Tag="Paused" Content="Paused" />
                     <ListBoxItem Style="{StaticResource NavCaption}" Content="MORE" />
                     <ListBoxItem Tag="Bookmarks" Content="Bookmarks" />
                     <ListBoxItem Tag="Statistics" Content="Statistics" />

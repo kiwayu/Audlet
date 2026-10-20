@@ -311,6 +311,11 @@ public sealed partial class PlaybackController : ObservableObject
         var month = _store.Stats.Months.FirstOrDefault(m => m.Month == key);
         if (month is null) _store.Stats.Months.Add(month = new MonthStats { Month = key });
         month.ListenedSec += sec;
+        var dayKey = now.ToLocalTime().ToString("yyyy-MM-dd");
+        var day = _store.Stats.Days.FirstOrDefault(d => d.Day == dayKey);
+        if (day is null) _store.Stats.Days.Add(day = new DayStats { Day = dayKey });
+        day.ListenedSec += sec;
+        if (_store.Stats.Days.Count > 400) _store.Stats.Days = _store.Stats.Days.OrderByDescending(d => d.Day).Take(366).ToList();
     }
 
     private void OnFileEnded()

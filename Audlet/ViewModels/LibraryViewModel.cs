@@ -16,7 +16,7 @@ public sealed partial class LibraryViewModel : ObservableObject
 
     public ObservableCollection<Book> Books { get; } = [];
     public IReadOnlyList<SortMode> SortModes { get; } = Enum.GetValues<SortMode>();
-    public string Heading => _section switch { Section.Started => "Started", Section.New => "New", Section.Finished => "Finished", Section.Queue => "Queue", _ => "Library" };
+    public string Heading => _section switch { Section.Started => "Started", Section.New => "New", Section.Finished => "Finished", Section.Queue => "Queue", Section.RecentlyAdded => "Recently added", Section.NearlyDone => "Nearly done", Section.Paused => "Paused", _ => "Library" };
 
     [ObservableProperty] private string _search = "";
     [ObservableProperty] private SortMode _sort;
@@ -40,6 +40,9 @@ public sealed partial class LibraryViewModel : ObservableObject
             Section.Started => q.Where(b => b.State == BookState.Started),
             Section.New => q.Where(b => b.State == BookState.New),
             Section.Finished => q.Where(b => b.State == BookState.Finished),
+            Section.RecentlyAdded => q.Where(b => Shelves.RecentlyAdded(b, DateTime.UtcNow)),
+            Section.NearlyDone => q.Where(Shelves.NearlyDone),
+            Section.Paused => q.Where(b => Shelves.Paused(b, DateTime.UtcNow)),
             Section.Queue => _main.Store.Settings.Queue
                 .Select(id => _main.Store.Library.Books.FirstOrDefault(b => b.Id.Equals(id, StringComparison.OrdinalIgnoreCase)))
                 .Where(b => b is not null)!,

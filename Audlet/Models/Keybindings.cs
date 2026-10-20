@@ -20,6 +20,45 @@ public static class Keybindings
         ("Lock", "Lock / unlock the buttons"),
     ];
 
+    // Shortcuts that reach the app while another window has focus. Each must hold Ctrl, Alt or Win.
+    public static readonly (string Action, string Label)[] GlobalActions =
+    [
+        ("PlayPause", "Play / pause"),
+        ("Rewind", "Small rewind"),
+        ("Forward", "Small forward"),
+        ("BigRewind", "Big rewind"),
+        ("BigForward", "Big forward"),
+    ];
+
+    public static Dictionary<string, string> GlobalDefaults() => new()
+    {
+        ["PlayPause"] = "Ctrl+Alt+Space", ["Rewind"] = "Ctrl+Alt+Left", ["Forward"] = "Ctrl+Alt+Right",
+        ["BigRewind"] = "Ctrl+Alt+Shift+Left", ["BigForward"] = "Ctrl+Alt+Shift+Right",
+    };
+
+    public static string GlobalGesture(Settings s, string action) =>
+        s.GlobalKeys.TryGetValue(action, out var g) ? g : GlobalDefaults().GetValueOrDefault(action, "");
+
+    public static bool TryParse(string gesture, out ModifierKeys mods, out Key key)
+    {
+        mods = ModifierKeys.None; key = Key.None;
+        foreach (var part in gesture.Split('+', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            switch (part)
+            {
+                case "Ctrl": mods |= ModifierKeys.Control; break;
+                case "Alt": mods |= ModifierKeys.Alt; break;
+                case "Shift": mods |= ModifierKeys.Shift; break;
+                case "Win": mods |= ModifierKeys.Windows; break;
+                default: if (!Enum.TryParse(part, out key) || IsModifier(key)) return false; break;
+            }
+        }
+        return key != Key.None;
+    }
+
+    public static bool IsGlobalGesture(string gesture) =>
+        TryParse(gesture, out var mods, out _) && (mods & (ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Windows)) != 0;
+
     public static Dictionary<string, string> Defaults() => new()
     {
         ["PlayPause"] = "Space", ["Rewind"] = "Left", ["Forward"] = "Right",

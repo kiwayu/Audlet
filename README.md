@@ -25,6 +25,11 @@ A desktop audiobook player for Windows 11 with a frosted-glass interface. Point 
 - Checks GitHub for a newer version on startup, downloads the installer in the app and verifies its size and checksum before starting it. The check, and the online cover lookup, can each be switched off in Settings
 - Back up the library, settings, statistics and covers to a zip and restore them later; a copy of the data files from each of the last seven days is kept automatically
 - Unhandled errors are written to `errors.log` in the data folder, which Settings can open
+- Smart shelves: recently added, nearly done, and books paused for a month
+- Statistics: listening per day and per month, books finished, your current streak, the average listening day and the author you listen to most
+- Text, PDF and subtitle files kept beside a book open from Now Playing; a subtitle file shows its current line while the book plays
+- Global hotkeys can be rebound under Settings, each needing Ctrl, Alt or Win
+- Removing a library folder from Settings drops its books; a folder that is merely unplugged keeps them as missing
 - Themes: dark and light glass that follow Windows, plus Catppuccin Mocha and Latte, Nord, Dracula, Tokyo Night, Rose Pine, Gruvbox Dark, and Solarized Dark
 
 ## Building

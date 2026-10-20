@@ -6,9 +6,16 @@ public sealed class MonthStats
     public long ListenedSec { get; set; }
 }
 
+public sealed class DayStats
+{
+    public required string Day { get; set; }   // "2026-09-20"
+    public long ListenedSec { get; set; }
+}
+
 public sealed class StatsFile
 {
     public List<MonthStats> Months { get; set; } = [];
+    public List<DayStats> Days { get; set; } = [];
 }
 
 public sealed class LibraryFile

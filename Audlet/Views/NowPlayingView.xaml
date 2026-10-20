@@ -119,6 +119,7 @@
             </Border>
             <TextBlock AutomationProperties.AutomationId="BookTitle" Text="{Binding Controller.CurrentBook.Title}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" Margin="0,20,0,4" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="520" />
             <TextBlock Text="{Binding Controller.CurrentBook.Author}" Foreground="{DynamicResource GlassMutedBrush}" HorizontalAlignment="Center" />
+            <TextBlock Text="{Binding Subtitle}" Visibility="{Binding ShowSubtitles, Converter={StaticResource Vis}}" Foreground="{DynamicResource GlassTextBrush}" FontSize="15" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="520" MinHeight="22" Margin="0,8,0,0" />
             <TextBlock Text="{Binding Controller.CurrentBook.Description}" Foreground="{DynamicResource GlassMutedBrush}" FontSize="12" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="54" MaxWidth="520" Margin="0,10,0,0" TextAlignment="Center" ToolTip="{Binding Controller.CurrentBook.Description}" />
         </StackPanel>
 
@@ -170,6 +171,8 @@
                     <Button Style="{StaticResource PillButton}" Margin="4,0" Content="EQ" Click="Eq_Click" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}" />
                     <Button Style="{StaticResource PillButton}" Margin="4,0" Content="Boost" Click="Boost_Click" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}" />
                     <Button Style="{StaticResource PillButton}" Margin="4,0" Content="Characters" Click="Characters_Click" />
+                    <Button Style="{StaticResource PillButton}" Margin="4,0" Content="Files" Click="Files_Click" Visibility="{Binding HasCompanions, Converter={StaticResource Vis}}" />
+                    <Button Style="{StaticResource PillButton}" Margin="4,0" Content="Subtitles" Command="{Binding ToggleSubtitlesCommand}" Visibility="{Binding HasSubtitles, Converter={StaticResource Vis}}" />
                     <Button Style="{StaticResource PillButton}" Margin="4,0" Content="{Binding Controller.Locked, Converter={StaticResource LockGlyph}}" Command="{Binding ToggleLockCommand}" />
                 </StackPanel>
             </StackPanel>
@@ -228,6 +231,18 @@
                     <TextBlock Text="{Binding Boost, StringFormat={}Boost {0:0} dB}" />
                     <Slider Style="{StaticResource GlassSlider}" Minimum="0" Maximum="12" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding Boost}" />
                 </StackPanel>
+            </Border>
+        </Popup>
+        <Popup x:Name="FilesPopup" StaysOpen="False" Placement="Mouse" AllowsTransparency="True">
+            <Border Style="{StaticResource GlassPanel}" Padding="10">
+                <ItemsControl ItemsSource="{Binding Companions}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource GlassButton}" Margin="0,2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Content="{Binding Name}"
+                                    Command="{Binding DataContext.OpenCompanionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding Path}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </Border>
         </Popup>
         <Popup x:Name="CharactersPopup" StaysOpen="False" Placement="Mouse" AllowsTransparency="True">

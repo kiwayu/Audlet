@@ -18,6 +18,7 @@ public sealed class Book
     public string Author { get; set; } = "";
     public string Breadcrumb { get; set; } = "";
     public string? Description { get; set; }
+    public List<string> Companions { get; set; } = [];   // text, PDF or subtitle files found beside the book
     public string? Series { get; set; }
     public double? SeriesIndex { get; set; }
     public string? SeriesLabel { get; set; }     // "Dune 3 of 6", filled in after each scan

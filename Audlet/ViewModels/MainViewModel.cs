@@ -6,7 +6,7 @@ using Audlet.Player;
 
 namespace Audlet.ViewModels;
 
-public enum Section { Library, Started, New, Finished, Queue, Bookmarks, Statistics, Settings, NowPlaying }
+public enum Section { Library, Started, New, Finished, Queue, RecentlyAdded, NearlyDone, Paused, Bookmarks, Statistics, Settings, NowPlaying }
 
 public sealed partial class MainViewModel : ObservableObject
 {
@@ -25,6 +25,8 @@ public sealed partial class MainViewModel : ObservableObject
 
     public event Action? LibraryChanged;
     public event Action<bool>? HotkeysToggled;
+    public event Action? HotkeysChanged;
+    public void ReloadHotkeys() => HotkeysChanged?.Invoke();
 
     public void SetHotkeys(bool on) { Store.Settings.GlobalHotkeys = on; HotkeysToggled?.Invoke(on); }
 
@@ -80,7 +82,7 @@ public sealed partial class MainViewModel : ObservableObject
         var progress = new Progress<string>(p => ScanStatus = Path.GetFileName(p));
         var loose = Store.Settings.LooseFiles.ToList();
         var scanned = await Task.Run(() => new LibraryScanner(MetadataReader.Read).Scan(roots, progress, loose));
-        LibraryMerger.Merge(Store.Library.Books, scanned);
+        LibraryMerger.Merge(Store.Library.Books, scanned, roots, loose);
         SeriesInfo.Label(Store.Library.Books);
         await Task.Run(() =>
         {

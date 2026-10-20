@@ -71,6 +71,7 @@ public partial class NowPlayingView : UserControl
     private void Sleep_Click(object s, RoutedEventArgs e) => SleepPopup.IsOpen = true;
     private void Eq_Click(object s, RoutedEventArgs e) => EqPopup.IsOpen = true;
     private void Boost_Click(object s, RoutedEventArgs e) => BoostPopup.IsOpen = true;
+    private void Files_Click(object s, RoutedEventArgs e) => FilesPopup.IsOpen = true;
     private void Characters_Click(object s, RoutedEventArgs e) { CharactersPane.DataContext = new CharactersViewModel(Vm.Main); CharactersPopup.IsOpen = true; }
     private void SpeedSlider_Changed(object s, RoutedPropertyChangedEventArgs<double> e) { if (s is Slider { IsMouseOver: true } or Slider { IsFocused: true }) Vm.Controller.SetSpeed(e.NewValue); }
 }

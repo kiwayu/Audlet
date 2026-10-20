@@ -21,6 +21,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     public ObservableCollection<string> RootFolders { get; }
     public ObservableCollection<string> LooseFiles { get; }
     public ObservableCollection<KeyRow> KeyRows { get; } = [];
+    public ObservableCollection<KeyRow> GlobalRows { get; } = [];
 
     public SettingsViewModel(MainViewModel main) { _main = main; RootFolders = new(S.RootFolders); LooseFiles = new(S.LooseFiles); LoadKeys(); }
 
@@ -28,17 +29,28 @@ public sealed partial class SettingsViewModel : ObservableObject
     {
         KeyRows.Clear();
         foreach (var (action, label) in Keybindings.Actions) KeyRows.Add(new KeyRow(action, label) { Gesture = Keybindings.Gesture(S, action) });
+        GlobalRows.Clear();
+        foreach (var (action, label) in Keybindings.GlobalActions) GlobalRows.Add(new KeyRow(action, label, global: true) { Gesture = Keybindings.GlobalGesture(S, action) });
     }
 
     // Binding a gesture already used elsewhere takes it away from the other action, so a key never does two things.
     public void SetKey(KeyRow row, string gesture)
     {
+        if (row.Global)
+        {
+            if (!Keybindings.IsGlobalGesture(gesture)) { _main.ShowToast("A global shortcut needs Ctrl, Alt or Win in it"); return; }
+            foreach (var other in GlobalRows.Where(r => r != row && r.Gesture == gesture)) { other.Gesture = ""; S.GlobalKeys[other.Action] = ""; }
+            row.Gesture = gesture; S.GlobalKeys[row.Action] = gesture;
+            Apply();
+            _main.ReloadHotkeys();
+            return;
+        }
         foreach (var other in KeyRows.Where(r => r != row && r.Gesture == gesture)) { other.Gesture = ""; S.Keys[other.Action] = ""; }
         row.Gesture = gesture; S.Keys[row.Action] = gesture;
         Apply();
     }
 
-    [RelayCommand] private void ResetKeys() { S.Keys = Keybindings.Defaults(); LoadKeys(); Apply(); }
+    [RelayCommand] private void ResetKeys() { S.Keys = Keybindings.Defaults(); S.GlobalKeys = Keybindings.GlobalDefaults(); LoadKeys(); Apply(); _main.ReloadHotkeys(); }
 
     public int SmallRewind { get => S.SmallRewindSec; set { S.SmallRewindSec = value; Apply(); } }
     public int BigRewind { get => S.BigRewindSec; set { S.BigRewindSec = value; Apply(); } }
@@ -121,10 +133,11 @@ public sealed partial class SettingsViewModel : ObservableObject
     [RelayCommand] private void ClearBackupFolder() { S.BackupFolder = null; OnPropertyChanged(nameof(BackupFolderLabel)); Apply(); }
 }
 
-public sealed partial class KeyRow(string action, string label) : ObservableObject
+public sealed partial class KeyRow(string action, string label, bool global = false) : ObservableObject
 {
     public string Action { get; } = action;
     public string Label { get; } = label;
+    public bool Global { get; } = global;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Display))] private string _gesture = "";
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Display))] private bool _capturing;
     public string Display => Capturing ? "Press a key..." : Gesture == "" ? "Not set" : Gesture;

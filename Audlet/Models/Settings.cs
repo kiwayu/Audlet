@@ -22,6 +22,7 @@ public sealed class Settings
     public int BigRewindSec { get; set; } = 60;
     public bool ShowPrevNextFile { get; set; } = true;   // previous and next chapter buttons
     public Dictionary<string, string> Keys { get; set; } = Keybindings.Defaults();   // action name to gesture, see Keybindings
+    public Dictionary<string, string> GlobalKeys { get; set; } = Keybindings.GlobalDefaults();
     public bool AutoRewind { get; set; } = true;
     public bool SkipSilence { get; set; }
     public double DefaultSpeed { get; set; } = 1.0;

@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Diagnostics;
 using Audlet.Converters;
+using Audlet.Library;
 using Audlet.Models;
 using Audlet.Player;
 
@@ -9,6 +11,7 @@ namespace Audlet.ViewModels;
 
 public sealed record ChapterRow(Chapter Chapter, int Index, string Length, bool IsCurrent, bool IsPast);
 public sealed record TickMark(double Fraction, string Title, double StartSec);
+public sealed record CompanionRow(string Name, string Path);
 
 public sealed partial class NowPlayingViewModel : ObservableObject
 {
@@ -33,6 +36,28 @@ public sealed partial class NowPlayingViewModel : ObservableObject
     [ObservableProperty] private int _skipStart;
     [ObservableProperty] private int _skipEnd;
 
+    [ObservableProperty] private string? _subtitle;
+    [ObservableProperty] private bool _showSubtitles;
+    private IReadOnlyList<Cue>? _cues;
+
+    public IReadOnlyList<CompanionRow> Companions => (Controller.CurrentBook?.Companions ?? []).Where(File.Exists).Select(p => new CompanionRow(Path.GetFileName(p), p)).ToList();
+    public bool HasCompanions => Companions.Count > 0;
+    public bool HasSubtitles => Companions.Any(c => c.Path.EndsWith(".srt", StringComparison.OrdinalIgnoreCase));
+
+    [RelayCommand] private void OpenCompanion(string path) { if (File.Exists(path)) Process.Start(new ProcessStartInfo(path) { UseShellExecute = true }); }
+    [RelayCommand] private void ToggleSubtitles() { ShowSubtitles = !ShowSubtitles; UpdateSubtitle(); }
+
+    // Cue times are taken against the whole book, which is what a subtitle file for a single M4B carries.
+    private void UpdateSubtitle()
+    {
+        if (!ShowSubtitles) { Subtitle = null; return; }
+        if (_cues is null && Companions.FirstOrDefault(c => c.Path.EndsWith(".srt", StringComparison.OrdinalIgnoreCase)) is { } srt)
+        {
+            try { _cues = Srt.Parse(File.ReadAllText(srt.Path)); } catch (Exception) { _cues = []; }
+        }
+        Subtitle = _cues is null ? null : Srt.At(_cues, Controller.BookPositionSec);
+    }
+
     public bool IsBookMode => Settings.PositionMode == PositionMode.Book;
     public double ShownPosition => IsBookMode ? Controller.BookPositionSec : Controller.PositionSec;
     public double ShownTotal => IsBookMode ? Controller.BookTotalSec : Controller.FileDurationSec;
@@ -52,7 +77,9 @@ public sealed partial class NowPlayingViewModel : ObservableObject
         Controller.PropertyChanged += (o, e) =>
         {
             if (e.PropertyName is nameof(PlaybackController.PositionSec) or nameof(PlaybackController.BookPositionSec))
-            { OnPropertyChanged(nameof(ShownPosition)); OnPropertyChanged(nameof(ShownTotal)); }
+            { OnPropertyChanged(nameof(ShownPosition)); OnPropertyChanged(nameof(ShownTotal)); if (ShowSubtitles) UpdateSubtitle(); }
+            if (e.PropertyName is nameof(PlaybackController.CurrentBook))
+            { _cues = null; Subtitle = null; OnPropertyChanged(nameof(Companions)); OnPropertyChanged(nameof(HasCompanions)); OnPropertyChanged(nameof(HasSubtitles)); }
             if (e.PropertyName is nameof(PlaybackController.CurrentChapter) or nameof(PlaybackController.CurrentBook))
             { RebuildChapters(); RebuildLists(); RebuildTicks(); OnPropertyChanged(nameof(ChapterLabel)); }
             if (e.PropertyName is nameof(PlaybackController.SleepRemaining) or nameof(PlaybackController.SleepActive))

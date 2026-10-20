@@ -6,10 +6,36 @@
     <UserControl.Resources><c:FractionOfWidth x:Key="FractionOfWidth" /></UserControl.Resources>
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" Margin="0,0,0,16"><Run Text="Statistics - " /><Run Text="{Binding TotalListened, Mode=OneWay}" /></TextBlock>
+        <UniformGrid DockPanel.Dock="Top" Columns="4" Margin="0,0,0,16">
+            <Border Style="{StaticResource GlassPanel}" Margin="0,0,12,0" Padding="14"><StackPanel><TextBlock Text="{Binding BooksFinished}" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" /><TextBlock Text="books finished" FontSize="12" Foreground="{DynamicResource GlassMutedBrush}" /></StackPanel></Border>
+            <Border Style="{StaticResource GlassPanel}" Margin="0,0,12,0" Padding="14"><StackPanel><TextBlock Text="{Binding Streak}" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" /><TextBlock Text="day streak" FontSize="12" Foreground="{DynamicResource GlassMutedBrush}" /></StackPanel></Border>
+            <Border Style="{StaticResource GlassPanel}" Margin="0,0,12,0" Padding="14"><StackPanel><TextBlock Text="{Binding AveragePerDay}" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" /><TextBlock Text="a listening day, last 30 days" FontSize="12" Foreground="{DynamicResource GlassMutedBrush}" /></StackPanel></Border>
+            <Border Style="{StaticResource GlassPanel}" Padding="14"><StackPanel><TextBlock Text="{Binding TopAuthor}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" TextTrimming="CharacterEllipsis" Margin="0,4,0,2" /><TextBlock Text="most listened author" FontSize="12" Foreground="{DynamicResource GlassMutedBrush}" /></StackPanel></Border>
+        </UniformGrid>
         <Grid>
             <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="24" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
             <Border Style="{StaticResource GlassPanel}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
+                  <StackPanel>
+                    <TextBlock Text="Last 14 days" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" Margin="0,0,0,6" />
+                    <ItemsControl ItemsSource="{Binding Days}" Margin="0,0,0,16">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,2">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="90" /><ColumnDefinition Width="*" /><ColumnDefinition Width="64" /></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Month}" FontSize="12" Foreground="{DynamicResource GlassMutedBrush}" VerticalAlignment="Center" />
+                                    <Grid Grid.Column="1" x:Name="DayTrack" Height="8" Margin="8,0" VerticalAlignment="Center">
+                                        <Border Background="{DynamicResource GlassBorderBrush}" CornerRadius="4" />
+                                        <Border Background="{DynamicResource AccentFillBrush}" CornerRadius="4" HorizontalAlignment="Left">
+                                            <Border.Width><MultiBinding Converter="{StaticResource FractionOfWidth}" Mode="OneWay"><Binding Path="Fraction" /><Binding ElementName="DayTrack" Path="ActualWidth" /></MultiBinding></Border.Width>
+                                        </Border>
+                                    </Grid>
+                                    <TextBlock Grid.Column="2" Text="{Binding Listened}" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Text="Months" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" Margin="0,0,0,6" />
                     <ItemsControl ItemsSource="{Binding Months}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:MonthRow}">
@@ -26,6 +52,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+                  </StackPanel>
                 </ScrollViewer>
             </Border>
             <Border Grid.Column="2" Style="{StaticResource GlassPanel}">

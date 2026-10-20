@@ -84,7 +84,21 @@ public sealed class LibraryScanner
             SeriesIndex = seriesIndex,
             Files = files,
             Chapters = chapters,
+            Companions = FindCompanions(id, isFolder),
             AddedUtc = DateTime.UtcNow,
         };
+    }
+
+    private static readonly string[] CompanionExtensions = [".txt", ".pdf", ".srt"];
+
+    // A folder book takes every companion file in its folder; a lone audio file takes the ones that share its name.
+    private static List<string> FindCompanions(string id, bool isFolder)
+    {
+        var dir = isFolder ? id : Path.GetDirectoryName(id)!;
+        var stem = isFolder ? null : Path.GetFileNameWithoutExtension(id);
+        return Directory.EnumerateFiles(dir)
+            .Where(f => CompanionExtensions.Contains(Path.GetExtension(f).ToLowerInvariant()))
+            .Where(f => stem is null || Path.GetFileNameWithoutExtension(f).StartsWith(stem, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(f => f, NaturalComparer.Instance).ToList();
     }
 }

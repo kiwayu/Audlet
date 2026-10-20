@@ -33,6 +33,7 @@ public partial class MainWindow : Window
         _hotkeys = new GlobalHotkeys(this, Vm.Controller);
         _hotkeys.Enable(s.GlobalHotkeys);
         Vm.HotkeysToggled += on => _hotkeys.Enable(on);
+        Vm.HotkeysChanged += () => _hotkeys.Reload();
         _ = new TaskbarButtons(this, Vm.Controller);
         _tray = new TrayIcon(Vm.Controller);
         _tray.ShowRequested += Restore;

@@ -76,7 +76,7 @@
                     <TextBlock Grid.Row="5" Style="{StaticResource Label}" Text="Look up covers and blurbs online (sends the title and author)" TextWrapping="Wrap" /><CheckBox Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding CoverLookup}" />
                     <TextBlock Grid.Row="4" Style="{StaticResource Label}" Text="Check for new versions on startup" /><CheckBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding CheckForUpdates}" />
                     <TextBlock Grid.Row="1" Style="{StaticResource Label}" Text="Close button hides to the tray and keeps playing" /><CheckBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding CloseToTray}" />
-                    <TextBlock Grid.Row="2" Style="{StaticResource Label}" Text="Global hotkeys (Ctrl+Alt+Space, Ctrl+Alt+Left/Right, Shift for big jumps)" TextWrapping="Wrap" /><CheckBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding GlobalHotkeys}" />
+                    <TextBlock Grid.Row="2" Style="{StaticResource Label}" Text="Global hotkeys (set them under Keyboard)" TextWrapping="Wrap" /><CheckBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding GlobalHotkeys}" />
                     <TextBlock Grid.Row="3" Style="{StaticResource Label}" Text="Pause when the audio device disappears" /><CheckBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding PauseOnDeviceLoss}" />
                 </Grid>
             </Border>
@@ -111,6 +111,19 @@
                                     <TextBlock Style="{StaticResource Label}" Text="{Binding Label}" />
                                     <Button Grid.Column="1" Style="{StaticResource GlassButton}" Tag="key" MinWidth="140" HorizontalAlignment="Left" Content="{Binding Display}"
                                             AutomationProperties.AutomationId="{Binding Action}" Click="KeyButton_Click" PreviewKeyDown="KeyButton_PreviewKeyDown" LostKeyboardFocus="KeyButton_LostFocus" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Style="{StaticResource Label}" Foreground="{DynamicResource GlassMutedBrush}" TextWrapping="Wrap" Margin="0,14,0,8" Text="These work while another app has focus. Each needs Ctrl, Alt or Win in it." />
+                    <ItemsControl ItemsSource="{Binding GlobalRows}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,2">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="260" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource Label}" Text="{Binding Label}" />
+                                    <Button Grid.Column="1" Style="{StaticResource GlassButton}" Tag="key" MinWidth="140" HorizontalAlignment="Left" Content="{Binding Display}"
+                                            Click="KeyButton_Click" PreviewKeyDown="KeyButton_PreviewKeyDown" LostKeyboardFocus="KeyButton_LostFocus" />
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
