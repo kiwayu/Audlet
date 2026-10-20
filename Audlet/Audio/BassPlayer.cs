@@ -28,7 +28,8 @@ public sealed class BassPlayer : IDisposable
 
     public BassPlayer()
     {
-        if (_users++ == 0 && !Bass.Init() && Bass.LastError != Errors.Already)
+        // With no output device, fall back to the "no sound" device so the app still opens and the library still works.
+        if (_users++ == 0 && !Bass.Init() && Bass.LastError != Errors.Already && !Bass.Init(0))
             throw new InvalidOperationException("Audio device init failed: " + Bass.LastError);
         foreach (var plugin in new[] { "bassflac.dll", "bassopus.dll", "basswv.dll" })
             Bass.PluginLoad(Path.Combine(AppContext.BaseDirectory, plugin));
