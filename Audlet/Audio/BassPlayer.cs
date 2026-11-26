@@ -3,7 +3,7 @@ using ManagedBass.Fx;
 
 namespace Audlet.Audio;
 
-public sealed class BassPlayer : IDisposable
+public sealed class BassPlayer : IAudioPlayer
 {
     public static readonly double[] EqCenters = [60, 230, 910, 3600, 14000];
 
@@ -106,6 +106,15 @@ public sealed class BassPlayer : IDisposable
         {
             lBand = band, fCenter = (float)EqCenters[band], fBandwidth = 1.0f, fGain = (float)_eqGains[band], lChannel = FXChannelFlags.All,
         });
+    }
+
+    // The enabled output devices by name, so a device that goes away can be noticed.
+    public HashSet<string> OutputDevices()
+    {
+        var set = new HashSet<string>();
+        for (var i = 1; Bass.GetDeviceInfo(i, out var info); i++)
+            if (info.IsEnabled) set.Add(info.Name);
+        return set;
     }
 
     private void Post(Action a) { if (_ctx is null) a(); else _ctx.Post(_ => a(), null); }
