@@ -23,7 +23,6 @@
     <LinearGradientBrush x:Key="GlassButtonBrush" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="#40FFFFFF" Offset="0" /><GradientStop Color="#1AFFFFFF" Offset="1" />
     </LinearGradientBrush>
-    <DropShadowEffect x:Key="GlassShadow" BlurRadius="28" ShadowDepth="10" Direction="270" Opacity="0.28" Color="#000000" />
     <LinearGradientBrush x:Key="BackgroundBrush" StartPoint="0,0" EndPoint="1,1">
         <GradientStop Color="#FF141826" Offset="0" /><GradientStop Color="#FF1C2333" Offset="0.55" /><GradientStop Color="#FF23203A" Offset="1" />
     </LinearGradientBrush>
@@ -34,7 +33,6 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="{StaticResource GlassRadius}" />
         <Setter Property="Padding" Value="16" />
-        <Setter Property="Effect" Value="{StaticResource GlassShadow}" />
         <Setter Property="TextElement.Foreground" Value="{DynamicResource GlassTextBrush}" />
     </Style>
 
