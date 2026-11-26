@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using Audlet.Library;
 using Audlet.ViewModels;
 
 namespace Audlet.Converters;
@@ -101,12 +102,27 @@ public sealed class FractionWidth : IValueConverter
 }
 
 // Bypasses the WPF image cache so a replaced cover shows at once; returns null for a missing path.
+// Card-size covers stay decoded by path and write time, so a card created again (another section, the rebuild after a
+// rescan, scrolling back) reuses its bitmap, while a replaced cover file has a new write time and is decoded afresh.
 public sealed class CoverImage : IValueConverter
 {
+    private static readonly LruCache<string, (DateTime Written, BitmapImage? Image)> Decoded = new(120);   // about 50 MB at 320 px
+
     public bool Full { get; set; }
     public object? Convert(object v, Type t, object p, CultureInfo c)
     {
-        if (v is not string path || !File.Exists(path)) return null;
+        if (v is not string path) return null;
+        var file = new FileInfo(path);
+        if (!file.Exists) return null;
+        if (Full) return Decode(path, full: true);
+        if (Decoded.TryGet(path, out var known) && known.Written == file.LastWriteTimeUtc) return known.Image;
+        var image = Decode(path, full: false);
+        Decoded.Add(path, (file.LastWriteTimeUtc, image));
+        return image;
+    }
+
+    private static BitmapImage? Decode(string path, bool full)
+    {
         // A damaged file must show as "no cover", never take the window down with it.
         try
         {
@@ -115,7 +131,7 @@ public sealed class CoverImage : IValueConverter
             img.CacheOption = BitmapCacheOption.OnLoad;
             img.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             img.UriSource = new Uri(path);
-            if (!Full) img.DecodePixelWidth = 320;
+            if (!full) img.DecodePixelWidth = 320;
             img.EndInit();
             img.Freeze();
             return img;
