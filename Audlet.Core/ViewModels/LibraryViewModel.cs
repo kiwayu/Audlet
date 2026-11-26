@@ -7,7 +7,7 @@ using Audlet.Models;
 
 namespace Audlet.ViewModels;
 
-public sealed partial class LibraryViewModel : ObservableObject
+public sealed partial class LibraryViewModel : ObservableObject, IDisposable
 {
     private readonly MainViewModel _main;
     private readonly Section _section;
@@ -26,6 +26,9 @@ public sealed partial class LibraryViewModel : ObservableObject
         main.LibraryChanged += Refresh;
         Refresh();
     }
+
+    // The view model outlives its view unless it lets go of the main view model.
+    public void Dispose() => _main.LibraryChanged -= Refresh;
 
     partial void OnSearchChanged(string value) => Refresh();
     partial void OnSortChanged(SortMode value) { _main.Store.Settings.SortMode = value; _main.Store.SaveSoon(); Refresh(); }

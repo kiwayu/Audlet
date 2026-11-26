@@ -95,6 +95,7 @@ public partial class MainWindow : Window
 
     private void ShowSection()
     {
+        ((Content.Content as FrameworkElement)?.DataContext as IDisposable)?.Dispose();
         if (Vm.FirstRun && Vm.Section != Section.Settings) { Content.Content = new FirstRunView { DataContext = Vm }; return; }
         Content.Content = Vm.Section switch
         {
