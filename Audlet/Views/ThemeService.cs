@@ -33,6 +33,16 @@ public static class ThemeService
         Set(r, "AccentTextBrush", theme.AccentText);
         Set(r, "AccentSoftBrush", "#40" + theme.Accent[3..]);
         Set(r, "ScrimBrush", white ? "#66000000" : "#33FFFFFF");
+        // Windows controls (tabs, check boxes, sliders, field underlines) take the theme accent instead of the Windows one.
+        foreach (var k in (string[])["AccentFillColorDefaultBrush", "AccentFillColorSecondaryBrush", "AccentFillColorTertiaryBrush",
+            "CheckBoxCheckBackgroundFillChecked", "CheckBoxCheckBackgroundFillCheckedPointerOver", "CheckBoxCheckBackgroundFillCheckedPressed",
+            "CheckBoxCheckBackgroundStrokeChecked", "CheckBoxCheckBackgroundStrokeCheckedPointerOver", "CheckBoxCheckBackgroundStrokeCheckedPressed",
+            "ToggleButtonBackgroundChecked", "ToggleButtonBackgroundCheckedPointerOver", "ToggleButtonBackgroundCheckedPressed",
+            "SliderThumbBackground", "SliderThumbBackgroundPointerOver", "TextControlFocusedBorderBrush"])
+            Set(r, k, theme.Accent);
+        foreach (var k in (string[])["TextOnAccentFillColorPrimaryBrush", "CheckBoxCheckGlyphForeground", "CheckBoxCheckGlyphForegroundPressed",
+            "ToggleButtonForegroundChecked", "ToggleButtonForegroundCheckedPressed"])
+            Set(r, k, theme.AccentText);
         r["GlassPanelBrush"] = Frozen(new LinearGradientBrush(
             [new GradientStop(C(white ? "#2EFFFFFF" : "#B3FFFFFF"), 0), new GradientStop(C(white ? "#14FFFFFF" : "#8AFFFFFF"), 1)], new Point(0, 0), new Point(0, 1)));
         r["GlassRimBrush"] = Frozen(new LinearGradientBrush(
