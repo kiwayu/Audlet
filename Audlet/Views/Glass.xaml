@@ -13,7 +13,7 @@
     <SolidColorBrush x:Key="AccentTextBrush" Color="#FF202020" />
     <SolidColorBrush x:Key="ScrimBrush" Color="#88000000" />
     <SolidColorBrush x:Key="AccentSoftBrush" Color="#40FFFFFF" />
-    <!-- Glass surfaces: a sheen from top to bottom, a lit rim, and colour orbs behind everything. ThemeService replaces these per theme. -->
+    <!-- Glass surfaces: a sheen from top to bottom and a lit rim. ThemeService replaces these per theme. -->
     <LinearGradientBrush x:Key="GlassPanelBrush" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="#2EFFFFFF" Offset="0" /><GradientStop Color="#14FFFFFF" Offset="1" />
     </LinearGradientBrush>
@@ -23,9 +23,6 @@
     <LinearGradientBrush x:Key="GlassButtonBrush" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="#40FFFFFF" Offset="0" /><GradientStop Color="#1AFFFFFF" Offset="1" />
     </LinearGradientBrush>
-    <RadialGradientBrush x:Key="Orb1Brush"><GradientStop Color="#9ACBA6F7" Offset="0" /><GradientStop Color="#00CBA6F7" Offset="1" /></RadialGradientBrush>
-    <RadialGradientBrush x:Key="Orb2Brush"><GradientStop Color="#8A89B4FA" Offset="0" /><GradientStop Color="#0089B4FA" Offset="1" /></RadialGradientBrush>
-    <RadialGradientBrush x:Key="Orb3Brush"><GradientStop Color="#80F5C2E7" Offset="0" /><GradientStop Color="#00F5C2E7" Offset="1" /></RadialGradientBrush>
     <DropShadowEffect x:Key="GlassShadow" BlurRadius="28" ShadowDepth="10" Direction="270" Opacity="0.28" Color="#000000" />
     <LinearGradientBrush x:Key="BackgroundBrush" StartPoint="0,0" EndPoint="1,1">
         <GradientStop Color="#FF141826" Offset="0" /><GradientStop Color="#FF1C2333" Offset="0.55" /><GradientStop Color="#FF23203A" Offset="1" />
