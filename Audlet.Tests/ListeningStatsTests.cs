@@ -5,8 +5,9 @@ namespace Audlet.Tests;
 
 public class ListeningStatsTests
 {
-    // Mid-month noon UTC, so the local date is the same in every time zone from UTC-11 to UTC+11.
+    // Mid-month, so the month is the same in every time zone. The day is counted in local time.
     private static readonly DateTime T0 = new(2026, 3, 15, 12, 0, 0, DateTimeKind.Utc);
+    private static readonly string Day = T0.ToLocalTime().ToString("yyyy-MM-dd");
 
     [Fact]
     public void WholeSecondsGoToTheBookTheMonthAndTheDay()
@@ -21,7 +22,7 @@ public class ListeningStatsTests
         Assert.Equal(12, book.ListenedSec);
         Assert.Equal(102, Assert.Single(stats.Months).ListenedSec);
         var day = Assert.Single(stats.Days);
-        Assert.Equal(("2026-03-15", 2L), (day.Day, day.ListenedSec));
+        Assert.Equal((Day, 2L), (day.Day, day.ListenedSec));
     }
 
     [Fact]
@@ -53,7 +54,7 @@ public class ListeningStatsTests
         clock.Add(new Book { Id = "b" }, stats, T0.AddSeconds(5));
 
         Assert.Equal(366, stats.Days.Count);
-        Assert.Equal("2026-03-15", stats.Days[0].Day);
+        Assert.Equal(Day, stats.Days[0].Day);
         Assert.Equal("2025-03-13", stats.Days[1].Day);
         Assert.Equal(DateTime.Parse("2025-03-14").AddDays(-365).ToString("yyyy-MM-dd"), stats.Days[^1].Day);
     }
