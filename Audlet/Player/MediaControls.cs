@@ -52,6 +52,7 @@ public sealed class MediaControls
     private async void Update()
     {
         if (_smtc is null) return;
+        string? key = null;
         try
         {
             _smtc.PlaybackStatus = _controller.IsPlaying ? MediaPlaybackStatus.Playing : MediaPlaybackStatus.Paused;
@@ -62,7 +63,7 @@ public sealed class MediaControls
             u.MusicProperties.AlbumTitle = _controller.CurrentChapter?.Title ?? "";
             // The thumbnail is looked up only when the cover file changes, and without blocking the UI thread on it.
             var cover = _controller.CurrentBook?.CoverPath;
-            var key = cover is not null && File.Exists(cover) ? cover + "|" + File.GetLastWriteTimeUtc(cover).Ticks : null;
+            key = cover is not null && File.Exists(cover) ? cover + "|" + File.GetLastWriteTimeUtc(cover).Ticks : null;
             if (key is not null && key != _thumbnail)
             {
                 _thumbnail = key;
@@ -72,6 +73,6 @@ public sealed class MediaControls
             }
             u.Update();
         }
-        catch (Exception) { }
+        catch (Exception) { if (key == _thumbnail) _thumbnail = null; }   // a failed lookup is tried again on the next update
     }
 }
