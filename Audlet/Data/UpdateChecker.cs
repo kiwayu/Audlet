@@ -14,7 +14,7 @@ public static class UpdateChecker
     private const string LatestUrl = "https://api.github.com/repos/kiwayu/Audlet/releases/latest";
     public const long MaxInstallerBytes = 300L * 1024 * 1024;
 
-    public static Version Current { get; } = Assembly.GetExecutingAssembly().GetName().Version is { } v ? new Version(v.Major, v.Minor, v.Build < 0 ? 0 : v.Build) : new Version(0, 0, 0);
+    public static Version Current { get; } = Assembly.GetEntryAssembly()?.GetName().Version is { } v ?new Version(v.Major, v.Minor, v.Build < 0 ? 0 : v.Build) : new Version(0, 0, 0);
 
     public static async Task<UpdateInfo?> CheckAsync(CancellationToken ct = default)
     {
