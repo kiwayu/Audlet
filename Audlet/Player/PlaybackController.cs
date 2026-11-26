@@ -15,8 +15,8 @@ public sealed partial class PlaybackController : ObservableObject
     private readonly SilenceSkipper _silence = new();
     private readonly SleepTimer _sleep = new();
     private BookTimeline? _timeline;
+    private readonly ListeningStats _listening = new();
     private DateTime? _pausedAtUtc;
-    private DateTime _lastStatUtc;
     private DateTime _lastSaveUtc;
     private const double SilenceHopSec = 0.2;
 
@@ -112,7 +112,7 @@ public sealed partial class PlaybackController : ObservableObject
             StartSleep(_store.Settings.SleepDefaultMin);
         _player.Play();
         IsPlaying = true;
-        _lastStatUtc = DateTime.UtcNow;
+        _listening.Restart(DateTime.UtcNow);
         if (CurrentBook.State == BookState.New) CurrentBook.State = BookState.Started;
         CurrentBook.LastPlayedUtc = DateTime.UtcNow;
         if (_store.Settings.SkipSilence) _level.Start();
@@ -302,21 +302,7 @@ public sealed partial class PlaybackController : ObservableObject
 
     private void AccumulateStats()
     {
-        if (CurrentBook is null) return;
-        var now = DateTime.UtcNow;
-        var sec = (long)(now - _lastStatUtc).TotalSeconds;
-        if (sec <= 0) return;
-        _lastStatUtc = now;
-        CurrentBook.ListenedSec += sec;
-        var key = now.ToLocalTime().ToString("yyyy-MM");
-        var month = _store.Stats.Months.FirstOrDefault(m => m.Month == key);
-        if (month is null) _store.Stats.Months.Add(month = new MonthStats { Month = key });
-        month.ListenedSec += sec;
-        var dayKey = now.ToLocalTime().ToString("yyyy-MM-dd");
-        var day = _store.Stats.Days.FirstOrDefault(d => d.Day == dayKey);
-        if (day is null) _store.Stats.Days.Add(day = new DayStats { Day = dayKey });
-        day.ListenedSec += sec;
-        if (_store.Stats.Days.Count > 400) _store.Stats.Days = _store.Stats.Days.OrderByDescending(d => d.Day).Take(366).ToList();
+        if (CurrentBook is not null) _listening.Add(CurrentBook, _store.Stats, DateTime.UtcNow);
     }
 
     private void OnFileEnded()
