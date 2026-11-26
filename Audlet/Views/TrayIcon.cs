@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
-using Audlet.Converters;
 using Audlet.Player;
+using Audlet.ViewModels;
 
 namespace Audlet.Views;
 
@@ -48,7 +48,7 @@ public sealed class TrayIcon : IDisposable
         _playItem.Text = _controller.IsPlaying ? "Pause" : "Play";
         var book = _controller.CurrentBook;
         var text = book is null ? "Audlet"
-            : book.Title + " - " + TimeConverter.Format(_controller.BookPositionSec) + " of " + TimeConverter.Format(_controller.BookTotalSec) + (_controller.IsPlaying ? "" : " (paused)");
+            : book.Title + " - " + TimeText.Format(_controller.BookPositionSec) + " of " + TimeText.Format(_controller.BookTotalSec) + (_controller.IsPlaying ? "" : " (paused)");
         _icon.Text = text.Length > 127 ? text[..127] : text;   // NotifyIcon caps the tooltip length
     }
 

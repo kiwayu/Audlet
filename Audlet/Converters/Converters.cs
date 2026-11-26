@@ -2,25 +2,20 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using Audlet.ViewModels;
 
 namespace Audlet.Converters;
 
 public sealed class TimeConverter : IValueConverter
 {
-    public static string Format(double seconds)
-    {
-        if (double.IsNaN(seconds) || seconds < 0) seconds = 0;
-        var t = TimeSpan.FromSeconds(Math.Round(seconds));
-        return t.TotalHours >= 1 ? string.Format("{0}:{1:00}:{2:00}", (int)t.TotalHours, t.Minutes, t.Seconds) : string.Format("{0}:{1:00}", t.Minutes, t.Seconds);
-    }
-    public object Convert(object value, Type t, object p, CultureInfo c) => Format(value is double d ? d : 0);
+    public object Convert(object value, Type t, object p, CultureInfo c) => TimeText.Format(value is double d ? d : 0);
     public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
 }
 
 public sealed class RemainingConverter : IMultiValueConverter
 {
     public object Convert(object[] v, Type t, object p, CultureInfo c) =>
-        v.Length == 2 && v[0] is double pos && v[1] is double total ? "-" + TimeConverter.Format(total - pos) : "";
+        v.Length == 2 && v[0] is double pos && v[1] is double total ? "-" + TimeText.Format(total - pos) : "";
     public object[] ConvertBack(object v, Type[] t, object p, CultureInfo c) => throw new NotSupportedException();
 }
 

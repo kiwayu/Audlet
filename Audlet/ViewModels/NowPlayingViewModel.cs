@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Diagnostics;
-using Audlet.Converters;
 using Audlet.Library;
 using Audlet.Models;
 using Audlet.Player;
@@ -94,7 +93,7 @@ public sealed partial class NowPlayingViewModel : ObservableObject
         if (Controller.CurrentBook is not { } b) return;
         var cur = Controller.CurrentChapter is { } c ? b.Chapters.IndexOf(c) : -1;
         for (var i = 0; i < b.Chapters.Count; i++)
-            Chapters.Add(new ChapterRow(b.Chapters[i], i, TimeConverter.Format(b.Chapters[i].EndSec - b.Chapters[i].StartSec), i == cur, i < cur));
+            Chapters.Add(new ChapterRow(b.Chapters[i], i, TimeText.Format(b.Chapters[i].EndSec - b.Chapters[i].StartSec), i == cur, i < cur));
     }
 
     // Chapter starts as fractions of the seek bar: the current file in file mode, the whole book in book mode.
@@ -130,7 +129,7 @@ public sealed partial class NowPlayingViewModel : ObservableObject
         var sec = fraction * total;
         var tick = Ticks.LastOrDefault(t => t.StartSec <= sec);
         var name = tick?.Title ?? (IsBookMode ? b.Chapters.FirstOrDefault()?.Title : b.Chapters.FirstOrDefault(c => c.FileIndex == Controller.FileIndex)?.Title) ?? "";
-        return name + "  " + TimeConverter.Format(sec);
+        return name + "  " + TimeText.Format(sec);
     }
 
     private void RebuildLists()
