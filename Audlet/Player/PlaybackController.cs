@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Audlet.Audio;
 using Audlet.Data;
-using Audlet.Library;
 using Audlet.Models;
 
 namespace Audlet.Player;
@@ -323,21 +322,9 @@ public sealed partial class PlaybackController : ObservableObject
         var finished = CurrentBook;
         AccumulateStats();
         _player.Pause(); IsPlaying = false; _level.Stop();
-        finished.State = BookState.Finished;
-        finished.FileIndex = 0; finished.PositionSec = 0;
-        _store.Settings.Queue.RemoveAll(id => id.Equals(finished.Id, StringComparison.OrdinalIgnoreCase));
-        var action = _store.Settings.EndOfBookAction;
-        var nextId = _store.Settings.Queue.FirstOrDefault();
-        var next = nextId is null ? null : Books.FirstOrDefault(b => b.Id.Equals(nextId, StringComparison.OrdinalIgnoreCase));
-        var fromQueue = next is not null;
-        next ??= SeriesInfo.Next(Books, finished);   // nothing queued: fall through to the next book in the series
-        if (action != EndOfBookAction.Stop && next is not null)
-        {
-            if (fromQueue) _store.Settings.Queue.RemoveAt(0);
-            LoadBook(next, play: action == EndOfBookAction.NextBookPlay);
-            ShowToast("Finished. Next: " + next.Title);
-        }
-        else ShowToast(next is null ? "The book is finished." : "Finished. Next in the series: " + next.Title);
+        var (next, play, toast) = EndOfBook.Finish(finished, Books, _store.Settings);
+        if (next is not null) LoadBook(next, play);
+        ShowToast(toast);
         _store.SaveNow();
     }
 
