@@ -22,7 +22,6 @@ public sealed class BassPlayer : IDisposable
     public event Action? Ended;
     public bool Mono { get; set; }
     public bool IsOpen => _handle != 0;
-    public bool IsPlaying => _handle != 0 && Bass.ChannelIsActive(_handle) == PlaybackState.Playing;
 
     private static int _users;   // BASS is initialised once per process and freed when the last player goes
 
