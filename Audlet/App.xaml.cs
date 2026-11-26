@@ -34,9 +34,9 @@ public partial class App : Application
         try { Backup.Daily(AppPaths.Root, DateTime.Today, store.Settings.BackupFolder); } catch (Exception ex) { ErrorLog.Write(AppPaths.Root, "backup", ex); }
         ThemeService.Start(() => store.Settings.Theme);
         var player = new BassPlayer();
-        _controller = new PlaybackController(player, store);
+        _controller = new PlaybackController(player, store, UiTimer.Every);
         _ = new MediaControls(_controller);
-        var devices = new DeviceWatcher();
+        var devices = new DeviceWatcher(UiTimer.Every);
         devices.DeviceLost += () => { if (store.Settings.PauseOnDeviceLoss) _controller!.PauseForDeviceLoss(); };
         _vm = new MainViewModel(store, _controller, new CoverCache(AppPaths.Covers));
         var window = new MainWindow { DataContext = _vm };

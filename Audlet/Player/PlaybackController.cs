@@ -1,4 +1,3 @@
-using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Audlet.Audio;
 using Audlet.Data;
@@ -11,8 +10,8 @@ public sealed partial class PlaybackController : ObservableObject
 {
     private readonly BassPlayer _player;
     private readonly AppStore _store;
-    private readonly DispatcherTimer _tick = new() { Interval = TimeSpan.FromMilliseconds(250) };
-    private readonly DispatcherTimer _level = new() { Interval = TimeSpan.FromMilliseconds(50) };
+    private readonly ITicker _tick;
+    private readonly ITicker _level;
     private readonly SilenceSkipper _silence = new();
     private readonly SleepTimer _sleep = new();
     private BookTimeline? _timeline;
@@ -40,10 +39,12 @@ public sealed partial class PlaybackController : ObservableObject
     public double FileDurationSec => CurrentBook is { } b && FileIndex < b.Files.Count ? b.Files[FileIndex].DurationSec : 0;
     public IReadOnlyList<Book> Books => _store.Library.Books;
 
-    public PlaybackController(BassPlayer player, AppStore store)
+    public PlaybackController(BassPlayer player, AppStore store, Func<TimeSpan, ITicker> timers)
     {
         _player = player;
         _store = store;
+        _tick = timers(TimeSpan.FromMilliseconds(250));
+        _level = timers(TimeSpan.FromMilliseconds(50));
         _player.Ended += OnFileEnded;
         _tick.Tick += (_, _) => Tick();
         _level.Tick += (_, _) => LevelTick();

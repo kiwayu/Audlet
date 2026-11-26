@@ -2,6 +2,7 @@ using Audlet.Audio;
 using Audlet.Data;
 using Audlet.Library;
 using Audlet.Player;
+using Audlet.Views;
 using Audlet.ViewModels;
 
 namespace Audlet.Tests;
@@ -35,7 +36,7 @@ public class LibraryDropTests : IDisposable
         var store = new AppStore(Path.Combine(_dir, "data"));
         store.Load();
         using var player = new BassPlayer();
-        var vm = new MainViewModel(store, new PlaybackController(player, store), new CoverCache(Path.Combine(_dir, "covers")));
+        var vm = new MainViewModel(store, new PlaybackController(player, store, UiTimer.Every), new CoverCache(Path.Combine(_dir, "covers")));
         Assert.True(vm.FirstRun);
 
         await vm.AddDroppedAsync([bookFolder, loose, Path.Combine(_dir, "nope.txt")]);

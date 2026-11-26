@@ -3,6 +3,7 @@ using Audlet.Data;
 using Audlet.Library;
 using Audlet.Models;
 using Audlet.Player;
+using Audlet.Views;
 using Audlet.ViewModels;
 
 namespace Audlet.Tests;
@@ -21,7 +22,7 @@ public class KeyRebindingTests : IDisposable
         // Debounced saves never fire, so nothing is written after the folder is deleted.
         _store = new AppStore(_dir) { DebounceMs = Timeout.Infinite };
         _store.Load();
-        _main = new MainViewModel(_store, new PlaybackController(_player, _store), new CoverCache(Path.Combine(_dir, "covers")));
+        _main = new MainViewModel(_store, new PlaybackController(_player, _store, UiTimer.Every), new CoverCache(Path.Combine(_dir, "covers")));
         _vm = new SettingsViewModel(_main);
     }
 

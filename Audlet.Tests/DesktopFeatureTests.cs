@@ -1,6 +1,7 @@
 using Audlet.Audio;
 using Audlet.Data;
 using Audlet.Player;
+using Audlet.Views;
 
 namespace Audlet.Tests;
 
@@ -15,7 +16,7 @@ public class DesktopFeatureTests : IDisposable
     {
         var store = new AppStore(_dir); store.Load();
         using var player = new BassPlayer();
-        var c = new PlaybackController(player, store);
+        var c = new PlaybackController(player, store, UiTimer.Every);
         var seen = new List<double>();
         for (var i = 0; i < 6; i++) { c.CycleSpeed(); seen.Add(c.Speed); }
         Assert.Equal([1.25, 1.5, 1.75, 2.0, 1.0, 1.25], seen);

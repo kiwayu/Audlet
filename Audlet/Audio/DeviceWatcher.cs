@@ -1,18 +1,19 @@
-using System.Windows.Threading;
 using ManagedBass;
+using Audlet.Player;
 
 namespace Audlet.Audio;
 
 // Polls the audio device list and reports when an enabled output device disappears, such as headphones being unplugged.
 public sealed class DeviceWatcher
 {
-    private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(2) };
+    private readonly ITicker _timer;
     private HashSet<string> _known = [];
 
     public event Action? DeviceLost;
 
-    public DeviceWatcher()
+    public DeviceWatcher(Func<TimeSpan, ITicker> timers)
     {
+        _timer = timers(TimeSpan.FromSeconds(2));
         _known = Snapshot();
         _timer.Tick += (o, a) => Check();
         _timer.Start();
