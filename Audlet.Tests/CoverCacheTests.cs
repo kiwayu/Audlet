@@ -2,6 +2,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Audlet.Library;
 using Audlet.Models;
+using Audlet.Views;
 
 namespace Audlet.Tests;
 
@@ -32,7 +33,7 @@ public class CoverCacheTests : IDisposable
         var bookDir = Path.Combine(_dir, "book");
         MakePng(bookDir, "cover.png", 1200);
         File.WriteAllText(Path.Combine(bookDir, "01.mp3"), "");
-        var cache = new CoverCache(Path.Combine(_dir, "covers"), embedded: _ => null);
+        var cache = new CoverCache(Path.Combine(_dir, "covers"), new WpfCoverCodec(), embedded: _ => null);
         var book = new Book { Id = bookDir, Files = [new AudioFile(Path.Combine(bookDir, "01.mp3"), 1, "x")] };
 
         var path = cache.Ensure(book);
@@ -61,7 +62,7 @@ public class CoverCacheTests : IDisposable
         File.WriteAllBytes(Path.Combine(bookDir, "cover.jpg"), [0xFF, 0xD8, 0xFF, 0xE0, .. new byte[4000]]);
         File.WriteAllText(Path.Combine(bookDir, "01.mp3"), "");
         var good = File.ReadAllBytes(MakePng(_dir, "embedded.png", 200));
-        var cache = new CoverCache(Path.Combine(_dir, "covers"), embedded: _ => good);
+        var cache = new CoverCache(Path.Combine(_dir, "covers"), new WpfCoverCodec(), embedded: _ => good);
         var book = new Book { Id = bookDir, Files = [new AudioFile(Path.Combine(bookDir, "01.mp3"), 1, "x")] };
 
         var path = cache.Ensure(book);
@@ -76,7 +77,7 @@ public class CoverCacheTests : IDisposable
         var bookDir = Path.Combine(_dir, "plain");
         Directory.CreateDirectory(bookDir);
         File.WriteAllText(Path.Combine(bookDir, "01.mp3"), "");
-        var cache = new CoverCache(Path.Combine(_dir, "covers"), embedded: _ => null);
+        var cache = new CoverCache(Path.Combine(_dir, "covers"), new WpfCoverCodec(), embedded: _ => null);
         var book = new Book { Id = bookDir, Files = [new AudioFile(Path.Combine(bookDir, "01.mp3"), 1, "x")] };
         Assert.Null(cache.Ensure(book));
     }

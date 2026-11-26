@@ -38,7 +38,7 @@ public partial class App : Application
         _ = new MediaControls(_controller);
         var devices = new DeviceWatcher(player, UiTimer.Every);
         devices.DeviceLost += () => { if (store.Settings.PauseOnDeviceLoss) _controller!.PauseForDeviceLoss(); };
-        _vm = new MainViewModel(store, _controller, new CoverCache(AppPaths.Covers), new WpfShell());
+        _vm = new MainViewModel(store, _controller, new CoverCache(AppPaths.Covers, new WpfCoverCodec()), new WpfShell());
         var window = new MainWindow { DataContext = _vm };
         MainWindow = window;
         window.Show();

@@ -1,7 +1,5 @@
 using System.Security.Cryptography;
 using System.Text;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Audlet.Models;
 
 namespace Audlet.Library;
@@ -10,11 +8,13 @@ public sealed class CoverCache
 {
     public const int MaxSide = 600;
     private readonly string _folder;
+    private readonly ICoverCodec _codec;
     private readonly Func<string, byte[]?> _embedded;
 
-    public CoverCache(string folder, Func<string, byte[]?>? embedded = null)
+    public CoverCache(string folder, ICoverCodec codec, Func<string, byte[]?>? embedded = null)
     {
         _folder = folder;
+        _codec = codec;
         _embedded = embedded ?? MetadataReader.ReadEmbeddedCover;
     }
 
@@ -30,28 +30,15 @@ public sealed class CoverCache
         {
             try
             {
-                var decoder = BitmapDecoder.Create(new MemoryStream(bytes), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-                Save(decoder.Frames[0], target);
+                Save(_codec.ToJpeg(bytes, MaxSide), target);
                 return target;
             }
             catch (Exception) { }
             // A JPEG with a damaged tail still decodes when scaled during decoding, so try that before giving up on it.
-            try { Save(DecodeScaled(bytes), target); return target; }
+            try { Save(_codec.ToJpegScaled(bytes, MaxSide), target); return target; }
             catch (Exception) { }
         }
         return null;
-    }
-
-    private static BitmapSource DecodeScaled(byte[] bytes)
-    {
-        var img = new BitmapImage();
-        img.BeginInit();
-        img.CacheOption = BitmapCacheOption.OnLoad;
-        img.StreamSource = new MemoryStream(bytes);
-        img.DecodePixelWidth = MaxSide;
-        img.EndInit();
-        img.Freeze();
-        return img;
     }
 
     private IEnumerable<byte[]> Candidates(Book book)
@@ -60,30 +47,18 @@ public sealed class CoverCache
         if (book.Files.Count > 0 && _embedded(book.Files[0].Path) is { } embedded) yield return embedded;
     }
 
-    public void Replace(Book book, string imagePath)
-    {
-        var decoder = BitmapDecoder.Create(new Uri(imagePath), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-        Save(decoder.Frames[0], PathFor(book));
-    }
+    public void Replace(Book book, string imagePath) => Save(_codec.ToJpeg(imagePath, MaxSide), PathFor(book));
 
-    public void Replace(Book book, byte[] imageBytes)
-    {
-        var decoder = BitmapDecoder.Create(new MemoryStream(imageBytes), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-        Save(decoder.Frames[0], PathFor(book));
-    }
+    public void Replace(Book book, byte[] imageBytes) => Save(_codec.ToJpeg(imageBytes, MaxSide), PathFor(book));
 
-    private void Save(BitmapSource frame, string target)
+    private void Save(byte[] jpeg, string target)
     {
         Directory.CreateDirectory(_folder);
-        var scale = Math.Min(1.0, (double)MaxSide / Math.Max(frame.PixelWidth, frame.PixelHeight));
-        BitmapSource src = scale < 1.0 ? new TransformedBitmap(frame, new ScaleTransform(scale, scale)) : frame;
-        var enc = new JpegBitmapEncoder { QualityLevel = 85 };
-        enc.Frames.Add(BitmapFrame.Create(src));
         // Write beside the target and move into place, so a crash mid-write never leaves a half file behind.
         var temp = target + ".part";
         try
         {
-            using (var fs = File.Create(temp)) enc.Save(fs);
+            File.WriteAllBytes(temp, jpeg);
             File.Move(temp, target, overwrite: true);
         }
         catch (Exception) { File.Delete(temp); throw; }

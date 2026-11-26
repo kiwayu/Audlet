@@ -49,7 +49,7 @@ public class RescanTests : IDisposable
         // Known from an earlier scan, with a cover file that has since been deleted.
         var piranesiId = Path.Combine(Root, "Piranesi");
         store.Library.Books.Add(new Book { Id = piranesiId, Title = "Piranesi", PositionSec = 4, CoverPath = Path.Combine(_dir, "gone.jpg") });
-        var covers = new CoverCache(Path.Combine(_dir, "covers"));
+        var covers = new CoverCache(Path.Combine(_dir, "covers"), new WpfCoverCodec());
         var vm = new MainViewModel(store, new PlaybackController(_player, store, UiTimer.Every), covers, new WpfShell());
         var changed = 0;
         vm.LibraryChanged += () => changed++;
@@ -81,7 +81,7 @@ public class RescanTests : IDisposable
         var store = new AppStore(Data) { DebounceMs = Timeout.Infinite };
         store.Load();
         store.Settings.RootFolders.Add(Root);
-        var vm = new MainViewModel(store, new PlaybackController(_player, store, UiTimer.Every), new CoverCache(Path.Combine(_dir, "covers")), new WpfShell());
+        var vm = new MainViewModel(store, new PlaybackController(_player, store, UiTimer.Every), new CoverCache(Path.Combine(_dir, "covers"), new WpfCoverCodec()), new WpfShell());
         await vm.RescanAsync();
         Assert.Single(store.Library.Books);
 
@@ -99,7 +99,7 @@ public class RescanTests : IDisposable
         var store = new AppStore(Data) { DebounceMs = Timeout.Infinite };
         store.Load();
         store.Settings.RootFolders.Add(Root);
-        var vm = new MainViewModel(store, new PlaybackController(_player, store, UiTimer.Every), new CoverCache(Path.Combine(_dir, "covers")), new WpfShell());
+        var vm = new MainViewModel(store, new PlaybackController(_player, store, UiTimer.Every), new CoverCache(Path.Combine(_dir, "covers"), new WpfCoverCodec()), new WpfShell());
         var changed = 0;
         vm.LibraryChanged += () => changed++;
 

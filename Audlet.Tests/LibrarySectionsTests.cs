@@ -30,7 +30,7 @@ public class LibrarySectionsTests : IDisposable
             Make("Delta", "Walker", BookState.Finished, sec: 200, added: now.AddDays(-2), played: now.AddDays(-3)),
         ]);
         _store.Settings.Queue = [@"C:\BOOKS\GAMMA", @"C:\Books\Gone", @"C:\Books\Alpha"];
-        _main = new MainViewModel(_store, new PlaybackController(_player, _store, UiTimer.Every), new CoverCache(Path.Combine(_dir, "covers")), new WpfShell());
+        _main = new MainViewModel(_store, new PlaybackController(_player, _store, UiTimer.Every), new CoverCache(Path.Combine(_dir, "covers"), new WpfCoverCodec()), new WpfShell());
     }
 
     public void Dispose()
