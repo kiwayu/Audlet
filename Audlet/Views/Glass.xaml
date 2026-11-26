@@ -27,6 +27,30 @@
         <GradientStop Color="#FF141826" Offset="0" /><GradientStop Color="#FF1C2333" Offset="0.55" /><GradientStop Color="#FF23203A" Offset="1" />
     </LinearGradientBrush>
 
+    <!-- Keyboard focus: a 2 px ring 1 px outside the control, in the text colour, on every custom control. -->
+    <Style x:Key="GlassFocus">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate><Rectangle Margin="-3" StrokeThickness="2" Stroke="{DynamicResource GlassTextBrush}" RadiusX="12" RadiusY="12" /></ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <!-- Lists sit inside a scroll viewer that clips anything outside it, so their ring is drawn 1 px inside. -->
+    <Style x:Key="GlassFocusInset">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate><Rectangle Margin="1" StrokeThickness="2" Stroke="{DynamicResource GlassTextBrush}" RadiusX="8" RadiusY="8" /></ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="GlassFocusRound">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate><Rectangle Margin="-3" StrokeThickness="2" Stroke="{DynamicResource GlassTextBrush}" RadiusX="100" RadiusY="100" /></ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="GlassPanel" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource GlassPanelBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource GlassRimBrush}" />
@@ -43,6 +67,7 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="12,6" />
         <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource GlassFocus}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -86,6 +111,7 @@
     <Style x:Key="TransportButton" TargetType="Button" BasedOn="{StaticResource GlassButton}">
         <Setter Property="Width" Value="44" />
         <Setter Property="Height" Value="44" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource GlassFocusRound}" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="FontWeight" Value="SemiBold" />
@@ -203,6 +229,7 @@
         <Setter Property="Foreground" Value="{DynamicResource GlassTextBrush}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource GlassFocus}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -235,6 +262,7 @@
     <Style x:Key="NavItem" TargetType="ListBoxItem">
         <Setter Property="Padding" Value="12,8" />
         <Setter Property="Margin" Value="0,2" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource GlassFocus}" />
         <Setter Property="Foreground" Value="{DynamicResource GlassTextBrush}" />
         <Setter Property="Template">
             <Setter.Value>

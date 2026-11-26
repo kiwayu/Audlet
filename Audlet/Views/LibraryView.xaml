@@ -42,7 +42,7 @@
             <Button Grid.Column="4" Style="{StaticResource GlassButton}" Content="Rescan" Command="{Binding RescanCommand}" />
         </Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding Books}">
+            <ItemsControl ItemsSource="{Binding Books}" FocusVisualStyle="{StaticResource GlassFocusInset}">
                 <ItemsControl.ItemsPanel><ItemsPanelTemplate><v:CardPanel Upcoming="Cards_Upcoming" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type m:Book}">

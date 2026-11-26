@@ -47,7 +47,7 @@
                 </UniformGrid>
                 <Grid>
                     <ScrollViewer x:Name="ChaptersPane" VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding Chapters}">
+                        <ItemsControl ItemsSource="{Binding Chapters}" FocusVisualStyle="{StaticResource GlassFocusInset}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="{x:Type vm:ChapterRow}">
                                     <Border MouseLeftButtonUp="Chapter_Click">
