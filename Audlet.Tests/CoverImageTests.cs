@@ -35,5 +35,17 @@ public class CoverImageTests : IDisposable
     }
 
     [Fact]
+    public void ACoverThatCouldNotBeReadIsReadAgainWhenItShowsNextTime()
+    {
+        var path = Jpeg("locked.jpg");
+        using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))   // another program holds it
+        {
+            CoverImage.Prefetch([path]);
+            Assert.Null(Show(path));
+        }
+        Assert.IsType<BitmapImage>(Show(path));
+    }
+
+    [Fact]
     public void AMissingCoverShowsNothing() => Assert.Null(Show(Path.Combine(_dir, "none.jpg")));
 }

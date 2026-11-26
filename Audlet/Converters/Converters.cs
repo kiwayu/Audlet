@@ -117,9 +117,10 @@ public sealed class CoverImage : IValueConverter
         var file = new FileInfo(path);
         if (!file.Exists) return null;
         if (Full) return Decode(path, full: true);
-        if (Decoded.TryGet(path, out var known) && known.Result.Written == file.LastWriteTimeUtc) return known.Result.Image;
+        if (Decoded.TryGet(path, out var known) && known.Result is { Image: { } cached } && known.Result.Written == file.LastWriteTimeUtc) return cached;
+        // A cover that could not be decoded (another program had it open, say) is tried again the next time it shows.
         var image = Decode(path, full: false);
-        Decoded.Add(path, Task.FromResult((file.LastWriteTimeUtc, image)));
+        if (image is not null) Decoded.Add(path, Task.FromResult((file.LastWriteTimeUtc, image)));
         return image;
     }
 
