@@ -17,13 +17,14 @@ public sealed class LibraryScanner
         foreach (var root in roots.Where(Directory.Exists))
             Walk(root, root, books, progress);
         foreach (var file in (looseFiles ?? []).Where(f => File.Exists(f) && AudioExtensions.IsAudio(f)))
-            books.Add(Build(Path.GetDirectoryName(file)!, file, [file], progress));
+            books.Add(Build(Path.GetDirectoryName(file)!, file, [file], Directory.EnumerateFiles(Path.GetDirectoryName(file)!).ToList(), progress));
         return books;
     }
 
     private void Walk(string root, string folder, List<Book> books, IProgress<string>? progress)
     {
-        var files = Directory.EnumerateFiles(folder).Where(AudioExtensions.IsAudio).OrderBy(f => f, NaturalComparer.Instance).ToList();
+        var listing = Directory.EnumerateFiles(folder).ToList();
+        var files = listing.Where(AudioExtensions.IsAudio).OrderBy(f => f, NaturalComparer.Instance).ToList();
         var subs = Directory.EnumerateDirectories(folder).OrderBy(d => d, NaturalComparer.Instance).ToList();
         var subsWithAudio = subs.Where(HasAudioBelow).ToList();
 
@@ -32,11 +33,12 @@ public sealed class LibraryScanner
                         subsWithAudio.All(d => DiscPart.IsMatch(Path.GetFileName(d)) && !Directory.EnumerateDirectories(d).Any(HasAudioBelow));
         if ((files.Count > 0 && subsWithAudio.Count == 0) || discParts)
         {
-            books.Add(Build(root, folder, AllAudioBelow(folder).ToList(), progress));
+            // With no audio in any sub-folder, the audio below this folder is exactly its own files, already listed and sorted.
+            books.Add(Build(root, folder, subsWithAudio.Count == 0 ? files : AllAudioBelow(folder).ToList(), listing, progress));
             return;
         }
         foreach (var file in files)
-            books.Add(Build(root, file, [file], progress));
+            books.Add(Build(root, file, [file], listing, progress));
         foreach (var sub in subsWithAudio)
             Walk(root, sub, books, progress);
     }
@@ -48,7 +50,8 @@ public sealed class LibraryScanner
         Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories).Where(AudioExtensions.IsAudio)
             .OrderBy(f => f, NaturalComparer.Instance);
 
-    private Book Build(string root, string id, List<string> paths, IProgress<string>? progress)
+    // siblings: the files directly in the folder that holds the book's companions (the book folder, or a file book's folder).
+    private Book Build(string root, string id, List<string> paths, List<string> siblings, IProgress<string>? progress)
     {
         progress?.Report(id);
         var isFolder = Directory.Exists(id);
@@ -84,7 +87,7 @@ public sealed class LibraryScanner
             SeriesIndex = seriesIndex,
             Files = files,
             Chapters = chapters,
-            Companions = FindCompanions(id, isFolder),
+            Companions = FindCompanions(id, isFolder, siblings),
             AddedUtc = DateTime.UtcNow,
         };
     }
@@ -92,11 +95,10 @@ public sealed class LibraryScanner
     private static readonly string[] CompanionExtensions = [".txt", ".pdf", ".srt"];
 
     // A folder book takes every companion file in its folder; a lone audio file takes the ones that share its name.
-    private static List<string> FindCompanions(string id, bool isFolder)
+    private static List<string> FindCompanions(string id, bool isFolder, List<string> siblings)
     {
-        var dir = isFolder ? id : Path.GetDirectoryName(id)!;
         var stem = isFolder ? null : Path.GetFileNameWithoutExtension(id);
-        return Directory.EnumerateFiles(dir)
+        return siblings
             .Where(f => CompanionExtensions.Contains(Path.GetExtension(f).ToLowerInvariant()))
             .Where(f => stem is null || Path.GetFileNameWithoutExtension(f).StartsWith(stem, StringComparison.OrdinalIgnoreCase))
             .OrderBy(f => f, NaturalComparer.Instance).ToList();

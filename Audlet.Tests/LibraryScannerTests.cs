@@ -55,6 +55,16 @@ public class LibraryScannerTests : IDisposable
     }
 
     [Fact]
+    public void CompanionsAreTheTextPdfAndSubtitleFilesBesideTheBook()
+    {
+        Touch("Dune", "01.mp3"); Touch("Dune", "notes.txt"); Touch("Dune", "map.pdf"); Touch("Dune", "cover.jpg");
+        Touch("Piranesi.m4b"); Touch("Piranesi.srt"); Touch("Other.txt");
+        var books = new LibraryScanner(Meta).Scan([_root]).OrderBy(b => b.Id).ToList();
+        Assert.Equal(["map.pdf", "notes.txt"], books[0].Companions.Select(Path.GetFileName));
+        Assert.Equal(["Piranesi.srt"], books[1].Companions.Select(Path.GetFileName));
+    }
+
+    [Fact]
     public void FilesSortNaturally()
     {
         Touch("B", "2.mp3"); Touch("B", "10.mp3"); Touch("B", "1.mp3");
