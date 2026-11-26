@@ -104,9 +104,11 @@ public sealed class FractionWidth : IValueConverter
 // Bypasses the WPF image cache so a replaced cover shows at once; returns null for a missing path.
 // Card-size covers stay decoded by path and write time, so a card created again (another section, the rebuild after a
 // rescan, scrolling back) reuses its bitmap, while a replaced cover file has a new write time and is decoded afresh.
+// Prefetch decodes the covers of cards about to be created on worker threads, so a card rarely waits for its cover.
 public sealed class CoverImage : IValueConverter
 {
-    private static readonly LruCache<string, (DateTime Written, BitmapImage? Image)> Decoded = new(120);   // about 50 MB at 320 px
+    // Used on the UI thread only; the decoding behind each task runs on a worker thread.
+    private static readonly LruCache<string, Task<(DateTime Written, BitmapImage? Image)>> Decoded = new(120);   // about 50 MB at 320 px
 
     public bool Full { get; set; }
     public object? Convert(object v, Type t, object p, CultureInfo c)
@@ -115,10 +117,17 @@ public sealed class CoverImage : IValueConverter
         var file = new FileInfo(path);
         if (!file.Exists) return null;
         if (Full) return Decode(path, full: true);
-        if (Decoded.TryGet(path, out var known) && known.Written == file.LastWriteTimeUtc) return known.Image;
+        if (Decoded.TryGet(path, out var known) && known.Result.Written == file.LastWriteTimeUtc) return known.Result.Image;
         var image = Decode(path, full: false);
-        Decoded.Add(path, (file.LastWriteTimeUtc, image));
+        Decoded.Add(path, Task.FromResult((file.LastWriteTimeUtc, image)));
         return image;
+    }
+
+    public static void Prefetch(IEnumerable<string?> paths)
+    {
+        foreach (var path in paths)
+            if (path is not null && !Decoded.TryGet(path, out _))
+                Decoded.Add(path, Task.Run(() => (File.GetLastWriteTimeUtc(path), Decode(path, full: false))));
     }
 
     private static BitmapImage? Decode(string path, bool full)

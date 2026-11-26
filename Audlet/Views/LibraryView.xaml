@@ -27,7 +27,7 @@
         </Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Books}">
-                <ItemsControl.ItemsPanel><ItemsPanelTemplate><v:CardPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                <ItemsControl.ItemsPanel><ItemsPanelTemplate><v:CardPanel Upcoming="Cards_Upcoming" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type m:Book}">
                         <Border Style="{StaticResource Card}" MouseLeftButtonUp="Card_Click"

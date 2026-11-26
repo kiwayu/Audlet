@@ -15,6 +15,10 @@ public sealed class CardPanel : VirtualizingPanel
     private double _slot;
     private bool _stale = true;
 
+    // Raised before cards are created, with the items of their rows and of one more row on each side, so slow work
+    // for them (decoding covers) can start early.
+    public event Action<IReadOnlyList<object>>? Upcoming;
+
     public CardPanel() => Unloaded += (_, _) => { if (_scroller is not null) _scroller.ScrollChanged -= OnScroll; _scroller = null; };
 
     private void OnScroll(object sender, ScrollChangedEventArgs e)
@@ -52,6 +56,12 @@ public sealed class CardPanel : VirtualizingPanel
         var (first, last) = _rows.Overlapping(offset - viewport / 2, offset + viewport * 1.5);
         var start = Math.Min(first * columns, count);
         var end = Math.Min((last + 1) * columns, count);
+        if (Upcoming is { } upcoming && start < end)
+        {
+            var items = ItemsControl.GetItemsOwner(this)!.Items;
+            var from = Math.Max(0, start - columns);
+            upcoming(Enumerable.Range(from, Math.Min(count, end + columns) - from).Select(i => items[i]).ToList());
+        }
         Create(start, end, constraint);
         Clear(start, end);
 
