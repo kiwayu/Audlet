@@ -7,8 +7,8 @@ public static class ThemeCatalog
 {
     public const string System = "System";
 
-    public static readonly Theme DarkGlass = new("Dark glass", true, "#FF141826", "#FF1C2333", "#FF23203A", "#FFFFFFFF", "#99FFFFFF", "#FFFFFFFF", "#FF202020");
-    public static readonly Theme LightGlass = new("Light glass", false, "#FFE9EDF5", "#FFDCE3F0", "#FFE6DDF2", "#FF1A1A1A", "#991A1A1A", "#FF1A1A1A", "#FFFFFFFF");
+    public static readonly Theme DarkGlass = new("Dark glass", true, "#FF141826", "#FF1C2333", "#FF23203A", "#FFFFFFFF", "#B8FFFFFF", "#FFFFFFFF", "#FF202020");
+    public static readonly Theme LightGlass = new("Light glass", false, "#FFE9EDF5", "#FFDCE3F0", "#FFE6DDF2", "#FF1A1A1A", "#B81A1A1A", "#FF1A1A1A", "#FFFFFFFF");
 
     public static readonly IReadOnlyList<Theme> All =
     [
