@@ -62,9 +62,12 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Border Width="48" Height="48" CornerRadius="6" Margin="0,0,16,0">
-                        <Border.Background><ImageBrush ImageSource="{Binding Controller.CurrentBook.CoverPath, Converter={StaticResource Cover}}" Stretch="UniformToFill" /></Border.Background>
-                    </Border>
+                    <Grid Width="48" Height="48" Margin="0,0,16,0">
+                        <Border CornerRadius="6" Background="{DynamicResource GlassBorderBrush}" />
+                        <Border CornerRadius="6">
+                            <Border.Background><ImageBrush ImageSource="{Binding Controller.CurrentBook.CoverPath, Converter={StaticResource Cover}}" Stretch="UniformToFill" /></Border.Background>
+                        </Border>
+                    </Grid>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="{Binding Controller.CurrentBook.Title}" FontWeight="SemiBold" FontSize="14" TextTrimming="CharacterEllipsis" />
                         <TextBlock Foreground="{DynamicResource GlassMutedBrush}" FontSize="12" TextTrimming="CharacterEllipsis">
