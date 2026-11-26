@@ -10,6 +10,7 @@ public sealed class MediaControls
     private readonly PlaybackController _controller;
     private MediaPlayer? _mediaPlayer;
     private SystemMediaTransportControls? _smtc;
+    private string? _thumbnail;   // the cover file and write time the thumbnail was last set from
 
     public MediaControls(PlaybackController controller)
     {
@@ -48,7 +49,7 @@ public sealed class MediaControls
         });
     }
 
-    private void Update()
+    private async void Update()
     {
         if (_smtc is null) return;
         try
@@ -59,8 +60,16 @@ public sealed class MediaControls
             u.MusicProperties.Title = _controller.CurrentBook?.Title ?? "";
             u.MusicProperties.Artist = _controller.CurrentBook?.Author ?? "";
             u.MusicProperties.AlbumTitle = _controller.CurrentChapter?.Title ?? "";
-            if (_controller.CurrentBook?.CoverPath is { } cover && File.Exists(cover))
-                u.Thumbnail = RandomAccessStreamReference.CreateFromFile(StorageFile.GetFileFromPathAsync(cover).GetAwaiter().GetResult());
+            // The thumbnail is looked up only when the cover file changes, and without blocking the UI thread on it.
+            var cover = _controller.CurrentBook?.CoverPath;
+            var key = cover is not null && File.Exists(cover) ? cover + "|" + File.GetLastWriteTimeUtc(cover).Ticks : null;
+            if (key is not null && key != _thumbnail)
+            {
+                _thumbnail = key;
+                var file = await StorageFile.GetFileFromPathAsync(cover!);
+                if (key != _thumbnail) return;   // a newer book took over while the file was looked up
+                u.Thumbnail = RandomAccessStreamReference.CreateFromFile(file);
+            }
             u.Update();
         }
         catch (Exception) { }
