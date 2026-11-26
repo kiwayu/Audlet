@@ -109,7 +109,7 @@
                 <TextBlock Margin="0,6,0,14" Foreground="{DynamicResource GlassMutedBrush}" TextWrapping="Wrap" Text="The sleep timer faded the book out. You can jump back to where the fade began, or keep going from here." />
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Style="{StaticResource GlassButton}" Content="Keep going" Click="DozeKeep_Click" Margin="0,0,8,0" />
-                    <Button AutomationProperties.AutomationId="DozeRewind" Style="{StaticResource PillButton}" Content="Rewind" Click="DozeRewind_Click" />
+                    <Button AutomationProperties.AutomationId="DozeRewind" Style="{StaticResource AccentButton}" Content="Rewind" Click="DozeRewind_Click" />
                 </StackPanel>
             </StackPanel>
             </Border>

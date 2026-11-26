@@ -14,7 +14,7 @@
                     <Button Grid.Column="2" Style="{StaticResource PillButton}" Content="Search" Click="Search_Click" IsDefault="True" />
                 </Grid>
                 <DockPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
-                    <Button DockPanel.Dock="Right" x:Name="UseButton" Style="{StaticResource PillButton}" Content="Use this cover" Click="Use_Click" IsEnabled="False" />
+                    <Button DockPanel.Dock="Right" x:Name="UseButton" Style="{StaticResource AccentButton}" Content="Use this cover" Click="Use_Click" IsEnabled="False" />
                     <Button DockPanel.Dock="Right" Style="{StaticResource GlassButton}" Content="Cancel" IsCancel="True" Margin="0,0,8,0" />
                     <CheckBox x:Name="UseDescription" Content="Also use the description as the book blurb" IsChecked="True" VerticalAlignment="Center" Foreground="{DynamicResource GlassTextBrush}" />
                 </DockPanel>

@@ -21,7 +21,7 @@ public static class ThemeCatalog
         new("Tokyo Night", true, "#FF16161E", "#FF1A1B26", "#FF24283B", "#FFC0CAF5", "#FF8089B3", "#FF7AA2F7", "#FF1A1B26"),
         new("Rose Pine", true, "#FF191724", "#FF1F1D2E", "#FF2E2540", "#FFE0DEF4", "#FF908CAA", "#FFEBBCBA", "#FF191724"),
         new("Gruvbox Dark", true, "#FF1D2021", "#FF282828", "#FF3C3836", "#FFEBDBB2", "#FFA89984", "#FFFABD2F", "#FF282828"),
-        new("Solarized Dark", true, "#FF002B36", "#FF073642", "#FF0B3E4A", "#FFEEE8D5", "#FF93A1A1", "#FF268BD2", "#FFFDF6E3"),
+        new("Solarized Dark", true, "#FF002B36", "#FF073642", "#FF0B3E4A", "#FFEEE8D5", "#FF93A1A1", "#FF268BD2", "#FF001F27"),
     ];
 
     public static IReadOnlyList<string> Names { get; } = [System, .. All.Select(t => t.Name)];
