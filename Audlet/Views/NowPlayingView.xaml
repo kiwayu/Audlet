@@ -180,74 +180,86 @@
 
         <!-- Popups -->
         <Popup x:Name="SpeedPopup" StaysOpen="False" Placement="Mouse" AllowsTransparency="True">
-            <Border Style="{StaticResource GlassPanel}">
-                <StackPanel Width="260">
-                    <Slider Style="{StaticResource GlassSlider}" Minimum="0.5" Maximum="3" TickFrequency="0.05" IsSnapToTickEnabled="True" Value="{Binding Controller.Speed, Mode=OneWay}" ValueChanged="SpeedSlider_Changed" />
-                    <ItemsControl ItemsSource="{Binding SpeedChoices}">
-                        <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate><DataTemplate><Button Style="{StaticResource GlassButton}" Margin="2" Content="{Binding}" ContentStringFormat="{}{0:0.00}x" Command="{Binding DataContext.SpeedPresetCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" /></DataTemplate></ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <Button Style="{StaticResource GlassButton}" Margin="0,8,0,0" Content="Use as default" Command="{Binding SetDefaultSpeedCommand}" />
-                    <TextBlock Margin="0,12,0,0" Text="Pitch (semitones)" Foreground="{DynamicResource GlassMutedBrush}" />
-                    <Slider Style="{StaticResource GlassSlider}" Minimum="-12" Maximum="12" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding Pitch}" />
-                </StackPanel>
+            <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{StaticResource GlassRadius}">
+                <Border Style="{StaticResource GlassPanel}">
+                    <StackPanel Width="260">
+                        <Slider Style="{StaticResource GlassSlider}" Minimum="0.5" Maximum="3" TickFrequency="0.05" IsSnapToTickEnabled="True" Value="{Binding Controller.Speed, Mode=OneWay}" ValueChanged="SpeedSlider_Changed" />
+                        <ItemsControl ItemsSource="{Binding SpeedChoices}">
+                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate><DataTemplate><Button Style="{StaticResource GlassButton}" Margin="2" Content="{Binding}" ContentStringFormat="{}{0:0.00}x" Command="{Binding DataContext.SpeedPresetCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" /></DataTemplate></ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Button Style="{StaticResource GlassButton}" Margin="0,8,0,0" Content="Use as default" Command="{Binding SetDefaultSpeedCommand}" />
+                        <TextBlock Margin="0,12,0,0" Text="Pitch (semitones)" Foreground="{DynamicResource GlassMutedBrush}" />
+                        <Slider Style="{StaticResource GlassSlider}" Minimum="-12" Maximum="12" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding Pitch}" />
+                    </StackPanel>
+                </Border>
             </Border>
         </Popup>
         <Popup x:Name="SleepPopup" StaysOpen="False" Placement="Mouse" AllowsTransparency="True">
-            <Border Style="{StaticResource GlassPanel}">
-                <StackPanel Width="220">
-                    <ItemsControl ItemsSource="{Binding SleepChoices}">
-                        <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate><DataTemplate><Button Style="{StaticResource GlassButton}" Margin="2" Content="{Binding}" ContentStringFormat="{}{0} min" Command="{Binding DataContext.SleepPresetCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" /></DataTemplate></ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <Button Style="{StaticResource GlassButton}" Margin="0,8,0,0" Content="End of chapter" Command="{Binding SleepChapterEndCommand}" />
-                    <Button Style="{StaticResource GlassButton}" Margin="0,4,0,0" Content="Off" Command="{Binding StopSleepCommand}" />
-                </StackPanel>
+            <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{StaticResource GlassRadius}">
+                <Border Style="{StaticResource GlassPanel}">
+                    <StackPanel Width="220">
+                        <ItemsControl ItemsSource="{Binding SleepChoices}">
+                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate><DataTemplate><Button Style="{StaticResource GlassButton}" Margin="2" Content="{Binding}" ContentStringFormat="{}{0} min" Command="{Binding DataContext.SleepPresetCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" /></DataTemplate></ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Button Style="{StaticResource GlassButton}" Margin="0,8,0,0" Content="End of chapter" Command="{Binding SleepChapterEndCommand}" />
+                        <Button Style="{StaticResource GlassButton}" Margin="0,4,0,0" Content="Off" Command="{Binding StopSleepCommand}" />
+                    </StackPanel>
+                </Border>
             </Border>
         </Popup>
         <Popup x:Name="EqPopup" StaysOpen="False" Placement="Mouse" AllowsTransparency="True">
-            <Border Style="{StaticResource GlassPanel}">
-                <StackPanel Width="300">
-                    <UniformGrid Columns="5" Height="140">
-                        <Slider Orientation="Vertical" Minimum="-15" Maximum="15" Value="{Binding Eq0}" ToolTip="60 Hz" />
-                        <Slider Orientation="Vertical" Minimum="-15" Maximum="15" Value="{Binding Eq1}" ToolTip="230 Hz" />
-                        <Slider Orientation="Vertical" Minimum="-15" Maximum="15" Value="{Binding Eq2}" ToolTip="910 Hz" />
-                        <Slider Orientation="Vertical" Minimum="-15" Maximum="15" Value="{Binding Eq3}" ToolTip="3.6 kHz" />
-                        <Slider Orientation="Vertical" Minimum="-15" Maximum="15" Value="{Binding Eq4}" ToolTip="14 kHz" />
-                    </UniformGrid>
-                    <UniformGrid Columns="5"><TextBlock Text="60" HorizontalAlignment="Center" /><TextBlock Text="230" HorizontalAlignment="Center" /><TextBlock Text="910" HorizontalAlignment="Center" /><TextBlock Text="3.6k" HorizontalAlignment="Center" /><TextBlock Text="14k" HorizontalAlignment="Center" /></UniformGrid>
-                    <UniformGrid Columns="2" Margin="0,8,0,0">
-                        <Button Style="{StaticResource GlassButton}" Margin="2" Content="Reset" Command="{Binding ResetEqCommand}" />
-                        <Button Style="{StaticResource GlassButton}" Margin="2" Content="Use as default" Command="{Binding SetDefaultEqCommand}" />
-                    </UniformGrid>
-                    <TextBlock Margin="0,12,0,0" Text="Skip start / end of each file (seconds)" Foreground="{DynamicResource GlassMutedBrush}" />
-                    <UniformGrid Columns="2"><TextBox Text="{Binding SkipStart}" Margin="2" /><TextBox Text="{Binding SkipEnd}" Margin="2" /></UniformGrid>
-                </StackPanel>
+            <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{StaticResource GlassRadius}">
+                <Border Style="{StaticResource GlassPanel}">
+                    <StackPanel Width="300">
+                        <UniformGrid Columns="5" Height="140">
+                            <Slider Orientation="Vertical" Minimum="-15" Maximum="15" Value="{Binding Eq0}" ToolTip="60 Hz" />
+                            <Slider Orientation="Vertical" Minimum="-15" Maximum="15" Value="{Binding Eq1}" ToolTip="230 Hz" />
+                            <Slider Orientation="Vertical" Minimum="-15" Maximum="15" Value="{Binding Eq2}" ToolTip="910 Hz" />
+                            <Slider Orientation="Vertical" Minimum="-15" Maximum="15" Value="{Binding Eq3}" ToolTip="3.6 kHz" />
+                            <Slider Orientation="Vertical" Minimum="-15" Maximum="15" Value="{Binding Eq4}" ToolTip="14 kHz" />
+                        </UniformGrid>
+                        <UniformGrid Columns="5"><TextBlock Text="60" HorizontalAlignment="Center" /><TextBlock Text="230" HorizontalAlignment="Center" /><TextBlock Text="910" HorizontalAlignment="Center" /><TextBlock Text="3.6k" HorizontalAlignment="Center" /><TextBlock Text="14k" HorizontalAlignment="Center" /></UniformGrid>
+                        <UniformGrid Columns="2" Margin="0,8,0,0">
+                            <Button Style="{StaticResource GlassButton}" Margin="2" Content="Reset" Command="{Binding ResetEqCommand}" />
+                            <Button Style="{StaticResource GlassButton}" Margin="2" Content="Use as default" Command="{Binding SetDefaultEqCommand}" />
+                        </UniformGrid>
+                        <TextBlock Margin="0,12,0,0" Text="Skip start / end of each file (seconds)" Foreground="{DynamicResource GlassMutedBrush}" />
+                        <UniformGrid Columns="2"><TextBox Text="{Binding SkipStart}" Margin="2" /><TextBox Text="{Binding SkipEnd}" Margin="2" /></UniformGrid>
+                    </StackPanel>
+                </Border>
             </Border>
         </Popup>
         <Popup x:Name="BoostPopup" StaysOpen="False" Placement="Mouse" AllowsTransparency="True">
-            <Border Style="{StaticResource GlassPanel}">
-                <StackPanel Width="220">
-                    <TextBlock Text="{Binding Boost, StringFormat={}Boost {0:0} dB}" />
-                    <Slider Style="{StaticResource GlassSlider}" Minimum="0" Maximum="12" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding Boost}" />
-                </StackPanel>
+            <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{StaticResource GlassRadius}">
+                <Border Style="{StaticResource GlassPanel}">
+                    <StackPanel Width="220">
+                        <TextBlock Text="{Binding Boost, StringFormat={}Boost {0:0} dB}" />
+                        <Slider Style="{StaticResource GlassSlider}" Minimum="0" Maximum="12" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding Boost}" />
+                    </StackPanel>
+                </Border>
             </Border>
         </Popup>
         <Popup x:Name="FilesPopup" StaysOpen="False" Placement="Mouse" AllowsTransparency="True">
-            <Border Style="{StaticResource GlassPanel}" Padding="10">
-                <ItemsControl ItemsSource="{Binding Companions}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Style="{StaticResource GlassButton}" Margin="0,2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Content="{Binding Name}"
-                                    Command="{Binding DataContext.OpenCompanionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding Path}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+            <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{StaticResource GlassRadius}">
+                <Border Style="{StaticResource GlassPanel}" Padding="10">
+                    <ItemsControl ItemsSource="{Binding Companions}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource GlassButton}" Margin="0,2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Content="{Binding Name}"
+                                        Command="{Binding DataContext.OpenCompanionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding Path}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
             </Border>
         </Popup>
         <Popup x:Name="CharactersPopup" StaysOpen="False" Placement="Mouse" AllowsTransparency="True">
-            <Border Style="{StaticResource GlassPanel}">
-                <v:CharactersView x:Name="CharactersPane" />
+            <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{StaticResource GlassRadius}">
+                <Border Style="{StaticResource GlassPanel}">
+                    <v:CharactersView x:Name="CharactersPane" />
+                </Border>
             </Border>
         </Popup>
     </Grid>
