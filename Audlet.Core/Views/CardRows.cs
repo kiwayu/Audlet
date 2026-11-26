@@ -1,34 +1,30 @@
 namespace Audlet.Views;
 
 // Row arithmetic for the library's card grid, which creates only the cards near the visible part of the list.
-// Rows not laid out yet count with the height of the shortest row measured so far: rows without a started book.
+// A card has one of two heights, known from its book before the card exists: a started book's card also shows a
+// progress bar. So every row's height is known, and each row lies exactly where WrapPanel would put it.
 public sealed class CardRows
 {
-    private readonly List<double> _heights = [];   // NaN until the row has been measured
+    private bool[] _tall = [];   // per row: it holds a started book
 
     public int Columns { get; private set; }
-    public int Count => _heights.Count;
-    public double Estimate { get; set; }
+    public int Count => _tall.Length;
+    public double Short { get; set; }   // the height of a card, and of a started book's card
+    public double Tall { get; set; }
 
     // As many slots as fit, as WrapPanel wraps: n slots fit when n * slot <= width. Never fewer than one.
     public static int ColumnsFor(double width, double slot) =>
         double.IsPositiveInfinity(width) ? int.MaxValue : Math.Max(1, (int)Math.Floor(width / slot + 1e-9));
 
-    // A new item or column count invalidates every measured row.
-    public void Reset(int items, int columns)
+    // started[i]: the i-th book's card is the tall kind.
+    public void Reset(IReadOnlyList<bool> started, int columns)
     {
         Columns = columns;
-        _heights.Clear();
-        for (var i = (items + columns - 1) / columns; i > 0; i--) _heights.Add(double.NaN);
+        _tall = new bool[(started.Count + columns - 1) / columns];
+        for (var i = 0; i < started.Count; i++) _tall[i / columns] |= started[i];
     }
 
-    public double Height(int row) => double.IsNaN(_heights[row]) ? Estimate : _heights[row];
-
-    public void Measured(int row, double height)
-    {
-        _heights[row] = height;
-        Estimate = Estimate == 0 ? height : Math.Min(Estimate, height);
-    }
+    public double Height(int row) => _tall[row] ? Tall : Short;
 
     public double Top(int row)
     {

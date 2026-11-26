@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using Audlet.Models;
 
 namespace Audlet.Views;
 
@@ -13,7 +14,6 @@ public sealed class CardPanel : VirtualizingPanel
     private readonly CardRows _rows = new();
     private ScrollViewer? _scroller;
     private double _slot;
-    private bool _stale = true;
 
     // Raised before cards are created, with the items of their rows and of one more row on each side, so slow work
     // for them (decoding covers) can start early.
@@ -30,25 +30,26 @@ public sealed class CardPanel : VirtualizingPanel
     {
         if (args.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Replace or NotifyCollectionChangedAction.Move)
             RemoveInternalChildRange(args.Position.Index, args.ItemUICount);
-        _stale = true;
         InvalidateMeasure();
     }
 
     protected override Size MeasureOverride(Size available)
     {
         var children = InternalChildren;   // creates the item container generator on first use
-        var count = ItemsControl.GetItemsOwner(this)?.Items.Count ?? 0;
+        var items = ItemsControl.GetItemsOwner(this)?.Items;
+        var count = items?.Count ?? 0;
         if (_scroller is null && FindScroller() is { } scroller) { _scroller = scroller; scroller.ScrollChanged += OnScroll; }
-        if (count == 0) { Clear(0, 0); _rows.Reset(0, 1); return default; }
+        if (count == 0) { Clear(0, 0); _rows.Reset([], 1); return default; }
         var constraint = new Size(available.Width, double.PositiveInfinity);
-        if (_slot == 0)
-        {
-            Create(0, 1, constraint);
-            _slot = children[0].DesiredSize.Width;
-            _rows.Estimate = children[0].DesiredSize.Height;
-        }
+        // A started book's card also shows its progress bar (see the card template), which makes it the tall kind.
+        var started = new bool[count];
+        for (var i = 0; i < count; i++) started[i] = items![i] is Book { BookPositionSec: > 0 };
+        // One card of each kind is measured once, so every row's height is known before its cards are created.
+        if (_rows.Short == 0 && Array.IndexOf(started, false) is >= 0 and var plain) { Create(plain, plain + 1, constraint); _rows.Short = Container(plain).DesiredSize.Height; }
+        if (_rows.Tall == 0 && Array.IndexOf(started, true) is >= 0 and var tall) { Create(tall, tall + 1, constraint); _rows.Tall = Container(tall).DesiredSize.Height; }
+        if (_slot == 0) _slot = children[0].DesiredSize.Width;
         var columns = Math.Min(count, CardRows.ColumnsFor(available.Width, _slot));
-        if (_stale || columns != _rows.Columns) { _rows.Reset(count, columns); _stale = false; }
+        _rows.Reset(started, columns);
 
         // Half a screen above and below the visible part is created too, so scrolling reveals cards that already exist.
         var viewport = _scroller is { ViewportHeight: > 0 } s ? s.ViewportHeight : Window.GetWindow(this) is { Height: > 0 } w ? w.Height : 1080;
@@ -58,24 +59,11 @@ public sealed class CardPanel : VirtualizingPanel
         var end = Math.Min((last + 1) * columns, count);
         if (Upcoming is { } upcoming && start < end)
         {
-            var items = ItemsControl.GetItemsOwner(this)!.Items;
             var from = Math.Max(0, start - columns);
-            upcoming(Enumerable.Range(from, Math.Min(count, end + columns) - from).Select(i => items[i]).ToList());
+            upcoming(Enumerable.Range(from, Math.Min(count, end + columns) - from).Select(i => items![i]).ToList());
         }
         Create(start, end, constraint);
         Clear(start, end);
-
-        // Rows created above the visible top may turn out taller than estimated; scroll by the difference so nothing on screen moves.
-        var visible = _rows.Overlapping(offset, offset + 1).First;
-        var shift = 0.0;
-        for (var r = first; r <= last; r++)
-        {
-            var height = 0.0;
-            for (var i = r * columns; i < Math.Min(count, (r + 1) * columns); i++) height = Math.Max(height, Container(i).DesiredSize.Height);
-            if (r < visible) shift += height - _rows.Height(r);
-            _rows.Measured(r, height);
-        }
-        if (shift != 0) _scroller?.ScrollToVerticalOffset(offset + shift);
         return new Size(columns * _slot, _rows.Total);
     }
 
