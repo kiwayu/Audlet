@@ -47,4 +47,13 @@ public sealed class Book
     public string CardSubline => SeriesLabel ?? (string.Equals(Breadcrumb, Author, StringComparison.OrdinalIgnoreCase) ? "" : Breadcrumb);
     public double TotalDurationSec => Files.Sum(f => f.DurationSec);
     public double BookPositionSec => Files.Take(FileIndex).Sum(f => f.DurationSec) + PositionSec;
+
+    // A copy with lists of its own, to be written out while the UI thread goes on changing this book's lists.
+    public Book Copy()
+    {
+        var b = (Book)MemberwiseClone();
+        b.Companions = [.. Companions]; b.Files = [.. Files]; b.Chapters = [.. Chapters];
+        b.Bookmarks = [.. Bookmarks]; b.Characters = [.. Characters]; b.History = [.. History];
+        return b;
+    }
 }

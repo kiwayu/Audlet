@@ -1,5 +1,7 @@
+using System.Runtime.ExceptionServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Audlet.Audio;
 using Audlet.Data;
 using Audlet.Library;
@@ -91,6 +93,58 @@ public class RescanTests : IDisposable
         Assert.Empty(store.Library.Books);
         Assert.True(vm.FirstRun);
     }
+
+    // Runs work on a thread of its own with a dispatcher, as the window's thread runs it: awaits come back to that thread.
+    private static void OnUiThread(Func<Task> work)
+    {
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            var dispatcher = Dispatcher.CurrentDispatcher;
+            SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(dispatcher));
+            dispatcher.InvokeAsync(async () =>
+            {
+                try { await work(); } catch (Exception ex) { failure = ex; }
+                dispatcher.InvokeShutdown();
+            });
+            Dispatcher.Run();
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+        if (failure is not null) ExceptionDispatchInfo.Throw(failure);
+    }
+
+    [Fact]
+    public void ARescanSavesTheFilesAsTheyWereWhileTheUiThreadKeepsChangingThem() => OnUiThread(async () =>
+    {
+        AppSession.WriteTone(Path.Combine(Root, "Piranesi", "01.wav"), 1, 500);
+        var store = new AppStore(Data) { DebounceMs = Timeout.Infinite };
+        store.Load();
+        store.Settings.RootFolders.Add(Root);
+        var days = Enumerable.Range(0, 100_000).Select(i => "day " + i).ToList();
+        store.Stats.Days.AddRange(days.Select(d => new DayStats { Day = d }));
+        var vm = new MainViewModel(store, new PlaybackController(_player, store, UiTimer.Every), new CoverCache(Path.Combine(_dir, "covers"), new WpfCoverCodec()), new WpfShell());
+        // While the rescan runs, the UI thread keeps changing a list the save writes out, as it may change the queue,
+        // bookmarks or listening days; each change is undone in the same step, so between steps the list is as it was.
+        var stop = false;
+        async Task Change()
+        {
+            var extra = new DayStats { Day = "extra" };
+            while (!stop) { store.Stats.Days.Insert(0, extra); store.Stats.Days.RemoveAt(0); await Dispatcher.Yield(DispatcherPriority.Background); }
+        }
+        var changing = Change();
+
+        await vm.RescanAsync();
+        stop = true;
+        await changing;
+
+        Assert.False(vm.IsScanning);
+        var saved = new AppStore(Data);
+        saved.Load();
+        Assert.Equal(days, saved.Stats.Days.Select(d => d.Day));
+        Assert.Equal("Piranesi", saved.Library.Books.Single().Title);
+    });
 
     [Fact]
     public async Task ARescanStartedWhileOneRunsDoesNothing()

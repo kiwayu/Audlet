@@ -16,6 +16,9 @@ public sealed class StatsFile
 {
     public List<MonthStats> Months { get; set; } = [];
     public List<DayStats> Days { get; set; } = [];
+
+    // A copy with lists of its own, to be written out while the UI thread goes on adding days and months.
+    public StatsFile Copy() => new() { Months = [.. Months], Days = [.. Days] };
 }
 
 public sealed class LibraryFile

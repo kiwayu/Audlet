@@ -93,9 +93,9 @@ public sealed partial class MainViewModel : ObservableObject
                 if (b.CoverPath is not null && !File.Exists(b.CoverPath)) b.CoverPath = null;
                 b.CoverPath ??= Covers.Ensure(b);
             }
-            // Saved before leaving the worker thread, so the UI thread stays free while the library file is written.
-            Store.SaveNow();
         });
+        // Written on a worker thread from a copy taken here, so the UI thread stays free and may change lists meanwhile.
+        await Store.SaveCopyAsync();
         IsScanning = false; ScanStatus = "";
         FirstRun = Store.Settings.RootFolders.Count == 0 && Store.Settings.LooseFiles.Count == 0;
         LibraryChanged?.Invoke();

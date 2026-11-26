@@ -53,4 +53,13 @@ public sealed class Settings
     public double WindowWidth { get; set; } = 1200;
     public double WindowHeight { get; set; } = 760;
     public bool WindowMaximized { get; set; }
+
+    // A copy with lists of its own, to be written out while the UI thread goes on changing these.
+    public Settings Copy()
+    {
+        var s = (Settings)MemberwiseClone();
+        s.RootFolders = [.. RootFolders]; s.LooseFiles = [.. LooseFiles]; s.Queue = [.. Queue];
+        s.Keys = new(Keys); s.GlobalKeys = new(GlobalKeys);
+        return s;
+    }
 }

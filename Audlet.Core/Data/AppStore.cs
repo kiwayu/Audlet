@@ -30,11 +30,26 @@ public sealed class AppStore
         {
             _pending?.Cancel();
             _pending = null;
-            Directory.CreateDirectory(_folder);
-            Write("library.json", Library);
-            Write("settings.json", Settings);
-            Write("stats.json", Stats);
+            WriteAll(Library, Settings, Stats);
         }
+    }
+
+    // Copies on the calling thread, which owns the lists, and writes the copy on a worker: copying takes about a
+    // millisecond where writing takes tens, and a worker reading lists while they change writes a torn file.
+    public Task SaveCopyAsync()
+    {
+        var library = new LibraryFile { Books = Library.Books.Select(b => b.Copy()).ToList() };
+        var settings = Settings.Copy();
+        var stats = Stats.Copy();
+        return Task.Run(() => { lock (_gate) WriteAll(library, settings, stats); });
+    }
+
+    private void WriteAll(LibraryFile library, Settings settings, StatsFile stats)
+    {
+        Directory.CreateDirectory(_folder);
+        Write("library.json", library);
+        Write("settings.json", settings);
+        Write("stats.json", stats);
     }
 
     public void SaveSoon()
