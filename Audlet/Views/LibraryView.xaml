@@ -15,6 +15,22 @@
             <Setter Property="Width" Value="180" /><Setter Property="Margin" Value="0,0,16,16" /><Setter Property="Padding" Value="10" /><Setter Property="Cursor" Value="Hand" />
             <Style.Triggers><DataTrigger Binding="{Binding Missing}" Value="True"><Setter Property="Opacity" Value="0.45" /></DataTrigger></Style.Triggers>
         </Style>
+        <!-- One menu for every card: it reads the book from the card it opens on. -->
+        <ContextMenu x:Key="CardMenu">
+            <MenuItem Header="Mark as New" Command="{Binding PlacementTarget.Tag.MarkNewCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem Header="Mark as Started" Command="{Binding PlacementTarget.Tag.MarkStartedCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem Header="Mark as Finished" Command="{Binding PlacementTarget.Tag.MarkFinishedCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <Separator />
+            <MenuItem Header="Add to queue" Command="{Binding PlacementTarget.Tag.AddToQueueCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem Header="Remove from queue" Command="{Binding PlacementTarget.Tag.RemoveFromQueueCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <Separator />
+            <MenuItem Header="Rename..." Command="{Binding PlacementTarget.Tag.RenameCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem Header="Move to folder..." Command="{Binding PlacementTarget.Tag.MoveToFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <Separator />
+            <MenuItem Header="Find cover online..." Command="{Binding PlacementTarget.Tag.FindCoverCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem Header="Set cover from file" Command="{Binding PlacementTarget.Tag.SetCoverCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem Header="Open folder" Command="{Binding PlacementTarget.Tag.OpenFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+        </ContextMenu>
     </UserControl.Resources>
     <DockPanel>
         <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
@@ -30,25 +46,8 @@
                 <ItemsControl.ItemsPanel><ItemsPanelTemplate><v:CardPanel Upcoming="Cards_Upcoming" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type m:Book}">
-                        <Border Style="{StaticResource Card}" MouseLeftButtonUp="Card_Click"
+                        <Border Style="{StaticResource Card}" MouseLeftButtonUp="Card_Click" ContextMenu="{StaticResource CardMenu}"
                                 Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
-                            <Border.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Mark as New" Command="{Binding PlacementTarget.Tag.MarkNewCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
-                                    <MenuItem Header="Mark as Started" Command="{Binding PlacementTarget.Tag.MarkStartedCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
-                                    <MenuItem Header="Mark as Finished" Command="{Binding PlacementTarget.Tag.MarkFinishedCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
-                                    <Separator />
-                                    <MenuItem Header="Add to queue" Command="{Binding PlacementTarget.Tag.AddToQueueCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
-                                    <MenuItem Header="Remove from queue" Command="{Binding PlacementTarget.Tag.RemoveFromQueueCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
-                                    <Separator />
-                                    <MenuItem Header="Rename..." Command="{Binding PlacementTarget.Tag.RenameCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
-                                    <MenuItem Header="Move to folder..." Command="{Binding PlacementTarget.Tag.MoveToFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
-                                    <Separator />
-                                    <MenuItem Header="Find cover online..." Command="{Binding PlacementTarget.Tag.FindCoverCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
-                                    <MenuItem Header="Set cover from file" Command="{Binding PlacementTarget.Tag.SetCoverCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
-                                    <MenuItem Header="Open folder" Command="{Binding PlacementTarget.Tag.OpenFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
-                                </ContextMenu>
-                            </Border.ContextMenu>
                             <StackPanel>
                                 <Grid>
                                     <Border Height="160" CornerRadius="8" Background="{DynamicResource GlassBorderBrush}">
