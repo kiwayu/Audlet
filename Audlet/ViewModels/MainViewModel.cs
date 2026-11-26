@@ -13,6 +13,7 @@ public sealed partial class MainViewModel : ObservableObject
     public AppStore Store { get; }
     public PlaybackController Controller { get; }
     public CoverCache Covers { get; }
+    public IShell Shell { get; }
 
     [ObservableProperty] private Section _section = Section.Library;
     [ObservableProperty] private bool _isScanning;
@@ -30,9 +31,9 @@ public sealed partial class MainViewModel : ObservableObject
 
     public void SetHotkeys(bool on) { Store.Settings.GlobalHotkeys = on; HotkeysToggled?.Invoke(on); }
 
-    public MainViewModel(AppStore store, PlaybackController controller, CoverCache covers)
+    public MainViewModel(AppStore store, PlaybackController controller, CoverCache covers, IShell shell)
     {
-        Store = store; Controller = controller; Covers = covers;
+        Store = store; Controller = controller; Covers = covers; Shell = shell;
         FirstRun = store.Settings.RootFolders.Count == 0 && store.Settings.LooseFiles.Count == 0;
         controller.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(PlaybackController.Toast) && controller.Toast is { } t) ShowToast(t); };
     }

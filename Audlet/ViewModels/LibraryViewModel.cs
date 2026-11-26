@@ -2,10 +2,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
 using Audlet.Library;
 using Audlet.Models;
-using Audlet.Views;
 
 namespace Audlet.ViewModels;
 
@@ -93,7 +91,7 @@ public sealed partial class LibraryViewModel : ObservableObject
     [RelayCommand]
     private async Task Rename(Book b)
     {
-        var name = InputDialog.Ask("Rename", "New name for this book", b.Title);
+        var name = _main.Shell.Ask("Rename", "New name for this book", b.Title);
         if (name is null || name == b.Title) return;
         if (!ValidName(name)) { _main.ShowToast("That name contains characters Windows does not allow"); return; }
         await RelocateAsync(b, x => BookMover.Rename(x, name));
@@ -103,9 +101,7 @@ public sealed partial class LibraryViewModel : ObservableObject
     private async Task MoveToFolder(Book b)
     {
         var root = RootOf(b.Id) ?? Path.GetDirectoryName(b.Id)!;
-        var dlg = new OpenFolderDialog { Title = "Move into which folder? You can create one here.", InitialDirectory = root };
-        if (dlg.ShowDialog() != true) return;
-        var folder = dlg.FolderName;
+        if (_main.Shell.PickFolder("Move into which folder? You can create one here.", root) is not { } folder) return;
         if (RootOf(folder + Path.DirectorySeparatorChar) is null && !_main.Store.Settings.RootFolders.Contains(folder, StringComparer.OrdinalIgnoreCase))
         { _main.ShowToast("Choose a folder inside one of your library folders"); return; }
         if (folder.StartsWith(b.Id + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) { _main.ShowToast("Cannot move a book into itself"); return; }
@@ -117,7 +113,7 @@ public sealed partial class LibraryViewModel : ObservableObject
     {
         var root = _main.Store.Settings.RootFolders.FirstOrDefault();
         if (root is null) { _main.ShowToast("Add a library folder first"); return; }
-        var name = InputDialog.Ask("New folder", "Folder name, for example a genre or an author");
+        var name = _main.Shell.Ask("New folder", "Folder name, for example a genre or an author");
         if (name is null) return;
         if (!ValidName(name)) { _main.ShowToast("That name contains characters Windows does not allow"); return; }
         var path = Path.Combine(root, name);
@@ -130,14 +126,14 @@ public sealed partial class LibraryViewModel : ObservableObject
     private async Task FindCover(Book b)
     {
         if (!_main.Store.Settings.AllowCoverLookup) { _main.ShowToast("Online cover lookup is switched off in Settings"); return; }
-        var dlg = new CoverSearchDialog(b.Title, b.Author);
-        if (dlg.ShowDialog() != true || dlg.Chosen is not { } pick) return;
+        if (_main.Shell.FindCover(b.Title, b.Author) is not { } found) return;
+        var (pick, applyDescription) = found;
         try
         {
             var bytes = await CoverSearch.DownloadAsync(pick.ImageUrl);
             _main.Covers.Replace(b, bytes);
             b.CoverPath = _main.Covers.PathFor(b);
-            if (dlg.ApplyDescription && !string.IsNullOrWhiteSpace(pick.Description)) b.Description = pick.Description.Trim();
+            if (applyDescription && !string.IsNullOrWhiteSpace(pick.Description)) b.Description = pick.Description.Trim();
             _main.Store.SaveSoon();
             _main.ShowToast("Cover updated from " + pick.Source);
             Refresh();
@@ -148,9 +144,8 @@ public sealed partial class LibraryViewModel : ObservableObject
     [RelayCommand]
     private void SetCover(Book b)
     {
-        var dlg = new OpenFileDialog { Filter = "Images|*.jpg;*.jpeg;*.png;*.webp" };
-        if (dlg.ShowDialog() != true) return;
-        _main.Covers.Replace(b, dlg.FileName);
+        if (_main.Shell.PickFile(null, "Images|*.jpg;*.jpeg;*.png;*.webp") is not { } file) return;
+        _main.Covers.Replace(b, file);
         b.CoverPath = _main.Covers.PathFor(b);
         _main.Store.SaveSoon();
         Refresh();

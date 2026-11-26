@@ -36,7 +36,7 @@ public class LibraryDropTests : IDisposable
         var store = new AppStore(Path.Combine(_dir, "data"));
         store.Load();
         using var player = new BassPlayer();
-        var vm = new MainViewModel(store, new PlaybackController(player, store, UiTimer.Every), new CoverCache(Path.Combine(_dir, "covers")));
+        var vm = new MainViewModel(store, new PlaybackController(player, store, UiTimer.Every), new CoverCache(Path.Combine(_dir, "covers")), new WpfShell());
         Assert.True(vm.FirstRun);
 
         await vm.AddDroppedAsync([bookFolder, loose, Path.Combine(_dir, "nope.txt")]);

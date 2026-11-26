@@ -2,8 +2,6 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Diagnostics;
-using System.Windows;
-using Microsoft.Win32;
 using Audlet.Data;
 using Audlet.Models;
 using Audlet.Views;
@@ -71,16 +69,16 @@ public sealed partial class SettingsViewModel : ObservableObject
     public bool ScheduleEnabled { get => S.SleepSchedule.Enabled; set { S.SleepSchedule.Enabled = value; Apply(); } }
     public string ScheduleFrom { get => S.SleepSchedule.FromTime.ToString("HH:mm"); set { if (TimeOnly.TryParse(value, out var t)) { S.SleepSchedule.FromTime = t; Apply(); } } }
     public string ScheduleTo { get => S.SleepSchedule.ToTime.ToString("HH:mm"); set { if (TimeOnly.TryParse(value, out var t)) { S.SleepSchedule.ToTime = t; Apply(); } } }
-    public string Theme { get => S.Theme; set { S.Theme = value; ThemeService.Apply(value); Apply(); } }
+    public string Theme { get => S.Theme; set { S.Theme = value; _main.Shell.ApplyTheme(value); Apply(); } }
 
     private void Apply() { _main.Store.SaveSoon(); _main.Controller.ApplySoundSettings(); }
 
     [RelayCommand]
     private async Task AddRoot()
     {
-        var dlg = new OpenFolderDialog { Title = "Choose your audiobooks folder" };
-        if (dlg.ShowDialog() != true || S.RootFolders.Contains(dlg.FolderName, StringComparer.OrdinalIgnoreCase)) return;
-        S.RootFolders.Add(dlg.FolderName); RootFolders.Add(dlg.FolderName);
+        var folder = _main.Shell.PickFolder("Choose your audiobooks folder");
+        if (folder is null || S.RootFolders.Contains(folder, StringComparer.OrdinalIgnoreCase)) return;
+        S.RootFolders.Add(folder); RootFolders.Add(folder);
         _main.FirstRun = false;
         await _main.RescanAsync();
     }
@@ -92,26 +90,25 @@ public sealed partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private void BackUp()
     {
-        var dlg = new SaveFileDialog { Title = "Save a backup", Filter = "Zip archive|*.zip", FileName = "Audlet-backup-" + DateTime.Today.ToString("yyyy-MM-dd") + ".zip" };
-        if (dlg.ShowDialog() != true) return;
+        var file = _main.Shell.PickSaveFile("Save a backup", "Zip archive|*.zip", "Audlet-backup-" + DateTime.Today.ToString("yyyy-MM-dd") + ".zip");
+        if (file is null) return;
         _main.Store.SaveNow();
-        try { Backup.Create(AppPaths.Root, dlg.FileName); _main.ShowToast("Backup saved"); }
+        try { Backup.Create(AppPaths.Root, file); _main.ShowToast("Backup saved"); }
         catch (Exception ex) { ErrorLog.Write(AppPaths.Root, "backup", ex); _main.ShowToast("Could not save the backup: " + ex.Message); }
     }
 
     [RelayCommand]
     private void Restore()
     {
-        var dlg = new OpenFileDialog { Title = "Restore a backup", Filter = "Zip archive|*.zip" };
-        if (dlg.ShowDialog() != true) return;
-        var answer = MessageBox.Show("Replace your library, settings and statistics with this backup? Audlet will restart.", "Restore", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
-        if (answer != MessageBoxResult.OK) return;
+        var file = _main.Shell.PickFile("Restore a backup", "Zip archive|*.zip");
+        if (file is null) return;
+        if (!_main.Shell.Confirm("Replace your library, settings and statistics with this backup? Audlet will restart.", "Restore")) return;
         try
         {
-            Backup.Restore(AppPaths.Root, dlg.FileName);
+            Backup.Restore(AppPaths.Root, file);
             _main.Store.Load();
             Process.Start(new ProcessStartInfo(Environment.ProcessPath!) { UseShellExecute = true });
-            Application.Current.Shutdown();
+            _main.Shell.Shutdown();
         }
         catch (Exception ex) { ErrorLog.Write(AppPaths.Root, "restore", ex); _main.ShowToast("Could not restore: " + ex.Message); }
     }
@@ -121,9 +118,9 @@ public sealed partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private void ChooseBackupFolder()
     {
-        var dlg = new OpenFolderDialog { Title = "Choose a second folder for daily backups" };
-        if (dlg.ShowDialog() != true) return;
-        S.BackupFolder = dlg.FolderName;
+        var folder = _main.Shell.PickFolder("Choose a second folder for daily backups");
+        if (folder is null) return;
+        S.BackupFolder = folder;
         OnPropertyChanged(nameof(BackupFolderLabel));
         _main.Store.SaveNow();
         try { Backup.Daily(AppPaths.Root, DateTime.Today, S.BackupFolder); _main.ShowToast("Backup written to " + Path.GetFileName(S.BackupFolder)); }
