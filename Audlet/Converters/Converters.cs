@@ -108,7 +108,7 @@ public sealed class FractionWidth : IValueConverter
 public sealed class CoverImage : IValueConverter
 {
     // Used on the UI thread only; the decoding behind each task runs on a worker thread.
-    private static readonly LruCache<string, Task<(DateTime Written, BitmapImage? Image)>> Decoded = new(120);   // about 50 MB at 320 px
+    private static readonly LruCache<string, Task<(DateTime Written, BitmapImage? Image)>> Decoded = new(120);   // about 50 MB at 320 px; more in a large window
 
     public bool Full { get; set; }
     public object? Convert(object v, Type t, object p, CultureInfo c)
@@ -126,9 +126,13 @@ public sealed class CoverImage : IValueConverter
 
     public static void Prefetch(IEnumerable<string?> paths)
     {
-        foreach (var path in paths)
-            if (path is not null && !Decoded.TryGet(path, out _))
-                Decoded.Add(path, Task.Run(() => (File.GetLastWriteTimeUtc(path), Decode(path, full: false))));
+        var wanted = paths.OfType<string>().ToList();
+        // A large window asks for more covers than the cache held; it must keep them all, or each layout pass would
+        // drop covers it had just queued and queue them again. Marking every wanted cover as used before adding any
+        // makes adding drop only covers that are not wanted.
+        Decoded.Capacity = Math.Max(Decoded.Capacity, wanted.Count);
+        foreach (var path in wanted.Where(p => !Decoded.TryGet(p, out _)).ToList())
+            Decoded.Add(path, Task.Run(() => (File.GetLastWriteTimeUtc(path), Decode(path, full: false))));
     }
 
     private static BitmapImage? Decode(string path, bool full)

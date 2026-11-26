@@ -7,6 +7,7 @@ public sealed class LruCache<TKey, TValue>(int capacity) where TKey : notnull
     private readonly LinkedList<(TKey Key, TValue Value)> _order = new();
 
     public int Count => _nodes.Count;
+    public int Capacity { get; set; } = capacity;
 
     public bool TryGet(TKey key, out TValue value)
     {
@@ -21,7 +22,7 @@ public sealed class LruCache<TKey, TValue>(int capacity) where TKey : notnull
     {
         if (_nodes.Remove(key, out var old)) _order.Remove(old);
         _nodes[key] = _order.AddFirst((key, value));
-        if (_nodes.Count <= capacity) return;
+        if (_nodes.Count <= Capacity) return;
         _nodes.Remove(_order.Last!.Value.Key);
         _order.RemoveLast();
     }

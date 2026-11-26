@@ -47,5 +47,15 @@ public class CoverImageTests : IDisposable
     }
 
     [Fact]
+    public void CoversPrefetchedForMoreCardsThanTheCacheHeldStayDecoded()
+    {
+        var paths = Enumerable.Range(0, 200).Select(i => Jpeg($"many{i}.jpg")).ToList();
+        CoverImage.Prefetch(paths);
+        var shown = paths.Select(Show).ToList();
+        CoverImage.Prefetch(paths);   // the next layout pass asks for the same cards
+        Assert.All(paths.Zip(shown), p => Assert.Same(p.Second, Show(p.First)));
+    }
+
+    [Fact]
     public void AMissingCoverShowsNothing() => Assert.Null(Show(Path.Combine(_dir, "none.jpg")));
 }
