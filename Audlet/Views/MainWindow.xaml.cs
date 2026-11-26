@@ -74,8 +74,8 @@ public partial class MainWindow : Window
             case Key.MediaNextTrack: c.NextChapter(); e.Handled = true; return;
             case Key.MediaPreviousTrack: c.PrevChapter(); e.Handled = true; return;
         }
-        if (Keybindings.IsModifier(key)) return;
-        switch (Keybindings.ActionFor(s, Keybindings.Format(key, Keyboard.Modifiers)))
+        if (KeyGestures.IsModifier(key)) return;
+        switch (Keybindings.ActionFor(s, KeyGestures.Format(key, Keyboard.Modifiers)))
         {
             case "PlayPause": c.TogglePlay(); break;
             case "Rewind": c.Jump(-s.SmallRewindSec); break;

@@ -1,7 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Audlet.Models;
 using Audlet.ViewModels;
 
 namespace Audlet.Views;
@@ -20,9 +19,9 @@ public partial class SettingsView : UserControl
         if (!row.Capturing) return;
         e.Handled = true;
         var key = e.Key == Key.System ? e.SystemKey : e.Key;
-        if (Keybindings.IsModifier(key)) return;
+        if (KeyGestures.IsModifier(key)) return;
         row.Capturing = false;
-        if (key != Key.Escape) ((SettingsViewModel)DataContext).SetKey(row, Keybindings.Format(key, Keyboard.Modifiers));
+        if (key != Key.Escape) ((SettingsViewModel)DataContext).SetKey(row, KeyGestures.Format(key, Keyboard.Modifiers));
     }
 
     private void KeyButton_LostFocus(object sender, KeyboardFocusChangedEventArgs e) => Row(sender).Capturing = false;

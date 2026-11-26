@@ -36,7 +36,7 @@ public sealed class GlobalHotkeys : IDisposable
             for (var i = 0; i < Keybindings.GlobalActions.Length; i++)
             {
                 var gesture = Keybindings.GlobalGesture(_controller.Settings, Keybindings.GlobalActions[i].Action);
-                if (!Keybindings.IsGlobalGesture(gesture) || !Keybindings.TryParse(gesture, out var mods, out var key)) continue;
+                if (!Keybindings.IsGlobalGesture(gesture) || !KeyGestures.TryParse(gesture, out var mods, out var key)) continue;
                 RegisterHotKey(h, i + 1, Mods(mods) | ModNoRepeat, (uint)KeyInterop.VirtualKeyFromKey(key));
             }
         }
