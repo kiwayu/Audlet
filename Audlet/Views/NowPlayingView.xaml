@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="clr-namespace:Audlet.Converters"
              xmlns:v="clr-namespace:Audlet.Views"
-             xmlns:vm="clr-namespace:Audlet.ViewModels"
+             xmlns:vm="clr-namespace:Audlet.ViewModels;assembly=Audlet.Core"
              xmlns:m="clr-namespace:Audlet.Models;assembly=Audlet.Core">
     <UserControl.Resources>
         <c:TimeConverter x:Key="Time" />
