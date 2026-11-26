@@ -14,6 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Audlet\Audlet.csproj" />
+    <ProjectReference Include="..\Audlet.Core\Audlet.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />

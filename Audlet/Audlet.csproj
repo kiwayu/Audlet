@@ -25,6 +25,9 @@
     <PackageReference Include="z440.atl.core" Version="7.17.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Audlet.Core\Audlet.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="..\lib\bass\*.dll" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>

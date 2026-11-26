@@ -4,7 +4,7 @@
              xmlns:c="clr-namespace:Audlet.Converters"
              xmlns:v="clr-namespace:Audlet.Views"
              xmlns:vm="clr-namespace:Audlet.ViewModels"
-             xmlns:m="clr-namespace:Audlet.Models">
+             xmlns:m="clr-namespace:Audlet.Models;assembly=Audlet.Core">
     <UserControl.Resources>
         <c:TimeConverter x:Key="Time" />
         <c:RemainingConverter x:Key="Remaining" />
