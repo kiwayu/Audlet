@@ -50,11 +50,15 @@ public sealed partial class PlaybackController : ObservableObject
         _tick.Start();
     }
 
-    public void LoadBook(Book book, bool play)
+    public void LoadBook(Book book, bool play) => LoadBook(book, play, saveOutgoing: true);
+
+    // The end of a book loads the next one without saving the finished book's place: EndOfBook.Finish has put it where
+    // it rests, and the player still holds the place where it ended.
+    private void LoadBook(Book book, bool play, bool saveOutgoing)
     {
         if (CurrentBook is { } prev && prev != book)
         {
-            SavePosition();
+            if (saveOutgoing) SavePosition();
             History.Record(book, HistoryKind.BookSwitch, book.FileIndex, book.PositionSec, DateTime.UtcNow);
         }
         _player.Pause();
@@ -323,7 +327,7 @@ public sealed partial class PlaybackController : ObservableObject
         AccumulateStats();
         _player.Pause(); IsPlaying = false; _level.Stop();
         var (next, play, toast) = EndOfBook.Finish(finished, Books, _store.Settings);
-        if (next is not null) LoadBook(next, play);
+        if (next is not null) LoadBook(next, play, saveOutgoing: false);
         ShowToast(toast);
         _store.SaveNow();
     }
