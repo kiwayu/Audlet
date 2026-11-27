@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Windows.Threading;
 using Audlet.Data;
 using Audlet.Models;
 
@@ -70,6 +71,30 @@ public class AppStoreTests : IDisposable
         again.Load();
         Assert.Equal(1400, again.Settings.WindowWidth);
     }
+
+    [Fact]
+    public void ADelayedSaveWritesTheFilesAsTheyWereWhileTheUiThreadKeepsChangingThem() => RescanTests.OnUiThread(async () =>
+    {
+        var store = new AppStore(_dir) { DebounceMs = 10 };
+        store.Load();
+        var days = Enumerable.Range(0, 100_000).Select(i => "day " + i).ToList();
+        store.Stats.Days.AddRange(days.Select(d => new DayStats { Day = d }));
+        store.SaveSoon();
+        // Until the delayed save has written its files, the UI thread keeps changing a list it writes out; each change
+        // is undone in the same step, so between steps the list is as it was when the save was asked for.
+        var stats = Path.Combine(_dir, "stats.json");
+        var extra = new DayStats { Day = "extra" };
+        var deadline = DateTime.UtcNow.AddSeconds(10);
+        while (!File.Exists(stats) && DateTime.UtcNow < deadline)
+        {
+            store.Stats.Days.Insert(0, extra); store.Stats.Days.RemoveAt(0);
+            await Dispatcher.Yield(DispatcherPriority.Background);
+        }
+
+        var again = new AppStore(_dir);
+        again.Load();
+        Assert.Equal(days, again.Stats.Days.Select(d => d.Day));
+    });
 
     [Fact]
     public async Task SaveSoonWritesAfterDebounce()

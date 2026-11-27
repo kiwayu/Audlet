@@ -36,16 +36,18 @@ public sealed class AppStore
         }
     }
 
-    // Copies on the calling thread, which owns the lists, and writes the copy on a worker: copying takes about a
-    // millisecond where writing takes tens, and a worker reading lists while they change writes a torn file.
+    public Task SaveCopyAsync() => Task.Run(TakeCopy());
+
+    // Copies on the calling thread, which owns the lists, and returns the write of that copy for a worker: copying takes
+    // about a millisecond where writing takes tens, and a worker reading lists while they change writes a torn file.
     // A save that read newer state may run before the worker does (the exit save); the older copy is then dropped.
-    public Task SaveCopyAsync()
+    private Action TakeCopy()
     {
         var library = new LibraryFile { Books = Library.Books.Select(b => b.Copy()).ToList() };
         var settings = Settings.Copy();
         var stats = Stats.Copy();
         var taken = Interlocked.Increment(ref _taken);
-        return Task.Run(() =>
+        return () =>
         {
             lock (_gate)
             {
@@ -53,7 +55,7 @@ public sealed class AppStore
                 _written = taken;
                 WriteAll(library, settings, stats);
             }
-        });
+        };
     }
 
     private void WriteAll(LibraryFile library, Settings settings, StatsFile stats)
@@ -64,8 +66,10 @@ public sealed class AppStore
         Write("stats.json", stats);
     }
 
+    // The copy is taken now, on the calling thread; only its write waits out the debounce.
     public void SaveSoon()
     {
+        var write = TakeCopy();
         lock (_gate)
         {
             _pending?.Cancel();
@@ -73,7 +77,7 @@ public sealed class AppStore
             var token = cts.Token;
             Task.Delay(DebounceMs, token).ContinueWith(t =>
             {
-                if (!t.IsCanceled) SaveNow();
+                if (!t.IsCanceled) write();
             }, TaskScheduler.Default);
         }
     }

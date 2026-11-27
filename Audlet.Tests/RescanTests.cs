@@ -95,7 +95,7 @@ public class RescanTests : IDisposable
     }
 
     // Runs work on a thread of its own with a dispatcher, as the window's thread runs it: awaits come back to that thread.
-    private static void OnUiThread(Func<Task> work)
+    internal static void OnUiThread(Func<Task> work)
     {
         Exception? failure = null;
         var thread = new Thread(() =>
