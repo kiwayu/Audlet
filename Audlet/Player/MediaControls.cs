@@ -27,7 +27,7 @@ public sealed class MediaControls
             controller.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName is nameof(PlaybackController.CurrentBook) or nameof(PlaybackController.IsPlaying) or nameof(PlaybackController.CurrentChapter))
-                    Update();
+                    UpdateSoon();
             };
         }
         catch (Exception) { _smtc = null; }
@@ -49,6 +49,16 @@ public sealed class MediaControls
         });
     }
 
+    private bool _updateQueued;
+
+    // Runs after the window has drawn the change, once for all the changes one step makes, so the slow overlay update does not delay that frame.
+    private void UpdateSoon()
+    {
+        if (_updateQueued) return;
+        _updateQueued = true;
+        System.Windows.Application.Current?.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () => { _updateQueued = false; Update(); });
+    }
+
     private async void Update()
     {
         if (_smtc is null) return;
@@ -67,6 +77,7 @@ public sealed class MediaControls
             if (key is not null && key != _thumbnail)
             {
                 _thumbnail = key;
+                u.Update();   // the text shows before the cover is found, and stays shown if the lookup fails
                 var file = await StorageFile.GetFileFromPathAsync(cover!);
                 if (key != _thumbnail) return;   // a newer book took over while the file was looked up
                 u.Thumbnail = RandomAccessStreamReference.CreateFromFile(file);
