@@ -37,7 +37,18 @@
             <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
             <TextBlock AutomationProperties.AutomationId="Heading" Text="{Binding Heading}" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" VerticalAlignment="Center" />
             <TextBox Grid.Column="1" Width="220" Margin="0,0,12,0" Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
-            <ComboBox Grid.Column="2" Width="150" Margin="0,0,12,0" ItemsSource="{Binding SortModes}" SelectedItem="{Binding Sort}" VerticalAlignment="Center" />
+            <ComboBox Grid.Column="2" Width="150" Margin="0,0,12,0" ItemsSource="{Binding SortModes}" SelectedItem="{Binding Sort}" VerticalAlignment="Center">
+                <!-- Sort names in words, not code names. -->
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock x:Name="Name" Text="{Binding}" />
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding}" Value="RecentlyPlayed"><Setter TargetName="Name" Property="Text" Value="Recently played" /></DataTrigger>
+                            <DataTrigger Binding="{Binding}" Value="DateAdded"><Setter TargetName="Name" Property="Text" Value="Date added" /></DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
             <Button Grid.Column="3" Style="{StaticResource GlassButton}" Content="New folder..." Command="{Binding NewFolderCommand}" Margin="0,0,8,0" />
             <Button Grid.Column="4" Style="{StaticResource GlassButton}" Content="Rescan" Command="{Binding RescanCommand}" />
         </Grid>
