@@ -13,7 +13,7 @@
                         <DataTemplate DataType="{x:Type vm:BookmarkRow}">
                             <Border Padding="10,8" CornerRadius="6" Cursor="Hand" MouseLeftButtonUp="Row_Click">
                                 <DockPanel>
-                                    <Button DockPanel.Dock="Right" Style="{StaticResource GlassButton}" Padding="6,2" Content="&#x2715;"
+                                    <Button DockPanel.Dock="Right" Style="{StaticResource GlassButton}" Padding="0" MinWidth="32" MinHeight="32" Content="&#x2715;"
                                             Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
                                     <StackPanel>
                                         <TextBlock FontWeight="SemiBold"><Run Text="{Binding Book.Title, Mode=OneWay}" /><Run Text=" - " /><Run Text="{Binding Bookmark.PositionSec, Mode=OneWay, Converter={StaticResource Time}}" /></TextBlock>

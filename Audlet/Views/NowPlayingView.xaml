@@ -22,7 +22,7 @@
         </Style>
         <Style x:Key="Tab" TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
             <Setter Property="Margin" Value="2,0" />
-            <Setter Property="Padding" Value="4,5" />
+            <Setter Property="Padding" Value="4,9" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="MinWidth" Value="0" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -78,7 +78,7 @@
                                     <DataTemplate DataType="{x:Type m:Bookmark}">
                                         <Border Style="{StaticResource Row}" MouseLeftButtonUp="Bookmark_Click">
                                             <DockPanel>
-                                                <Button DockPanel.Dock="Right" Style="{StaticResource GlassButton}" Padding="6,2" Content="&#x2715;"
+                                                <Button DockPanel.Dock="Right" Style="{StaticResource GlassButton}" Padding="0" MinWidth="32" MinHeight="32" Content="&#x2715;"
                                                         Command="{Binding DataContext.DeleteBookmarkCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
                                                 <StackPanel>
                                                     <TextBlock Text="{Binding Note}" TextTrimming="CharacterEllipsis" />

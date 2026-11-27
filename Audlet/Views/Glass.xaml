@@ -194,7 +194,8 @@
     </Style>
     <Style x:Key="SeekSlider" TargetType="Slider">
         <Setter Property="IsMoveToPointEnabled" Value="True" />
-        <Setter Property="Height" Value="20" />
+        <!-- 32 px to aim at; the track stays 6 px. -->
+        <Setter Property="Height" Value="32" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Slider">

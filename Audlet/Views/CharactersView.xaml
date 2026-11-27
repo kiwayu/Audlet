@@ -9,7 +9,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type m:Character}">
                         <DockPanel Margin="0,3">
-                            <Button DockPanel.Dock="Right" Style="{StaticResource GlassButton}" Padding="6,2" Content="&#x2715;"
+                            <Button DockPanel.Dock="Right" Style="{StaticResource GlassButton}" Padding="0" MinWidth="32" MinHeight="32" Content="&#x2715;"
                                     Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
                             <StackPanel><TextBlock Text="{Binding Name}" FontWeight="SemiBold" /><TextBlock Text="{Binding Description}" Foreground="{DynamicResource GlassMutedBrush}" TextWrapping="Wrap" /></StackPanel>
                         </DockPanel>
