@@ -12,6 +12,7 @@ namespace Audlet.Views;
 public sealed class CardPanel : VirtualizingPanel
 {
     private readonly CardRows _rows = new();
+    private readonly double[] _kind = new double[2];   // a new card's height: [0] a book not started, [1] a started one
     private ScrollViewer? _scroller;
     private double _slot;
 
@@ -44,12 +45,10 @@ public sealed class CardPanel : VirtualizingPanel
         // A started book's card also shows its progress bar (see the card template), which makes it the tall kind.
         var started = new bool[count];
         for (var i = 0; i < count; i++) started[i] = items![i] is Book { BookPositionSec: > 0 };
-        // One card of each kind is measured once, so every row's height is known before its cards are created.
-        if (_rows.Short == 0 && Array.IndexOf(started, false) is >= 0 and var plain) { Create(plain, plain + 1, constraint); _rows.Short = Container(plain).DesiredSize.Height; }
-        if (_rows.Tall == 0 && Array.IndexOf(started, true) is >= 0 and var tall) { Create(tall, tall + 1, constraint); _rows.Tall = Container(tall).DesiredSize.Height; }
+        var heights = Heights(started, constraint);
         if (_slot == 0) _slot = children[0].DesiredSize.Width;
         var columns = Math.Min(count, CardRows.ColumnsFor(available.Width, _slot));
-        _rows.Reset(started, columns);
+        _rows.Reset(heights, columns);
 
         // Half a screen above and below the visible part is created too, so scrolling reveals cards that already exist.
         var viewport = _scroller is { ViewportHeight: > 0 } s ? s.ViewportHeight : Window.GetWindow(this) is { Height: > 0 } w ? w.Height : 1080;
@@ -63,8 +62,28 @@ public sealed class CardPanel : VirtualizingPanel
             upcoming(Enumerable.Range(from, Math.Min(count, end + columns) - from).Select(i => items![i]).ToList());
         }
         Create(start, end, constraint);
-        Clear(start, end);
+        Clear(start, end, started);
+        _rows.Reset(Heights(started, constraint), columns);   // with the cards just made, and without those just removed
         return new Size(columns * _slot, _rows.Total);
+    }
+
+    // Each item's card height. A card that exists is as tall as it measured: it shows its book as the book was when the
+    // card was made, which may since have changed. Any other card will be made from its book as it is now, so it is as
+    // tall as a new card of its kind, measured once on a card made for that.
+    private double[] Heights(bool[] started, Size constraint)
+    {
+        var heights = new double[started.Length];
+        var generator = ItemContainerGenerator;
+        for (var c = 0; c < InternalChildren.Count; c++)
+            if (generator.IndexFromGeneratorPosition(new GeneratorPosition(c, 0)) is >= 0 and var item) heights[item] = InternalChildren[c].DesiredSize.Height;
+        for (var i = 0; i < started.Length; i++)
+        {
+            if (heights[i] > 0) continue;
+            var kind = started[i] ? 1 : 0;
+            if (_kind[kind] == 0) { Create(i, i + 1, constraint); _kind[kind] = Container(i).DesiredSize.Height; }
+            heights[i] = _kind[kind];
+        }
+        return heights;
     }
 
     protected override Size ArrangeOverride(Size finalSize)
@@ -115,8 +134,10 @@ public sealed class CardPanel : VirtualizingPanel
         }
     }
 
-    // Removes the containers of items outside [start, end).
-    private void Clear(int start, int end)
+    // Removes the containers of items outside [start, end), except a card of the other kind than its book now is: the
+    // book started or finished after the card was made, a new card would differ, and WrapPanel keeps the card until the
+    // list refreshes.
+    private void Clear(int start, int end, bool[]? started = null)
     {
         var generator = ItemContainerGenerator;
         for (var i = InternalChildren.Count - 1; i >= 0; i--)
@@ -124,6 +145,7 @@ public sealed class CardPanel : VirtualizingPanel
             var position = new GeneratorPosition(i, 0);
             var item = generator.IndexFromGeneratorPosition(position);
             if (item >= start && item < end) continue;
+            if (item >= 0 && started is not null && _kind[0] != _kind[1] && InternalChildren[i].DesiredSize.Height == _kind[started[item] ? 0 : 1]) continue;
             generator.Remove(position, 1);
             RemoveInternalChildRange(i, 1);
         }

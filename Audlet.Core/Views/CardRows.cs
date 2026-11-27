@@ -1,30 +1,28 @@
 namespace Audlet.Views;
 
 // Row arithmetic for the library's card grid, which creates only the cards near the visible part of the list.
-// A card has one of two heights, known from its book before the card exists: a started book's card also shows a
-// progress bar. So every row's height is known, and each row lies exactly where WrapPanel would put it.
+// A row is as tall as its tallest card, as in WrapPanel, so with every card's height known each row lies exactly
+// where WrapPanel would put it.
 public sealed class CardRows
 {
-    private bool[] _tall = [];   // per row: it holds a started book
+    private double[] _height = [];   // per row
 
     public int Columns { get; private set; }
-    public int Count => _tall.Length;
-    public double Short { get; set; }   // the height of a card, and of a started book's card
-    public double Tall { get; set; }
+    public int Count => _height.Length;
 
     // As many slots as fit, as WrapPanel wraps: n slots fit when n * slot <= width. Never fewer than one.
     public static int ColumnsFor(double width, double slot) =>
         double.IsPositiveInfinity(width) ? int.MaxValue : Math.Max(1, (int)Math.Floor(width / slot + 1e-9));
 
-    // started[i]: the i-th book's card is the tall kind.
-    public void Reset(IReadOnlyList<bool> started, int columns)
+    // heights[i]: the height of the i-th card.
+    public void Reset(IReadOnlyList<double> heights, int columns)
     {
         Columns = columns;
-        _tall = new bool[(started.Count + columns - 1) / columns];
-        for (var i = 0; i < started.Count; i++) _tall[i / columns] |= started[i];
+        _height = new double[(heights.Count + columns - 1) / columns];
+        for (var i = 0; i < heights.Count; i++) _height[i / columns] = Math.Max(_height[i / columns], heights[i]);
     }
 
-    public double Height(int row) => _tall[row] ? Tall : Short;
+    public double Height(int row) => _height[row];
 
     public double Top(int row)
     {
