@@ -112,20 +112,24 @@
         <GridSplitter Grid.Column="1" Grid.RowSpan="2" Width="24" Background="Transparent" HorizontalAlignment="Center" DragCompleted="Splitter_DragCompleted" />
 
         <!-- Right top: cover -->
-        <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,24">
+        <!-- The cover takes what height the text leaves, so a short window shrinks the cover instead of cutting it and the description. -->
+        <Grid Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,24">
+            <Grid.RowDefinitions><RowDefinition /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
             <!-- A book without a cover shows the same placeholder square as its library card. -->
-            <Grid Width="280" Height="280">
-                <Border CornerRadius="12" Background="{DynamicResource GlassBorderBrush}" />
-                <Border CornerRadius="12">
-                    <Border.Effect><DropShadowEffect BlurRadius="40" ShadowDepth="12" Opacity="0.5" /></Border.Effect>
-                    <Border.Background><ImageBrush ImageSource="{Binding Controller.CurrentBook.CoverPath, Converter={StaticResource Cover}}" Stretch="UniformToFill" /></Border.Background>
-                </Border>
-            </Grid>
-            <TextBlock AutomationProperties.AutomationId="BookTitle" Text="{Binding Controller.CurrentBook.Title}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" Margin="0,20,0,4" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="520" />
-            <TextBlock Text="{Binding Controller.CurrentBook.Author}" Foreground="{DynamicResource GlassMutedBrush}" HorizontalAlignment="Center" />
-            <TextBlock Text="{Binding Subtitle}" Visibility="{Binding ShowSubtitles, Converter={StaticResource Vis}}" Foreground="{DynamicResource GlassTextBrush}" FontSize="15" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="520" MinHeight="22" Margin="0,8,0,0" />
-            <TextBlock Text="{Binding Controller.CurrentBook.Description}" Foreground="{DynamicResource GlassMutedBrush}" FontSize="12" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="54" MaxWidth="520" Margin="0,10,0,0" TextAlignment="Center" ToolTip="{Binding Controller.CurrentBook.Description}" />
-        </StackPanel>
+            <Viewbox StretchDirection="DownOnly">
+                <Grid Width="280" Height="280">
+                    <Border CornerRadius="12" Background="{DynamicResource GlassBorderBrush}" />
+                    <Border CornerRadius="12">
+                        <Border.Effect><DropShadowEffect BlurRadius="40" ShadowDepth="12" Opacity="0.5" /></Border.Effect>
+                        <Border.Background><ImageBrush ImageSource="{Binding Controller.CurrentBook.CoverPath, Converter={StaticResource Cover}}" Stretch="UniformToFill" /></Border.Background>
+                    </Border>
+                </Grid>
+            </Viewbox>
+            <TextBlock Grid.Row="1" AutomationProperties.AutomationId="BookTitle" Text="{Binding Controller.CurrentBook.Title}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" Margin="0,20,0,4" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="520" />
+            <TextBlock Grid.Row="2" Text="{Binding Controller.CurrentBook.Author}" Foreground="{DynamicResource GlassMutedBrush}" HorizontalAlignment="Center" />
+            <TextBlock Grid.Row="3" Text="{Binding Subtitle}" Visibility="{Binding ShowSubtitles, Converter={StaticResource Vis}}" Foreground="{DynamicResource GlassTextBrush}" FontSize="15" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="520" MinHeight="22" Margin="0,8,0,0" />
+            <TextBlock Grid.Row="4" Text="{Binding Controller.CurrentBook.Description}" Foreground="{DynamicResource GlassMutedBrush}" FontSize="12" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="54" MaxWidth="520" Margin="0,10,0,0" TextAlignment="Center" ToolTip="{Binding Controller.CurrentBook.Description}" />
+        </Grid>
 
         <!-- Right bottom: controls -->
         <Border Grid.Column="2" Grid.Row="1" Style="{StaticResource GlassPanel}" Padding="24,16">
