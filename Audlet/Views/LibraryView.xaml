@@ -36,7 +36,19 @@
         <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
             <TextBlock AutomationProperties.AutomationId="Heading" Text="{Binding Heading}" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource GlassTextBrush}" VerticalAlignment="Center" />
-            <TextBox Grid.Column="1" Width="220" Margin="0,0,12,0" Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
+            <!-- A lone search box is named by its magnifier and a Search hint while empty. -->
+            <Grid Grid.Column="1" Width="220" Margin="0,0,12,0" VerticalAlignment="Center">
+                <TextBox x:Name="SearchBox" AutomationProperties.Name="Search" Padding="32,5,6,6" Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="11,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False" Foreground="{DynamicResource GlassMutedBrush}" />
+                <TextBlock Text="Search" Margin="33,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False" Foreground="{DynamicResource GlassMutedBrush}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers><DataTrigger Binding="{Binding Text, ElementName=SearchBox}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
             <ComboBox Grid.Column="2" Width="150" Margin="0,0,12,0" ItemsSource="{Binding SortModes}" SelectedItem="{Binding Sort}" VerticalAlignment="Center">
                 <!-- Sort names in words, not code names. -->
                 <ComboBox.ItemTemplate>
