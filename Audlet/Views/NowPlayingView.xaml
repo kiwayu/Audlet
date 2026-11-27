@@ -82,7 +82,7 @@
                                                         Command="{Binding DataContext.DeleteBookmarkCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
                                                 <StackPanel>
                                                     <TextBlock Text="{Binding Note}" TextTrimming="CharacterEllipsis" />
-                                                    <TextBlock Foreground="{DynamicResource GlassMutedBrush}" FontSize="11"><Run Text="{Binding PositionSec, Mode=OneWay, Converter={StaticResource Time}}" /><Run Text=" - file " /><Run Text="{Binding FileIndex, Mode=OneWay}" /></TextBlock>
+                                                    <TextBlock Foreground="{DynamicResource GlassMutedBrush}" FontSize="12"><Run Text="{Binding PositionSec, Mode=OneWay, Converter={StaticResource Time}}" /><Run Text=" - file " /><Run Text="{Binding FileIndex, Mode=OneWay}" /></TextBlock>
                                                 </StackPanel>
                                             </DockPanel>
                                         </Border>
@@ -131,7 +131,7 @@
         <Border Grid.Column="2" Grid.Row="1" Style="{StaticResource GlassPanel}" Padding="24,16">
             <StackPanel>
                 <Grid x:Name="SeekArea" MouseMove="Seek_MouseMove" MouseLeave="Seek_MouseLeave" Background="Transparent">
-                    <TextBlock x:Name="HoverLabel" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-22,0,0" FontSize="11"
+                    <TextBlock x:Name="HoverLabel" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,-22,0,0" FontSize="12"
                                Foreground="{DynamicResource GlassTextBrush}" Background="{DynamicResource GlassBrush}" Padding="6,2" IsHitTestVisible="False" />
                     <Slider x:Name="Seek" Style="{StaticResource SeekSlider}" Maximum="{Binding ShownTotal, Mode=OneWay}" Value="{Binding ShownPosition, Mode=OneWay}"
                             Thumb.DragCompleted="Seek_DragCompleted" PreviewMouseLeftButtonUp="Seek_Click" IsEnabled="{Binding Controller.Locked, Converter={StaticResource InverseBool}}" />

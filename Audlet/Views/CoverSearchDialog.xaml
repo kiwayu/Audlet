@@ -48,9 +48,9 @@
                                     <Image Source="{Binding ImageUrl}" Stretch="Uniform" />
                                 </Border>
                                 <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Margin="0,6,0,0" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" Foreground="{DynamicResource GlassTextBrush}" />
-                                <TextBlock Text="{Binding Author}" FontSize="11" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{Binding Source}" FontSize="10" Foreground="{DynamicResource GlassMutedBrush}" />
-                                <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxHeight="48" Margin="0,4,0,0" ToolTip="{Binding Description}" />
+                                <TextBlock Text="{Binding Author}" FontSize="12" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding Source}" FontSize="12" Foreground="{DynamicResource GlassMutedBrush}" />
+                                <TextBlock Text="{Binding Description}" FontSize="12" Foreground="{DynamicResource GlassMutedBrush}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" MaxHeight="48" Margin="0,4,0,0" ToolTip="{Binding Description}" />
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
