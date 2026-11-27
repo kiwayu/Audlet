@@ -45,6 +45,36 @@ public class ListeningStatsTests
     }
 
     [Fact]
+    public void CountsThatFallBetweenWholeSecondsLoseNoTime()
+    {
+        var book = new Book { Id = "b" };
+        var stats = new StatsFile();
+        var clock = new ListeningStats();
+        clock.Restart(T0);
+
+        // The player counts about four times a second, and its timer never ticks exactly on a whole second.
+        for (var i = 1; i <= 231; i++) clock.Add(book, stats, T0.AddMilliseconds(260 * i));
+
+        Assert.Equal(60, book.ListenedSec);
+    }
+
+    [Fact]
+    public void ListeningShorterThanASecondBetweenPausesStillCounts()
+    {
+        var book = new Book { Id = "b" };
+        var stats = new StatsFile();
+        var clock = new ListeningStats();
+
+        foreach (var start in new[] { T0, T0.AddMinutes(1) })
+        {
+            clock.Restart(start);
+            clock.Add(book, stats, start.AddSeconds(0.6));
+        }
+
+        Assert.Equal(1, book.ListenedSec);
+    }
+
+    [Fact]
     public void PastFourHundredDaysOnlyTheNewestYearIsKept()
     {
         var stats = new StatsFile { Days = Enumerable.Range(1, 400).Select(i => new DayStats { Day = DateTime.Parse("2025-03-14").AddDays(-i).ToString("yyyy-MM-dd"), ListenedSec = 60 }).ToList() };
