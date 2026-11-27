@@ -12,7 +12,7 @@
         <c:PositiveToVisibility x:Key="Started" />
         <c:PercentText x:Key="PercentText" />
         <Style x:Key="Card" TargetType="Border" BasedOn="{StaticResource GlassPanel}">
-            <Setter Property="Width" Value="180" /><Setter Property="Margin" Value="0,0,16,16" /><Setter Property="Padding" Value="10" /><Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Width" Value="184" /><Setter Property="Margin" Value="0,0,16,16" /><Setter Property="Padding" Value="12" /><Setter Property="Cursor" Value="Hand" />
             <Style.Triggers><DataTrigger Binding="{Binding Missing}" Value="True"><Setter Property="Opacity" Value="0.45" /></DataTrigger></Style.Triggers>
         </Style>
         <!-- One menu for every card: it reads the book from the card it opens on. -->
@@ -73,11 +73,11 @@
                                 Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
                             <StackPanel>
                                 <Grid>
-                                    <Border Height="160" CornerRadius="8" Background="{DynamicResource GlassBorderBrush}">
-                                        <Border.Clip><RectangleGeometry Rect="0,0,160,160" RadiusX="8" RadiusY="8" /></Border.Clip>
+                                    <Border Height="160" CornerRadius="4" Background="{DynamicResource GlassBorderBrush}">
+                                        <Border.Clip><RectangleGeometry Rect="0,0,160,160" RadiusX="4" RadiusY="4" /></Border.Clip>
                                         <Image Source="{Binding CoverPath, Converter={StaticResource Cover}}" Stretch="UniformToFill" />
                                     </Border>
-                                    <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6" CornerRadius="6" Padding="6,2" Background="{DynamicResource GlassBrush}">
+                                    <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="4" CornerRadius="4" Padding="8,4" Background="{DynamicResource GlassBrush}">
                                         <TextBlock Text="{Binding State}" FontSize="12" />
                                     </Border>
                                 </Grid>

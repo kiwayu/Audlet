@@ -65,7 +65,7 @@
         <Setter Property="Background" Value="{DynamicResource GlassButtonBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource GlassRimBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="Padding" Value="12,8" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource GlassFocus}" />
         <Setter Property="Template">
@@ -221,7 +221,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListBoxItem">
-                    <TextBlock Text="{TemplateBinding Content}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource GlassMutedBrush}" Margin="12,14,0,4" />
+                    <TextBlock Text="{TemplateBinding Content}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource GlassMutedBrush}" Margin="12,16,0,4" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

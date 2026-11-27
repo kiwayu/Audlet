@@ -17,7 +17,7 @@
         <c:LocalTime x:Key="LocalTime" />
         <c:FractionOfWidth x:Key="FractionOfWidth" />
         <Style x:Key="Row" TargetType="Border">
-            <Setter Property="Padding" Value="10,7" /><Setter Property="CornerRadius" Value="6" /><Setter Property="Cursor" Value="Hand" /><Setter Property="Margin" Value="0,1" />
+            <Setter Property="Padding" Value="12,8" /><Setter Property="CornerRadius" Value="8" /><Setter Property="Cursor" Value="Hand" /><Setter Property="Margin" Value="0,2" />
             <Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource GlassHoverBrush}" /></Trigger></Style.Triggers>
         </Style>
         <Style x:Key="Tab" TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
