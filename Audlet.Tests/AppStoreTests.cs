@@ -1,3 +1,4 @@
+using System.Reflection;
 using Audlet.Data;
 using Audlet.Models;
 
@@ -45,6 +46,29 @@ public class AppStoreTests : IDisposable
         store.Load();
         Assert.Empty(store.Library.Books);
         Assert.True(File.Exists(Path.Combine(_dir, "library.json.bad")));
+    }
+
+    [Fact]
+    public async Task ACopyStillQueuedWhenTheAppSavesOnExitDoesNotOverwriteThatSave()
+    {
+        var store = new AppStore(_dir);
+        store.Load();
+        store.Settings.WindowWidth = 1000;
+        // Holding the store's lock keeps the rescan's write queued, as a busy thread pool would; the lock lets the
+        // same thread in again, so the exit save below still runs first.
+        var gate = typeof(AppStore).GetField("_gate", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(store)!;
+        Task rescanSave;
+        lock (gate)
+        {
+            rescanSave = store.SaveCopyAsync();
+            store.Settings.WindowWidth = 1400;
+            store.SaveNow();
+        }
+        await rescanSave;
+
+        var again = new AppStore(_dir);
+        again.Load();
+        Assert.Equal(1400, again.Settings.WindowWidth);
     }
 
     [Fact]

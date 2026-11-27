@@ -8,6 +8,7 @@ public sealed class AppStore
     private readonly string _folder;
     private readonly object _gate = new();
     private CancellationTokenSource? _pending;
+    private long _taken, _written;   // numbers each save in the order its state was read, and the newest one written
 
     public AppStore(string folder) => _folder = folder;
 
@@ -30,18 +31,29 @@ public sealed class AppStore
         {
             _pending?.Cancel();
             _pending = null;
+            _written = Interlocked.Increment(ref _taken);
             WriteAll(Library, Settings, Stats);
         }
     }
 
     // Copies on the calling thread, which owns the lists, and writes the copy on a worker: copying takes about a
     // millisecond where writing takes tens, and a worker reading lists while they change writes a torn file.
+    // A save that read newer state may run before the worker does (the exit save); the older copy is then dropped.
     public Task SaveCopyAsync()
     {
         var library = new LibraryFile { Books = Library.Books.Select(b => b.Copy()).ToList() };
         var settings = Settings.Copy();
         var stats = Stats.Copy();
-        return Task.Run(() => { lock (_gate) WriteAll(library, settings, stats); });
+        var taken = Interlocked.Increment(ref _taken);
+        return Task.Run(() =>
+        {
+            lock (_gate)
+            {
+                if (taken < _written) return;
+                _written = taken;
+                WriteAll(library, settings, stats);
+            }
+        });
     }
 
     private void WriteAll(LibraryFile library, Settings settings, StatsFile stats)
