@@ -168,16 +168,22 @@
                         <Button Style="{StaticResource TransportButton}" FontFamily="Segoe MDL2 Assets" Content="&#xE893;" AutomationProperties.AutomationId="NextChapter" Click="NextChapter_Click" ToolTip="Next chapter" Margin="10,0,0,0" Visibility="{Binding Settings.ShowPrevNextFile, Converter={StaticResource Vis}}" />
                     </StackPanel>
                 </StackPanel>
+                <!-- Ranked by use: the listening controls on the first row, the tools on a smaller second row, so the row never overflows. -->
                 <StackPanel Orientation="Horizontal" Margin="0,16,0,0" HorizontalAlignment="Center">
                     <Button Style="{StaticResource PillButton}" Margin="4,0" Content="{Binding Controller.Speed}" ContentStringFormat="{}{0:0.00}x" Click="Speed_Click" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}" />
                     <Button AutomationProperties.AutomationId="Sleep" Style="{StaticResource PillButton}" Margin="4,0" Content="{Binding SleepLabel}" Click="Sleep_Click" />
                     <Button AutomationProperties.AutomationId="QuickBookmark" Style="{StaticResource PillButton}" Margin="4,0" Content="Bookmark" Click="QuickBookmark_Click" />
-                    <Button Style="{StaticResource PillButton}" Margin="4,0" Content="EQ" Click="Eq_Click" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}" />
-                    <Button Style="{StaticResource PillButton}" Margin="4,0" Content="Boost" Click="Boost_Click" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}" />
-                    <Button Style="{StaticResource PillButton}" Margin="4,0" Content="Characters" Click="Characters_Click" />
-                    <Button Style="{StaticResource PillButton}" Margin="4,0" Content="Files" Click="Files_Click" Visibility="{Binding HasCompanions, Converter={StaticResource Vis}}" />
-                    <Button Style="{StaticResource PillButton}" Margin="4,0" Content="Subtitles" Command="{Binding ToggleSubtitlesCommand}" Visibility="{Binding HasSubtitles, Converter={StaticResource Vis}}" />
-                    <Button Style="{StaticResource PillButton}" Margin="4,0" Content="{Binding Controller.Locked, Converter={StaticResource LockGlyph}}" Command="{Binding ToggleLockCommand}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0" HorizontalAlignment="Center">
+                    <StackPanel.Resources>
+                        <Style TargetType="Button" BasedOn="{StaticResource GlassButton}"><Setter Property="FontSize" Value="12" /><Setter Property="Padding" Value="10,4" /><Setter Property="Margin" Value="4,0" /></Style>
+                    </StackPanel.Resources>
+                    <Button Content="EQ" Click="Eq_Click" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}" />
+                    <Button Content="Boost" Click="Boost_Click" Visibility="{Binding Controller.Locked, Converter={StaticResource Hid}}" />
+                    <Button Content="Characters" Click="Characters_Click" />
+                    <Button Content="Files" Click="Files_Click" Visibility="{Binding HasCompanions, Converter={StaticResource Vis}}" />
+                    <Button Content="Subtitles" Command="{Binding ToggleSubtitlesCommand}" Visibility="{Binding HasSubtitles, Converter={StaticResource Vis}}" />
+                    <Button Content="{Binding Controller.Locked, Converter={StaticResource LockGlyph}}" Command="{Binding ToggleLockCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>
