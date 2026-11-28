@@ -72,7 +72,8 @@ public sealed partial class PlaybackController : ObservableObject
         _player.BoostDb = _store.Settings.BoostDb;
         _player.PitchSemitones = book.PitchSemitones;
         _player.SetEq(book.EqBands ?? _store.Settings.DefaultEqBands);
-        if (book.Files.Count == 0 || book.Missing) { ShowToast("The files for this book are missing."); return; }
+        // Close the book before, so nothing plays it or saves its place onto this one.
+        if (book.Files.Count == 0 || book.Missing) { _player.Close(); ShowToast("The files for this book are missing."); return; }
         if (!OpenFile(book.FileIndex, book.PositionSec)) return;
         if (play) Play();
     }

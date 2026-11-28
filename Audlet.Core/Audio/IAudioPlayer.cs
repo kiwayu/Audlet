@@ -13,6 +13,7 @@ public interface IAudioPlayer : IDisposable
     double Balance { get; set; }
     double Volume { get; set; }
     bool Open(string path);
+    void Close();
     void Play();
     void Pause();
     void SetEq(double[] gainsDb);
