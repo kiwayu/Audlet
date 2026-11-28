@@ -48,6 +48,10 @@ public sealed class Book
     public double TotalDurationSec => Files.Sum(f => f.DurationSec);
     public double BookPositionSec => Files.Take(FileIndex).Sum(f => f.DurationSec) + PositionSec;
 
+    // A replaced cover keeps its path. WPF bindings to CoverPath listen to the event of this name and read the file again.
+    public event EventHandler? CoverPathChanged;
+    public void CoverReplaced() => CoverPathChanged?.Invoke(this, EventArgs.Empty);
+
     // A copy with lists of its own, to be written out while the UI thread goes on changing this book's lists.
     public Book Copy()
     {

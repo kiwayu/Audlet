@@ -249,8 +249,9 @@ public sealed partial class PlaybackController : ObservableObject
         _store.SaveSoon();
     }
 
-    // A replaced cover keeps its file path, so whatever shows the current book is told to look at it again.
-    public void CoverReplaced(Book book) { if (book == CurrentBook) OnPropertyChanged(nameof(CurrentBook)); }
+    // A replaced cover keeps its file path, so whatever shows the book's cover is told to look at it again.
+    public event Action? CurrentCoverReplaced;
+    public void CoverReplaced(Book book) { book.CoverReplaced(); if (book == CurrentBook) CurrentCoverReplaced?.Invoke(); }
 
     // Reset first so the same text twice still raises a change notification.
     private void ShowToast(string text) { Toast = null; Toast = text; }

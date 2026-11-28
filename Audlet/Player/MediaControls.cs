@@ -29,6 +29,7 @@ public sealed class MediaControls
                 if (e.PropertyName is nameof(PlaybackController.CurrentBook) or nameof(PlaybackController.IsPlaying) or nameof(PlaybackController.CurrentChapter))
                     UpdateSoon();
             };
+            controller.CurrentCoverReplaced += UpdateSoon;
         }
         catch (Exception) { _smtc = null; }
     }

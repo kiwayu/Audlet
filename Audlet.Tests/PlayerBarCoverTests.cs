@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -10,6 +11,7 @@ using Audlet.Data;
 using Audlet.Library;
 using Audlet.Models;
 using Audlet.Player;
+using Audlet.Tests.E2E;
 using Audlet.ViewModels;
 using Audlet.Views;
 
@@ -79,5 +81,48 @@ public class PlayerBarCoverTests : IDisposable
 
         var shown = Centre(bar.Source);
         Assert.True(shown.B > 200 && shown.R < 60, $"the player bar shows {shown}");
+    });
+
+    // In the app the cover lands while Now Playing shows when Find cover online finishes its download after the
+    // listener has opened Now Playing; Set cover from file reaches the same code without the wait.
+    [Fact]
+    public void ReplacingTheCoverOfTheBookPlayingLeavesNowPlayingAsItWasApartFromTheCover() => RescanTests.OnUiThread(async () =>
+    {
+        var store = new AppStore(Path.Combine(_dir, "data")) { DebounceMs = Timeout.Infinite };
+        store.Load();
+        var covers = new CoverCache(Path.Combine(_dir, "covers"), new WpfCoverCodec());
+        var folder = Path.Combine(_dir, "Dune");
+        AppSession.WriteTone(Path.Combine(folder, "01.wav"), 4, 440);
+        File.WriteAllText(Path.Combine(folder, "Dune.srt"), "1\n00:00:00,000 --> 00:00:04,000\nThe spice must flow\n");
+        var book = new Book
+        {
+            Id = folder, Title = "Dune", State = BookState.Started,
+            Files = [new AudioFile(Path.Combine(folder, "01.wav"), 4, "01")],
+            Chapters = [new Chapter("One", 0, 0, 2), new Chapter("Two", 0, 2, 4)],
+            Companions = [Path.Combine(folder, "Dune.srt")],
+            Bookmarks = [new Bookmark(0, 1, "here", DateTime.UtcNow)],
+        };
+        covers.Replace(book, Solid("red.png", Colors.Red));
+        book.CoverPath = covers.PathFor(book);
+        store.Library.Books.Add(book);
+        var main = new MainViewModel(store, new PlaybackController(_player, store, UiTimer.Every), covers, new PickingShell(Solid("blue.png", Colors.Blue)));
+        main.Controller.LoadBook(book, play: false);
+        var nowPlaying = new NowPlayingViewModel(main);
+        nowPlaying.ToggleSubtitlesCommand.Execute(null);
+        var cover = new Image();
+        cover.SetBinding(Image.SourceProperty, new Binding("Controller.CurrentBook.CoverPath") { Source = nowPlaying, Converter = new CoverImage { Full = true } });
+        Assert.Equal("The spice must flow", nowPlaying.Subtitle);
+        Assert.True(Centre(cover.Source).R > 200);
+        var listChanges = new List<string>();
+        foreach (var (name, list) in new (string, INotifyCollectionChanged)[] { ("chapters", nowPlaying.Chapters), ("bookmarks", nowPlaying.Bookmarks), ("history", nowPlaying.History), ("ticks", nowPlaying.Ticks) })
+            list.CollectionChanged += (_, e) => listChanges.Add(name + " " + e.Action);
+
+        new LibraryViewModel(main, Section.Library).SetCoverCommand.Execute(book);
+        await Dispatcher.Yield(DispatcherPriority.Background);
+
+        Assert.Equal("The spice must flow", nowPlaying.Subtitle);
+        Assert.Empty(listChanges);
+        var shown = Centre(cover.Source);
+        Assert.True(shown.B > 200 && shown.R < 60, $"Now Playing shows {shown}");
     });
 }
