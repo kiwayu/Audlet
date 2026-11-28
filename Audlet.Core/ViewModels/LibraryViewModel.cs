@@ -137,6 +137,7 @@ public sealed partial class LibraryViewModel : ObservableObject, IDisposable
             _main.Covers.Replace(b, bytes);
             b.CoverPath = _main.Covers.PathFor(b);
             if (applyDescription && !string.IsNullOrWhiteSpace(pick.Description)) b.Description = pick.Description.Trim();
+            _main.Controller.CoverReplaced(b);
             _main.Store.SaveSoon();
             _main.ShowToast("Cover updated from " + pick.Source);
             Refresh();
@@ -150,6 +151,7 @@ public sealed partial class LibraryViewModel : ObservableObject, IDisposable
         if (_main.Shell.PickFile(null, "Images|*.jpg;*.jpeg;*.png;*.webp") is not { } file) return;
         _main.Covers.Replace(b, file);
         b.CoverPath = _main.Covers.PathFor(b);
+        _main.Controller.CoverReplaced(b);
         _main.Store.SaveSoon();
         Refresh();
     }
