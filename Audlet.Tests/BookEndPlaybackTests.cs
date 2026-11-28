@@ -45,4 +45,45 @@ public class BookEndPlaybackTests : IDisposable
         Assert.Same(next, controller.CurrentBook);
         Assert.Equal((BookState.Finished, 0, 0.0), (finished.State, finished.FileIndex, finished.PositionSec));
     }
+
+    // As at start: the last book loads paused, so nothing has played yet when next chapter ends it.
+    [Fact]
+    public void ABookEndedBeforeItPlayedSavesNoListeningTime()
+    {
+        var store = new AppStore(Path.Combine(_dir, "data")) { DebounceMs = Timeout.Infinite };
+        store.Load();
+        var book = Tone("One");
+        store.Library.Books.Add(book);
+        var controller = new PlaybackController(_player, store, UiTimer.Every);
+        controller.LoadBook(book, play: false);
+
+        controller.NextChapter();
+
+        var saved = new AppStore(Path.Combine(_dir, "data"));
+        saved.Load();
+        Assert.Equal(0, saved.Library.Books.Single().ListenedSec);
+        Assert.Empty(saved.Stats.Days);
+        Assert.Empty(saved.Stats.Months);
+    }
+
+    [Fact]
+    public void ABookEndedWhilePausedSavesNoListeningTimeForThePause()
+    {
+        var store = new AppStore(Path.Combine(_dir, "data")) { DebounceMs = Timeout.Infinite };
+        store.Load();
+        var book = Tone("One");
+        store.Library.Books.Add(book);
+        var controller = new PlaybackController(_player, store, UiTimer.Every);
+        _player.Volume = 0;
+        controller.LoadBook(book, play: true);
+        controller.Pause();
+        Thread.Sleep(1500);
+
+        controller.NextChapter();
+
+        var saved = new AppStore(Path.Combine(_dir, "data"));
+        saved.Load();
+        Assert.Equal(0, saved.Library.Books.Single().ListenedSec);
+        Assert.Empty(saved.Stats.Days);
+    }
 }

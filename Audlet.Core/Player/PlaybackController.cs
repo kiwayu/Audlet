@@ -309,7 +309,7 @@ public sealed partial class PlaybackController : ObservableObject
 
     private void AccumulateStats()
     {
-        if (CurrentBook is not null) _listening.Add(CurrentBook, _store.Stats, DateTime.UtcNow);
+        if (IsPlaying && CurrentBook is not null) _listening.Add(CurrentBook, _store.Stats, DateTime.UtcNow);
     }
 
     private void OnFileEnded()
@@ -338,7 +338,7 @@ public sealed partial class PlaybackController : ObservableObject
 
     public void Shutdown()
     {
-        if (IsPlaying) AccumulateStats();
+        AccumulateStats();
         SavePosition();
         _tick.Stop(); _level.Stop();
         _store.SaveNow();
