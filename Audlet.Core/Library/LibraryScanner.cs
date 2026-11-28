@@ -28,7 +28,7 @@ public sealed class LibraryScanner
         var subs = Directory.EnumerateDirectories(folder).OrderBy(d => d, NaturalComparer.Instance).ToList();
         var subsWithAudio = subs.Where(HasAudioBelow).ToList();
 
-        // ponytail: a folder holding only CD1/CD2-style sub-folders is one book; any other layout needs a manual merge later
+        // Shortcut: a folder holding only CD1/CD2-style sub-folders is one book; any other layout needs a manual merge later
         var discParts = files.Count == 0 && subsWithAudio.Count > 0 &&
                         subsWithAudio.All(d => DiscPart.IsMatch(Path.GetFileName(d)) && !Directory.EnumerateDirectories(d).Any(HasAudioBelow));
         if ((files.Count > 0 && subsWithAudio.Count == 0) || discParts)

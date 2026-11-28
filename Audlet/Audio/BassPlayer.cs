@@ -96,7 +96,7 @@ public sealed class BassPlayer : IAudioPlayer
     private void ApplyVolume()
     {
         // BASS accepts volume above 1.0 for amplification. 12 dB is x3.98.
-        // ponytail: boost clips at full scale, add a limiter DSP if it audibly distorts
+        // Shortcut: boost clips at full scale, add a limiter DSP if it audibly distorts
         if (_handle != 0) Bass.ChannelSetAttribute(_handle, ChannelAttribute.Volume, _volume * Math.Pow(10, _boostDb / 20.0));
     }
     private void ApplyEq(int band)

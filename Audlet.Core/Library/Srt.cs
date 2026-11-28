@@ -32,7 +32,7 @@ public static partial class Srt
         int.Parse(m.Groups[group].Value) * 3600 + int.Parse(m.Groups[group + 1].Value) * 60 + int.Parse(m.Groups[group + 2].Value)
         + int.Parse(m.Groups[group + 3].Value.PadRight(3, '0')) / 1000.0;
 
-    // ponytail: a linear scan is fine for a few thousand cues; switch to a binary search if files get huge.
+    // Shortcut: a linear scan is fine for a few thousand cues; switch to a binary search if files get huge.
     public static string? At(IReadOnlyList<Cue> cues, double sec)
     {
         foreach (var c in cues) if (sec >= c.StartSec && sec <= c.EndSec) return c.Text;
