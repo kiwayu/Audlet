@@ -39,6 +39,15 @@ public class EndOfBookTests
     }
 
     [Fact]
+    public void AQueuedBookNoLongerInTheLibraryIsPassedOver()
+    {
+        var settings = new Settings { Queue = [@"C:\Books\Gone", _other.Id], EndOfBookAction = EndOfBookAction.NextBook };
+
+        Assert.Equal((_other, false, "Finished. Next: Other"), EndOfBook.Finish(_two, Books, settings));
+        Assert.DoesNotContain(_other.Id, settings.Queue);
+    }
+
+    [Fact]
     public void StopLoadsNothingAndLeavesTheQueueAlone()
     {
         var settings = new Settings { EndOfBookAction = EndOfBookAction.Stop };
