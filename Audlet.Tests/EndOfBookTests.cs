@@ -69,6 +69,14 @@ public class EndOfBookTests
     }
 
     [Fact]
+    public void StopNamesTheQueueWhenTheNextBookIsQueued()
+    {
+        var settings = new Settings { Queue = [_other.Id], EndOfBookAction = EndOfBookAction.Stop };
+
+        Assert.Equal(((Book?)null, false, "Finished. Next in the queue: Other"), EndOfBook.Finish(_one, Books, settings));
+    }
+
+    [Fact]
     public void WithNothingNextTheBookIsSimplyFinished()
     {
         var settings = new Settings { EndOfBookAction = EndOfBookAction.NextBookPlay };

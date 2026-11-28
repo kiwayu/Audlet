@@ -23,6 +23,6 @@ public static class EndOfBook
             if (fromQueue) settings.Queue.RemoveAll(id => id.Equals(next.Id, StringComparison.OrdinalIgnoreCase));
             return (next, action == EndOfBookAction.NextBookPlay, "Finished. Next: " + next.Title);
         }
-        return (null, false, next is null ? "The book is finished." : "Finished. Next in the series: " + next.Title);
+        return (null, false, next is null ? "The book is finished." : (fromQueue ? "Finished. Next in the queue: " : "Finished. Next in the series: ") + next.Title);
     }
 }
