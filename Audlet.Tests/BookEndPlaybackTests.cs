@@ -46,6 +46,29 @@ public class BookEndPlaybackTests : IDisposable
         Assert.Equal((BookState.Finished, 0, 0.0), (finished.State, finished.FileIndex, finished.PositionSec));
     }
 
+    // With Stop, the default, the finished book stays open; quitting, opening another book or Play must not start from its end.
+    [Fact]
+    public void AFinishedBookThatStaysOpenIsBackAtItsStart()
+    {
+        var store = new AppStore(Path.Combine(_dir, "data")) { DebounceMs = Timeout.Infinite };
+        store.Load();
+        var book = Tone("One");
+        store.Library.Books.Add(book);
+        var player = new BassPlayer();   // the controller disposes it on quit
+        var controller = new PlaybackController(player, store, UiTimer.Every);
+        controller.LoadBook(book, play: false);
+        controller.SeekFile(0, 1.5);
+
+        controller.NextChapter();
+
+        Assert.Equal(0, controller.PositionSec);
+        controller.Shutdown();
+        var saved = new AppStore(Path.Combine(_dir, "data"));
+        saved.Load();
+        var b = saved.Library.Books.Single();
+        Assert.Equal((BookState.Finished, 0, 0.0), (b.State, b.FileIndex, b.PositionSec));
+    }
+
     // As at start: the last book loads paused, so nothing has played yet when next chapter ends it.
     [Fact]
     public void ABookEndedBeforeItPlayedSavesNoListeningTime()

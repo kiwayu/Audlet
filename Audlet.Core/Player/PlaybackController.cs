@@ -332,6 +332,7 @@ public sealed partial class PlaybackController : ObservableObject
         _player.Pause(); IsPlaying = false; _level.Stop();
         var (next, play, toast) = EndOfBook.Finish(finished, Books, _store.Settings);
         if (next is not null) LoadBook(next, play, saveOutgoing: false);
+        else OpenFile(finished.FileIndex, finished.PositionSec);   // rewound to where Finish put the book, so neither a later save nor Play uses the end
         ShowToast(toast);
         _store.SaveNow();
     }
