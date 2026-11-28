@@ -13,8 +13,9 @@ public static class EndOfBook
         finished.FileIndex = 0; finished.PositionSec = 0;
         settings.Queue.RemoveAll(id => id.Equals(finished.Id, StringComparison.OrdinalIgnoreCase));
         var action = settings.EndOfBookAction;
-        // The queue may hold books that have left the library since they were queued (their folder is no longer scanned).
-        var next = settings.Queue.Select(id => books.FirstOrDefault(b => b.Id.Equals(id, StringComparison.OrdinalIgnoreCase))).FirstOrDefault(b => b is not null);
+        // The queue may hold books that have left the library since they were queued (their folder is no longer scanned),
+        // and books whose files are missing (an unplugged drive); those stay queued for when they are back.
+        var next = settings.Queue.Select(id => books.FirstOrDefault(b => b.Id.Equals(id, StringComparison.OrdinalIgnoreCase))).FirstOrDefault(b => b is { Missing: false });
         var fromQueue = next is not null;
         next ??= SeriesInfo.Next(books, finished);   // nothing queued: fall through to the next book in the series
         if (action != EndOfBookAction.Stop && next is not null)

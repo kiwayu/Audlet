@@ -48,6 +48,16 @@ public class EndOfBookTests
     }
 
     [Fact]
+    public void AQueuedBookWhoseFilesAreMissingIsPassedOverAndStaysQueued()
+    {
+        var unplugged = new Book { Id = @"E:\Books\Unplugged", Title = "Unplugged", Missing = true };
+        var settings = new Settings { Queue = [unplugged.Id, _other.Id], EndOfBookAction = EndOfBookAction.NextBook };
+
+        Assert.Equal((_other, false, "Finished. Next: Other"), EndOfBook.Finish(_two, [.. Books, unplugged], settings));
+        Assert.Equal([unplugged.Id], settings.Queue);
+    }
+
+    [Fact]
     public void StopLoadsNothingAndLeavesTheQueueAlone()
     {
         var settings = new Settings { EndOfBookAction = EndOfBookAction.Stop };
